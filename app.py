@@ -1,101 +1,94 @@
+import os
 import streamlit as st
-import time
 from rag_engine import RAGEngine
 
-# Page Config
+# ── Page config ────────────────────────────────────────────────
 st.set_page_config(page_title="College Knowledge Retrieval", page_icon="📚", layout="wide")
 
-# Styling
-st.markdown(\"\"\"
-    <style>
-    .chat-message {
-        padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem; display: flex
-    }
-    .chat-message.user {
-        background-color: #2b313e
-    }
-    .chat-message.bot {
-        background-color: #475063
-    }
-    .chat-message .avatar {
-      width: 20%;
-    }
-    .chat-message .avatar img {
-      max-width: 78px;
-      max-height: 78px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-    .chat-message .message {
-      width: 80%;
-      padding: 0 1.5rem;
-      color: #fff;
-    }
-    </style>
-\"\"\", unsafe_allow_html=True)
-
-# Initialize Session State
+# ── Session state ──────────────────────────────────────────────
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
 if "rag_engine" not in st.session_state:
-    st.session_state.rag_engine = RAGEngine()
+    with st.spinner("Loading RAG engine (first launch may download embeddings)..."):
+        st.session_state.rag_engine = RAGEngine()
 
-# Sidebar
+engine: RAGEngine = st.session_state.rag_engine
+
+# ── Sidebar ────────────────────────────────────────────────────
 with st.sidebar:
     st.title("📚 Knowledge Base")
     st.markdown("---")
-    st.subheader("System Status")
-    if st.session_state.rag_engine.vector_store:
-        st.success("Vector Database Loaded")
-    else:
-        st.error("Vector Database Not Found. Please run `ingest.py`.")
-    
-    st.markdown("---")
-    st.markdown("### How to use")
-    st.markdown("1. Put PDFs in `data/` folder.")
-    st.markdown("2. Run `python ingest.py` in terminal.")
-    st.markdown("3. Ask questions here!")
 
-# Main Chat Interface
+    st.subheader("System Status")
+    if engine.status["db"]:
+        st.success("✅ Vector Database Loaded")
+    else:
+        st.error("❌ Vector Database Not Found")
+
+    if engine.status["ollama"]:
+        st.success("✅ Ollama LLM Connected")
+    else:
+        st.error("❌ Ollama Not Running")
+
+    if engine.status["ready"]:
+        st.success("✅ RAG Pipeline Ready")
+    else:
+        st.warning("⚠️ System Not Ready")
+
+    st.markdown("---")
+    st.markdown("### Setup Steps")
+    st.markdown("1. Install [Ollama](https://ollama.com)")
+    st.markdown("2. Run `ollama pull llama3.2:3b`")
+    st.markdown("3. Put documents in `data/` folder")
+    st.markdown("4. Run `python ingest.py`")
+    st.markdown("5. Ask questions here!")
+
+    st.markdown("---")
+    if st.button("🔄 Reload Engine"):
+        st.session_state.rag_engine = RAGEngine()
+        st.rerun()
+
+# ── Main chat ──────────────────────────────────────────────────
 st.header("🤖 College Knowledge Assistant")
+st.caption("Ask questions about college documents — answers are grounded in uploaded files.")
 
 # Display chat history
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
 
-# User Input
+# User input
 if prompt := st.chat_input("Ask a question about college documents..."):
-    # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Generate response
     with st.chat_message("assistant"):
-        message_placeholder = st.empty()
-        full_response = ""
-        
+        placeholder = st.empty()
+
         with st.spinner("Searching documents and thinking..."):
-            result = st.session_state.rag_engine.query(prompt)
-            
+            result = engine.query(prompt)
+
             if isinstance(result, str):
                 full_response = result
             else:
                 answer = result["answer"]
-                sources = result["source_documents"]
-                
-                full_response = answer
-                
-                if sources:
-                    full_response += "\n\n**Sources:**\n"
-                    for i, doc in enumerate(sources):
-                        source_name = doc.metadata.get('source', 'Unknown')
-                        page_num = doc.metadata.get('page', 'N/A')
-                        full_response += f"- *{os.path.basename(source_name)}* (Page {page_num})\n"
+                sources = result.get("source_documents", [])
 
-        message_placeholder.markdown(full_response)
-    
-    # Add assistant response to chat history
+                full_response = answer
+
+                if sources:
+                    full_response += "\n\n---\n**📄 Sources:**\n"
+                    seen = set()
+                    for doc in sources:
+                        src = doc.metadata.get("source", "Unknown")
+                        page = doc.metadata.get("page", "N/A")
+                        key = f"{src}-{page}"
+                        if key not in seen:
+                            seen.add(key)
+                            full_response += f"- *{src}* (Page {page})\n"
+
+        placeholder.markdown(full_response)
+
     st.session_state.messages.append({"role": "assistant", "content": full_response})
