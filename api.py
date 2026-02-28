@@ -18,8 +18,13 @@ app.add_middleware(
 # Initialize RAG Engine globally
 rag_engine = RAGEngine()
 
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
 class ChatRequest(BaseModel):
     message: str
+    history: Optional[List[ChatMessage]] = None
 
 class SourceDoc(BaseModel):
     source: str
@@ -38,9 +43,14 @@ def health_check():
 def chat(request: ChatRequest):
     """Processes a user message and returns the LLM response with sources."""
     if not rag_engine.status["ready"]:
-        raise HTTPException(status_code=503, detail="RAG Engine is not strictly ready. Check /health endpoint.")
+        raise HTTPException(status_code=503, detail="RAG Engine is not ready. Check /health endpoint.")
     
-    result = rag_engine.query(request.message)
+    # Convert history to list of dicts for the engine
+    history = None
+    if request.history:
+        history = [{"role": h.role, "content": h.content} for h in request.history]
+    
+    result = rag_engine.query(request.message, history=history)
     
     # If the response is just a string, it means an error occurred in query()
     if isinstance(result, str):

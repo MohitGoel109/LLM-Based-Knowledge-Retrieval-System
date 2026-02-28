@@ -81,11 +81,12 @@ RAG_PROMPT = PromptTemplate(
         "Use ONLY the context below to answer. Be clear, concise, and student-friendly.\n"
         "If the context does not contain the answer, say "
         "'I don't have enough information to answer that.'\n\n"
+        "{chat_history}"
         "Context:\n{context}\n\n"
         "Question: {question}\n\n"
         "Answer:"
     ),
-    input_variables=["context", "question"],
+    input_variables=["context", "question", "chat_history"],
 )
 
 
@@ -102,6 +103,8 @@ class RAGEngine:
         self.retriever = None
         self.llm = None
         self.qa_chain = None
+        self.chat_history = []  # Stores last N messages for conversational memory
+        self.max_history = 6    # Keep last 6 messages (3 Q&A pairs)
         self.status = {"db": False, "ollama": False, "ready": False}
         self._initialize()
 
@@ -148,7 +151,7 @@ class RAGEngine:
             self.status["ready"] = True
 
     # ── Public API ─────────────────────────────────────────────
-    def query(self, question: str):
+    def query(self, question: str, history: list = None):
         """Ask a question. Returns dict with answer + sources, or error string."""
         if not self.qa_chain:
             parts = []
@@ -161,10 +164,35 @@ class RAGEngine:
         # Expand slang/abbreviations so retrieval finds the right docs
         cleaned_question = _expand_slang(question)
 
+        # Build chat history string from provided history or internal buffer
+        if history:
+            self.chat_history = history[-self.max_history:]
+        chat_history_str = ""
+        if self.chat_history:
+            chat_history_str = "Previous conversation:\n"
+            for msg in self.chat_history:
+                role = "Student" if msg["role"] == "user" else "Assistant"
+                chat_history_str += f"{role}: {msg['content']}\n"
+            chat_history_str += "\n"
+
         # Retrieve source documents separately for citations
         assert self.retriever is not None  # guaranteed when qa_chain is set
         source_docs = self.retriever.invoke(cleaned_question)
-        answer = self.qa_chain.invoke(cleaned_question)
+
+        # Build prompt inputs manually (can't use the chain directly with history)
+        context = _format_docs(source_docs)
+        prompt_text = RAG_PROMPT.format(
+            context=context,
+            question=cleaned_question,
+            chat_history=chat_history_str,
+        )
+        answer = self.llm.invoke(prompt_text)
+
+        # Update internal history
+        self.chat_history.append({"role": "user", "content": question})
+        self.chat_history.append({"role": "assistant", "content": answer})
+        self.chat_history = self.chat_history[-self.max_history:]
+
         return {
             "answer": answer,
             "source_documents": source_docs,
