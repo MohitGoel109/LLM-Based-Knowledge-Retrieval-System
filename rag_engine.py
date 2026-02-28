@@ -3,8 +3,9 @@ import requests
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_ollama import OllamaLLM
-from langchain.chains import RetrievalQA
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
 
 # ── Configuration ──────────────────────────────────────────────
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -25,6 +26,11 @@ RAG_PROMPT = PromptTemplate(
     ),
     input_variables=["context", "question"],
 )
+
+
+def _format_docs(docs):
+    """Join retrieved document pages into a single context string."""
+    return "\n\n".join(doc.page_content for doc in docs)
 
 
 class RAGEngine:
@@ -67,14 +73,16 @@ class RAGEngine:
         else:
             print("[RAG] Ollama is not running. Start it with: ollama serve")
 
-        # 4. QA chain
+        # 4. RAG chain (using LCEL instead of deprecated RetrievalQA)
         if self.llm and self.retriever:
-            self.qa_chain = RetrievalQA.from_chain_type(
-                llm=self.llm,
-                chain_type="stuff",
-                retriever=self.retriever,
-                return_source_documents=True,
-                chain_type_kwargs={"prompt": RAG_PROMPT},
+            self.qa_chain = (
+                {
+                    "context": self.retriever | _format_docs,
+                    "question": RunnablePassthrough(),
+                }
+                | RAG_PROMPT
+                | self.llm
+                | StrOutputParser()
             )
             self.status["ready"] = True
 
@@ -89,10 +97,13 @@ class RAGEngine:
                 parts.append("Ollama is not running — start it with 'ollama serve'.")
             return " | ".join(parts) if parts else "System not initialized."
 
-        response = self.qa_chain.invoke({"query": question})
+        # Retrieve source documents separately for citations
+        assert self.retriever is not None  # guaranteed when qa_chain is set
+        source_docs = self.retriever.invoke(question)
+        answer = self.qa_chain.invoke(question)
         return {
-            "answer": response["result"],
-            "source_documents": response.get("source_documents", []),
+            "answer": answer,
+            "source_documents": source_docs,
         }
 
     # ── Helpers ────────────────────────────────────────────────
