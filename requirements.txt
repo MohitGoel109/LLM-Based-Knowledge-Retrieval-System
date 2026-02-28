@@ -8,5 +8,5 @@ chromadb
 sentence-transformers
 streamlit
 pypdf
-python-docx
+docx2txt
 requests

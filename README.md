@@ -10,7 +10,7 @@ A local RAG (Retrieval-Augmented Generation) system for querying internal colleg
 
 ## Setup
 
-1.  **Install Ollama**: Download from [ollama.com](https://ollama.com/) and run `ollama pull llama3`.
+1.  **Install Ollama**: Download from [ollama.com](https://ollama.com/) and run `ollama pull llama3.2:3b`.
 2.  **Install Python Dependencies**:
     ```bash
     python -m venv venv
