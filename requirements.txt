@@ -10,3 +10,5 @@ streamlit
 pypdf
 docx2txt
 requests
+fastapi
+uvicorn

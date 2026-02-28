@@ -1,0 +1,46 @@
+
+> web-app@1.0.0 dev
+> vite
+
+
+  VITE v7.3.1  ready in 103 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+12:46:45 AM [vite] (client) hmr update /src/App.jsx
+
+> web-app@1.0.0 dev
+> vite
+
+Port 5173 is in use, trying another one...
+
+  VITE v7.3.1  ready in 90 ms
+
+  ➜  Local:   http://localhost:5174/
+  ➜  Network: use --host to expose
+12:51:16 AM [vite] vite.config.js changed, restarting server...
+12:51:16 AM [vite] vite.config.js changed, restarting server...
+12:51:16 AM [vite] (client) Re-optimizing dependencies because lockfile has changed
+12:51:16 AM [vite] server restarted.
+12:51:16 AM [vite] server restarted.
+12:51:17 AM [vite] (client) Pre-transform error: Cannot apply unknown utility class `bg-white/70`. Are you using CSS modules or similar and missing `@reference`? https://tailwindcss.com/docs/functions-and-directives#reference-directive
+  Plugin: @tailwindcss/vite:generate:serve
+  File: /home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/src/index.css
+12:51:17 AM [vite] Internal server error: Cannot apply unknown utility class `bg-white/70`. Are you using CSS modules or similar and missing `@reference`? https://tailwindcss.com/docs/functions-and-directives#reference-directive
+  Plugin: @tailwindcss/vite:generate:serve
+  File: /home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/src/index.css
+      at onInvalidCandidate (file:///home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/node_modules/@tailwindcss/node/node_modules/tailwindcss/dist/chunk-L5IEUH3R.mjs:21:1314)
+      at $e (file:///home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/node_modules/@tailwindcss/node/node_modules/tailwindcss/dist/chunk-L5IEUH3R.mjs:16:37066)
+      at file:///home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/node_modules/@tailwindcss/node/node_modules/tailwindcss/dist/chunk-L5IEUH3R.mjs:21:355
+      at Ar (file:///home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/node_modules/@tailwindcss/node/node_modules/tailwindcss/dist/chunk-L5IEUH3R.mjs:3:1733)
+      at I (file:///home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/node_modules/@tailwindcss/node/node_modules/tailwindcss/dist/chunk-L5IEUH3R.mjs:3:1377)
+      at Ce (file:///home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/node_modules/@tailwindcss/node/node_modules/tailwindcss/dist/chunk-L5IEUH3R.mjs:21:172)
+      at Gi (file:///home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/node_modules/@tailwindcss/node/node_modules/tailwindcss/dist/chunk-L5IEUH3R.mjs:38:294)
+      at async ao (file:///home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/node_modules/@tailwindcss/node/node_modules/tailwindcss/dist/chunk-L5IEUH3R.mjs:38:631)
+      at async vf (file:///home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/node_modules/@tailwindcss/node/node_modules/tailwindcss/dist/chunk-L5IEUH3R.mjs:38:1406)
+      at async uu (file:///home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/node_modules/@tailwindcss/node/dist/index.mjs:10:3458)
+      at async B.generate (file:///home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/node_modules/@tailwindcss/vite/dist/index.mjs:1:5049)
+      at async TransformPluginContext.handler (file:///home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/node_modules/@tailwindcss/vite/dist/index.mjs:1:2719)
+      at async EnvironmentPluginContainer.transform (file:///home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/node_modules/vite/dist/node/chunks/config.js:28797:14)
+      at async loadAndTransform (file:///home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/node_modules/vite/dist/node/chunks/config.js:22670:26)
+      at async viteTransformMiddleware (file:///home/pyrosensei/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app/node_modules/vite/dist/node/chunks/config.js:24542:20)

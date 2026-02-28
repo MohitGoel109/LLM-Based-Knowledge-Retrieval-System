@@ -20,30 +20,9 @@ with st.sidebar:
     st.title("📚 Knowledge Base")
     st.markdown("---")
 
-    st.subheader("System Status")
-    if engine.status["db"]:
-        st.success("✅ Vector Database Loaded")
-    else:
-        st.error("❌ Vector Database Not Found")
-
-    if engine.status["ollama"]:
-        st.success("✅ Ollama LLM Connected")
-    else:
-        st.error("❌ Ollama Not Running")
-
-    if engine.status["ready"]:
-        st.success("✅ RAG Pipeline Ready")
-    else:
-        st.warning("⚠️ System Not Ready")
-
-    st.markdown("---")
-    st.markdown("### Setup Steps")
-    st.markdown("1. Install [Ollama](https://ollama.com)")
-    st.markdown("2. Run `ollama pull llama3.2:3b`")
-    st.markdown("3. Put documents in `data/` folder")
-    st.markdown("4. Run `python ingest.py`")
-    st.markdown("5. Ask questions here!")
-
+    st.subheader("Welcome!")
+    st.markdown("Ask questions about college documents, rules, regulations, and placement criteria.")
+    
     st.markdown("---")
     if st.button("🔄 Reload Engine"):
         st.session_state.rag_engine = RAGEngine()

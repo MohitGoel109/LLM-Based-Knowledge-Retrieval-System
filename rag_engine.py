@@ -14,10 +14,71 @@ EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 LLM_MODEL = "llama3.2:3b"
 OLLAMA_BASE_URL = "http://localhost:11434"
 
+# ── Slang / Abbreviation Dictionary ───────────────────────────
+# Maps common student slang and internet abbreviations to their
+# full forms so both retrieval and the LLM see clean text.
+import re
+
+SLANG_MAP = {
+    # Common abbreviations
+    r'\buk\b': 'you know',
+    r'\bidk\b': "I don't know",
+    r'\bimo\b': 'in my opinion',
+    r'\bbtw\b': 'by the way',
+    r'\bfyi\b': 'for your information',
+    r'\bafaik\b': 'as far as I know',
+    r'\btbh\b': 'to be honest',
+    r'\brn\b': 'right now',
+    r'\bpls\b': 'please',
+    r'\bplz\b': 'please',
+    r'\bthx\b': 'thanks',
+    r'\bty\b': 'thank you',
+    r'\bnp\b': 'no problem',
+    r'\bwdym\b': 'what do you mean',
+    r'\bhmu\b': 'let me know',
+    r'\blmk\b': 'let me know',
+    r'\bbrb\b': 'be right back',
+    r'\bomg\b': 'oh my god',
+    r'\bsmh\b': 'shaking my head',
+    r'\bgoat\b': 'greatest of all time',
+    r'\bw/\b': 'with',
+    r'\bw/o\b': 'without',
+    r'\bb/w\b': 'between',
+    r'\baint\b': "isn't",
+    r'\bwanna\b': 'want to',
+    r'\bgonna\b': 'going to',
+    r'\bgotta\b': 'got to',
+    r'\bkinda\b': 'kind of',
+    r'\bsorta\b': 'sort of',
+    r'\blemme\b': 'let me',
+    r'\bgimme\b': 'give me',
+    r'\bdunno\b': "don't know",
+    # College-specific
+    r'\battendance %\b': 'attendance percentage',
+    r'\bkt\b': 'backlog subject',
+    r'\bcgpa\b': 'CGPA cumulative grade point average',
+    r'\bsgpa\b': 'SGPA semester grade point average',
+    r'\bhod\b': 'Head of Department',
+    r'\bplacement\b': 'placement cell campus recruitment',
+}
+
+
+def _expand_slang(text: str) -> str:
+    """Replace slang and abbreviations with full forms (case-insensitive)."""
+    result = text
+    for pattern, replacement in SLANG_MAP.items():
+        result = re.sub(pattern, replacement, result, flags=re.IGNORECASE)
+    return result
+
+
 # Prompt that keeps answers grounded in the retrieved context
 RAG_PROMPT = PromptTemplate(
     template=(
-        "You are a helpful college assistant. Use ONLY the context below to answer.\n"
+        "You are a friendly and helpful college assistant who talks to students.\n"
+        "Students may use informal language, slang, abbreviations, or shorthand.\n"
+        "Interpret their intent naturally (e.g. 'uk' means 'you know', "
+        "'idk' means 'I don't know', 'wanna' means 'want to').\n"
+        "Use ONLY the context below to answer. Be clear, concise, and student-friendly.\n"
         "If the context does not contain the answer, say "
         "'I don't have enough information to answer that.'\n\n"
         "Context:\n{context}\n\n"
@@ -97,10 +158,13 @@ class RAGEngine:
                 parts.append("Ollama is not running — start it with 'ollama serve'.")
             return " | ".join(parts) if parts else "System not initialized."
 
+        # Expand slang/abbreviations so retrieval finds the right docs
+        cleaned_question = _expand_slang(question)
+
         # Retrieve source documents separately for citations
         assert self.retriever is not None  # guaranteed when qa_chain is set
-        source_docs = self.retriever.invoke(question)
-        answer = self.qa_chain.invoke(question)
+        source_docs = self.retriever.invoke(cleaned_question)
+        answer = self.qa_chain.invoke(cleaned_question)
         return {
             "answer": answer,
             "source_documents": source_docs,
