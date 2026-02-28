@@ -7,3 +7,7 @@ venv/
 dist/
 build/
 .streamlit/
+node_modules/
+*.log
+nohup.out
+web-app/package-lock.json
