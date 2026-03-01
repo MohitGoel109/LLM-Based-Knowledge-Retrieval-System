@@ -1,30 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  /* Custom animations */
-  --animate-fade-in-up: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-  --animate-fade-in: fade-in 0.5s ease-out both;
-  --animate-pulse-slow: pulse-soft 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  --animate-slide-down: slide-down 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
-  --animate-float-1: float-1 18s ease-in-out infinite;
-  --animate-float-2: float-2 22s ease-in-out infinite;
-  --animate-float-3: float-3 15s ease-in-out infinite;
-  --animate-float-dot-1: float-dot-1 8s ease-in-out infinite;
-  --animate-float-dot-2: float-dot-2 10s ease-in-out infinite;
-  --animate-float-dot-3: float-dot-3 12s ease-in-out infinite;
-  --animate-ring-1: ring-spin 8s linear infinite;
-  --animate-ring-2: ring-spin 14s linear infinite reverse;
-  --animate-logo-breathe: logo-breathe 4s ease-in-out infinite;
-  --animate-wave: wave 2s infinite;
-  --animate-spin-slow: spin 8s linear infinite;
+  --animate-fade-in-up: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade-in: fade-in 0.4s ease-out both;
+  --animate-slide-down: slide-down 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* ── Keyframes ───────────────────────────────────────── */
+/* Keyframes */
 @keyframes fade-in-up {
-  0% { opacity: 0; transform: translateY(15px); }
+  0% { opacity: 0; transform: translateY(12px); }
   100% { opacity: 1; transform: translateY(0); }
 }
 
@@ -34,79 +20,14 @@
 }
 
 @keyframes slide-down {
-  0% { opacity: 0; transform: translateY(-10px); }
+  0% { opacity: 0; transform: translateY(-8px); }
   100% { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes pulse-soft {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.05); }
-}
-
-@keyframes float-1 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(30px, -40px) scale(1.05); }
-  50% { transform: translate(-20px, -60px) scale(0.95); }
-  75% { transform: translate(40px, -20px) scale(1.02); }
-}
-
-@keyframes float-2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(-40px, 30px) scale(1.08); }
-  66% { transform: translate(20px, 50px) scale(0.94); }
-}
-
-@keyframes float-3 {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(-30px, -30px); }
-}
-
-@keyframes float-dot-1 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
-  50% { transform: translate(15px, -20px) scale(1.5); opacity: 0.7; }
-}
-
-@keyframes float-dot-2 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.25; }
-  50% { transform: translate(-12px, 18px) scale(1.8); opacity: 0.6; }
-}
-
-@keyframes float-dot-3 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.2; }
-  50% { transform: translate(20px, -15px) scale(1.3); opacity: 0.5; }
-}
-
-@keyframes ring-spin {
-  0% { transform: rotate(0deg) scale(1); }
-  25% { transform: rotate(90deg) scale(1.02); }
-  50% { transform: rotate(180deg) scale(1); }
-  75% { transform: rotate(270deg) scale(0.98); }
-  100% { transform: rotate(360deg) scale(1); }
-}
-
-@keyframes logo-breathe {
-  0%, 100% { transform: rotate(3deg) scale(1); box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.3); }
-  50% { transform: rotate(3deg) scale(1.04); box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.45); }
-}
-
-@keyframes wave {
-  0%, 100% { transform: rotate(0deg); }
-  10% { transform: rotate(14deg); }
-  20% { transform: rotate(-8deg); }
-  30% { transform: rotate(14deg); }
-  40% { transform: rotate(-4deg); }
-  50% { transform: rotate(10deg); }
-  60%, 100% { transform: rotate(0deg); }
-}
-
-/* ── Theme transition overlay (circular reveal) ────── */
+/* Theme transition (circular reveal) */
 @keyframes theme-expand {
-  0% {
-    clip-path: circle(0% at var(--origin-x) var(--origin-y));
-  }
-  100% {
-    clip-path: circle(150% at var(--origin-x) var(--origin-y));
-  }
+  0% { clip-path: circle(0% at var(--origin-x) var(--origin-y)); }
+  100% { clip-path: circle(150% at var(--origin-x) var(--origin-y)); }
 }
 
 .theme-transition-overlay {
@@ -114,59 +35,34 @@
   inset: 0;
   background-color: var(--bg-color);
   z-index: 9999;
-  animation: theme-expand 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: theme-expand 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   pointer-events: none;
 }
 
-/* ── Base ────────────────────────────────────────────── */
-*,
-*::before,
-*::after {
+/* Base */
+*, *::before, *::after {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.12) transparent;
+  scrollbar-color: rgba(0, 0, 0, 0.08) transparent;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: #f8f7f4;
+  background-color: #ffffff;
   color: #1f2937;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
-/* ── Scrollbar styles ──────────────────────────────── */
-::-webkit-scrollbar {
-  width: 6px;
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.08); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.14); }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+/* Prose */
+.prose-zeno p { margin: 2px 0; }
+.prose-zeno h1, .prose-zeno h2, .prose-zeno h3 { margin-top: 12px; margin-bottom: 4px; }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.18);
-}
-
-/* ── Prose styles for AI responses ────────────────── */
-.prose-zeno p {
-  margin: 2px 0;
-}
-
-.prose-zeno h1,
-.prose-zeno h2,
-.prose-zeno h3 {
-  margin-top: 12px;
-  margin-bottom: 4px;
-}
-
-/* ── Selection ─────────────────────────────────────── */
-::selection {
-  background-color: rgba(99, 102, 241, 0.25);
-  color: inherit;
-}
+/* Selection */
+::selection { background-color: rgba(0, 0, 0, 0.08); color: inherit; }
