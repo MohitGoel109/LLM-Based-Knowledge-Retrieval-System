@@ -18,13 +18,15 @@ app.add_middleware(
 # Initialize RAG Engine globally
 rag_engine = RAGEngine()
 
+class ChatRequest(BaseModel):
+    message: str
+    history: Optional[List[ChatMessage]]
+    
 class ChatMessage(BaseModel):
     role: str
     content: str
 
-class ChatRequest(BaseModel):
-    message: str
-    history: Optional[List[ChatMessage]] = None
+ = None
 
 class SourceDoc(BaseModel):
     source: str
