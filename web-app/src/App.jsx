@@ -89,8 +89,8 @@ function App() {
             <nav className={`fixed top-5 left-1/2 -translate-x-1/2 w-[92%] max-w-4xl z-50 transition-all duration-700 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}>
                 <div className="flex items-center justify-between px-5 py-3.5 rounded-2xl bg-white/60 backdrop-blur-2xl border border-white/30 shadow-[0_2px_20px_rgba(0,0,0,0.06)]">
                     <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-surface-dark flex items-center justify-center text-white text-sm">🎓</div>
-                        <span className="font-bold tracking-tight text-[17px]">College AI</span>
+                        <div className="w-8 h-8 rounded-xl bg-surface-dark flex items-center justify-center text-white text-sm font-bold">Z</div>
+                        <span className="font-bold tracking-tight text-[17px]">Zeno</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <span className="relative flex h-2 w-2">
@@ -108,11 +108,11 @@ function App() {
                 {messages.length === 0 && (
                     <div className={`flex-1 flex flex-col justify-center items-center text-center transition-all duration-700 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
                         <h1 className="text-5xl md:text-7xl font-bold tracking-[-0.04em] leading-[1.05] mb-5">
-                            Ask anything<br />
-                            <span className="text-surface-dark/40">about college.</span>
+                            Hey, I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-pink to-accent-blue">Zeno</span>.<br />
+                            <span className="text-surface-dark/40">Ask me anything.</span>
                         </h1>
                         <p className="text-lg text-surface-dark/55 font-medium max-w-md mb-10 leading-relaxed">
-                            Rules, placements, fees, scholarships — get instant answers from official documents.
+                            Your AI assistant for college rules, placements, fees, scholarships, and more.
                         </p>
 
                         {/* Suggested Questions Grid */}
@@ -140,8 +140,8 @@ function App() {
                                 className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-slide-down`}
                             >
                                 <div className={`max-w-[80%] rounded-2xl px-5 py-4 text-[15px] leading-relaxed ${msg.role === 'user'
-                                        ? 'bg-surface-dark text-white rounded-br-lg shadow-lg'
-                                        : 'bg-white border border-surface-dark/8 text-surface-dark rounded-bl-lg shadow-sm'
+                                    ? 'bg-surface-dark text-white rounded-br-lg shadow-lg'
+                                    : 'bg-white border border-surface-dark/8 text-surface-dark rounded-bl-lg shadow-sm'
                                     }`}>
                                     <div className="whitespace-pre-wrap">{msg.content}</div>
                                 </div>
@@ -182,7 +182,7 @@ function App() {
                         </button>
                     </form>
                     <p className="text-center mt-3 text-[11px] font-semibold tracking-[0.12em] uppercase text-surface-dark/30">
-                        Powered by college documents • Conversation-aware
+                        Powered by Zeno • Conversation-aware
                     </p>
                 </div>
             </main>

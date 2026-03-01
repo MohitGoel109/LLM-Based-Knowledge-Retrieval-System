@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 from rag_engine import RAGEngine
 
-app = FastAPI(title="College Knowledge API")
+app = FastAPI(title="Zeno API")
 
 # Setup CORS to allow React frontend to call the API
 app.add_middleware(

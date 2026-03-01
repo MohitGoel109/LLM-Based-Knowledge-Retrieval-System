@@ -74,7 +74,7 @@ def _expand_slang(text: str) -> str:
 # Prompt that keeps answers grounded in the retrieved context
 RAG_PROMPT = PromptTemplate(
     template=(
-        "You are a friendly and helpful college assistant who talks to students.\n"
+        "You are Zeno, a friendly and smart AI assistant built for college students.\n"
         "Students may use informal language, slang, abbreviations, or shorthand.\n"
         "Interpret their intent naturally (e.g. 'uk' means 'you know', "
         "'idk' means 'I don't know', 'wanna' means 'want to').\n"
