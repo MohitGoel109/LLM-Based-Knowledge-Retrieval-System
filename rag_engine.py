@@ -13,6 +13,11 @@ CHROMA_PATH = os.path.join(BASE_DIR, "chroma_db")
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 LLM_MODEL = "llama3.2:3b"
 OLLAMA_BASE_URL = "http://localhost:11434"
+OLLAMA_TIMEOUT = 300  # seconds — CPU inference can be slow
+
+# Use cached model to avoid hanging on HuggingFace metadata checks
+os.environ.setdefault("HF_HUB_OFFLINE", "1")
+os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
 
 # ── Slang / Abbreviation Dictionary ───────────────────────────
 # Maps common student slang and internet abbreviations to their
@@ -130,8 +135,14 @@ class RAGEngine:
         # 3. Ollama LLM
         if self._ollama_is_running():
             try:
-                self.llm = OllamaLLM(model=LLM_MODEL, base_url=OLLAMA_BASE_URL)
+                self.llm = OllamaLLM(
+                    model=LLM_MODEL,
+                    base_url=OLLAMA_BASE_URL,
+                    timeout=OLLAMA_TIMEOUT,
+                    num_predict=512,  # limit output tokens for faster responses
+                )
                 self.status["ollama"] = True
+                print(f"[RAG] Ollama connected: {LLM_MODEL}")
             except Exception as e:
                 print(f"[RAG] Error initializing Ollama: {e}")
         else:
@@ -202,7 +213,16 @@ class RAGEngine:
     @staticmethod
     def _ollama_is_running() -> bool:
         try:
-            r = requests.get(f"{OLLAMA_BASE_URL}/api/tags", timeout=3)
-            return r.status_code == 200
+            r = requests.get(f"{OLLAMA_BASE_URL}/api/tags", timeout=10)
+            if r.status_code == 200:
+                models = r.json().get("models", [])
+                model_names = [m.get("name", "") for m in models]
+                if LLM_MODEL in model_names:
+                    print(f"[RAG] Found model: {LLM_MODEL}")
+                else:
+                    print(f"[RAG] Warning: {LLM_MODEL} not found. Available: {model_names}")
+                    print(f"[RAG] Pull it with: ollama pull {LLM_MODEL}")
+                return True
+            return False
         except Exception:
             return False

@@ -2,21 +2,38 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
+from contextlib import asynccontextmanager
+import os
+
+# Set HuggingFace to offline mode before importing rag_engine
+os.environ.setdefault("HF_HUB_OFFLINE", "1")
+os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+
 from rag_engine import RAGEngine
 
-app = FastAPI(title="Zeno API")
+# Global RAG engine (initialized at startup)
+rag_engine: Optional[RAGEngine] = None
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Initialize RAG engine at server startup."""
+    global rag_engine
+    print("[API] Initializing RAG Engine...")
+    rag_engine = RAGEngine()
+    print(f"[API] RAG Engine ready: {rag_engine.status}")
+    yield
+    print("[API] Shutting down.")
+
+app = FastAPI(title="Zeno API", lifespan=lifespan)
 
 # Setup CORS to allow React frontend to call the API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins, you can restrict this in production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Initialize RAG Engine globally
-rag_engine = RAGEngine()
 
 class ChatMessage(BaseModel):
     role: str
