@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zeno — RAG Pipeline Visualization</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #0a0a0f;
@@ -13,7 +19,12 @@
             min-height: 100vh;
             padding: 40px 20px;
         }
-        .container { max-width: 1100px; margin: 0 auto; }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
         h1 {
             font-size: 2.5rem;
             font-weight: 800;
@@ -23,6 +34,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
         .subtitle {
             text-align: center;
             color: #666;
@@ -34,6 +46,7 @@
         .pipeline-section {
             margin-bottom: 60px;
         }
+
         .section-title {
             font-size: 1.1rem;
             font-weight: 700;
@@ -45,12 +58,18 @@
             align-items: center;
             gap: 10px;
         }
+
         .section-title .num {
-            width: 32px; height: 32px;
+            width: 32px;
+            height: 32px;
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; font-weight: 800; color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: white;
         }
 
         /* Flow Steps */
@@ -60,37 +79,43 @@
             align-items: stretch;
             flex-wrap: wrap;
         }
+
         .flow-step {
             flex: 1;
             min-width: 180px;
             background: #12121a;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 16px;
             padding: 24px 20px;
             position: relative;
             transition: all 0.3s ease;
         }
+
         .flow-step:hover {
             border-color: rgba(139, 92, 246, 0.3);
             box-shadow: 0 0 30px rgba(139, 92, 246, 0.1);
             transform: translateY(-2px);
         }
+
         .flow-step .icon {
             font-size: 28px;
             margin-bottom: 12px;
             display: block;
         }
+
         .flow-step h3 {
             font-size: 0.95rem;
             font-weight: 700;
             margin-bottom: 8px;
             color: #fff;
         }
+
         .flow-step p {
             font-size: 0.8rem;
             color: #888;
             line-height: 1.5;
         }
+
         .flow-step .tech {
             margin-top: 12px;
             display: inline-block;
@@ -117,21 +142,37 @@
             grid-template-columns: 1fr 1fr 1fr;
             gap: 16px;
         }
+
         .arch-block {
             background: #12121a;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 16px;
             padding: 28px 24px;
             text-align: center;
             transition: all 0.3s ease;
         }
+
         .arch-block:hover {
             border-color: rgba(139, 92, 246, 0.3);
             transform: translateY(-2px);
         }
-        .arch-block .icon { font-size: 36px; margin-bottom: 12px; }
-        .arch-block h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
-        .arch-block p { font-size: 0.8rem; color: #666; }
+
+        .arch-block .icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .arch-block h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .arch-block p {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
         .arch-block.highlight {
             border-color: rgba(99, 102, 241, 0.3);
             background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.05));
@@ -146,16 +187,36 @@
             margin: 24px 0;
             flex-wrap: wrap;
         }
+
         .data-node {
             padding: 10px 20px;
             border-radius: 12px;
             font-size: 0.85rem;
             font-weight: 600;
         }
-        .data-node.input { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.2); }
-        .data-node.process { background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.2); }
-        .data-node.output { background: rgba(244, 114, 182, 0.15); color: #f472b6; border: 1px solid rgba(244, 114, 182, 0.2); }
-        .data-arrow { color: #333; font-size: 20px; }
+
+        .data-node.input {
+            background: rgba(52, 211, 153, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+        }
+
+        .data-node.process {
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .data-node.output {
+            background: rgba(244, 114, 182, 0.15);
+            color: #f472b6;
+            border: 1px solid rgba(244, 114, 182, 0.2);
+        }
+
+        .data-arrow {
+            color: #333;
+            font-size: 20px;
+        }
 
         /* Tech Stack */
         .tech-grid {
@@ -163,30 +224,52 @@
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 12px;
         }
+
         .tech-card {
             background: #12121a;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 12px;
             padding: 16px 20px;
             display: flex;
             align-items: center;
             gap: 12px;
         }
+
         .tech-card .dot {
-            width: 10px; height: 10px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             flex-shrink: 0;
         }
-        .tech-card h4 { font-size: 0.85rem; font-weight: 600; }
-        .tech-card p { font-size: 0.75rem; color: #666; margin-top: 2px; }
+
+        .tech-card h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .tech-card p {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 2px;
+        }
 
         @media (max-width: 768px) {
-            .flow { flex-direction: column; }
-            .flow-arrow { transform: rotate(90deg); justify-content: center; }
-            .arch-grid { grid-template-columns: 1fr; }
+            .flow {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+                justify-content: center;
+            }
+
+            .arch-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>🧠 Zeno RAG Pipeline</h1>
@@ -336,38 +419,63 @@
             <div class="tech-grid">
                 <div class="tech-card">
                     <div class="dot" style="background: #818cf8;"></div>
-                    <div><h4>LangChain</h4><p>RAG orchestration framework</p></div>
+                    <div>
+                        <h4>LangChain</h4>
+                        <p>RAG orchestration framework</p>
+                    </div>
                 </div>
                 <div class="tech-card">
                     <div class="dot" style="background: #34d399;"></div>
-                    <div><h4>ChromaDB</h4><p>Open-source vector database</p></div>
+                    <div>
+                        <h4>ChromaDB</h4>
+                        <p>Open-source vector database</p>
+                    </div>
                 </div>
                 <div class="tech-card">
                     <div class="dot" style="background: #f472b6;"></div>
-                    <div><h4>Ollama</h4><p>Local LLM runtime</p></div>
+                    <div>
+                        <h4>Ollama</h4>
+                        <p>Local LLM runtime</p>
+                    </div>
                 </div>
                 <div class="tech-card">
                     <div class="dot" style="background: #fbbf24;"></div>
-                    <div><h4>FastAPI</h4><p>High-performance Python API</p></div>
+                    <div>
+                        <h4>FastAPI</h4>
+                        <p>High-performance Python API</p>
+                    </div>
                 </div>
                 <div class="tech-card">
                     <div class="dot" style="background: #60a5fa;"></div>
-                    <div><h4>React 19</h4><p>Modern UI framework</p></div>
+                    <div>
+                        <h4>React 19</h4>
+                        <p>Modern UI framework</p>
+                    </div>
                 </div>
                 <div class="tech-card">
                     <div class="dot" style="background: #a78bfa;"></div>
-                    <div><h4>Tailwind CSS 4</h4><p>Utility-first styling</p></div>
+                    <div>
+                        <h4>Tailwind CSS 4</h4>
+                        <p>Utility-first styling</p>
+                    </div>
                 </div>
                 <div class="tech-card">
                     <div class="dot" style="background: #fb923c;"></div>
-                    <div><h4>HuggingFace</h4><p>Embedding models</p></div>
+                    <div>
+                        <h4>HuggingFace</h4>
+                        <p>Embedding models</p>
+                    </div>
                 </div>
                 <div class="tech-card">
                     <div class="dot" style="background: #4ade80;"></div>
-                    <div><h4>Vite 7</h4><p>Next-gen frontend tooling</p></div>
+                    <div>
+                        <h4>Vite 7</h4>
+                        <p>Next-gen frontend tooling</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </body>
+
 </html>

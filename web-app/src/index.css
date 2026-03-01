@@ -21,6 +21,7 @@
     opacity: 0;
     transform: translateY(15px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -28,8 +29,13 @@
 }
 
 @keyframes fade-in {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes slide-down {
@@ -37,6 +43,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -44,7 +51,9 @@
 }
 
 /* ── Base ────────────────────────────────────────────── */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
 }
