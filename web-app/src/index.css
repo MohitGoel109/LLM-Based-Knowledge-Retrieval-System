@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* ─── Base ─────────────────────────────────────────── */
 *,
 *::before,
 *::after {
@@ -11,19 +12,23 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
 }
 
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: rgba(128, 128, 128, 0.2);
-  border-radius: 4px;
+  border-radius: 9999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(128, 128, 128, 0.4);
 }
@@ -31,4 +36,160 @@ body {
 .prose table {
   width: 100%;
   table-layout: auto;
+}
+
+/* ─── Animated Gradient Text ──────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #8B5CF6, #EC4899, #F97316, #06B6D4, #8B5CF6);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-flow 4s ease infinite;
+}
+
+.gradient-text-subtle {
+  background: linear-gradient(135deg, #7C3AED, #DB2777, #7C3AED);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-flow 3s ease infinite;
+}
+
+/* ─── Floating Orb Animations ─────────────────────── */
+@keyframes float-1 {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate(60px, -80px) scale(1.15);
+  }
+
+  50% {
+    transform: translate(-40px, -120px) scale(0.95);
+  }
+
+  75% {
+    transform: translate(80px, -40px) scale(1.05);
+  }
+}
+
+@keyframes float-2 {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate(-70px, 60px) scale(1.1);
+  }
+
+  50% {
+    transform: translate(50px, 100px) scale(0.9);
+  }
+
+  75% {
+    transform: translate(-30px, 40px) scale(1.05);
+  }
+}
+
+@keyframes float-3 {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate(40px, 90px) scale(0.95);
+  }
+
+  50% {
+    transform: translate(-60px, 30px) scale(1.1);
+  }
+
+  75% {
+    transform: translate(20px, -50px) scale(1);
+  }
+}
+
+.animate-float-1 {
+  animation: float-1 20s ease-in-out infinite;
+}
+
+.animate-float-2 {
+  animation: float-2 25s ease-in-out infinite;
+}
+
+.animate-float-3 {
+  animation: float-3 18s ease-in-out infinite;
+}
+
+/* ─── Gradient Flow ───────────────────────────────── */
+@keyframes gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ─── Shimmer ─────────────────────────────────────── */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ─── Glassmorphism ───────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+}
+
+.glass-dark {
+  background: rgba(12, 12, 12, 0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+}
+
+/* ─── Gradient Border Glow on Input Focus ─────────── */
+.input-glow {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.input-glow:focus-within {
+  box-shadow:
+    0 0 0 3px rgba(139, 92, 246, 0.15),
+    0 8px 32px rgba(139, 92, 246, 0.10);
+}
+
+/* ─── Touch Feedback ──────────────────────────────── */
+@media (hover: none) {
+  .touch-bounce:active {
+    transform: scale(0.96);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* ─── Selection Color ─────────────────────────────── */
+::selection {
+  background: rgba(139, 92, 246, 0.25);
+  color: inherit;
 }
