@@ -29,20 +29,50 @@ fi
 echo "[OK] Ollama is running with llama3.2:3b"
 
 # 4. Check Python deps
-if ! python -c "import streamlit" &>/dev/null; then
+if ! python -c "import fastapi" &>/dev/null; then
     echo "[INFO] Installing Python dependencies..."
     pip install -r requirements.txt
 fi
 
 # 5. Auto-ingest if no vector DB exists
-if [ ! -d "chroma_db" ]; then
+if [ ! -d "chroma_db" ] || [ -z "$(ls -A chroma_db 2>/dev/null)" ]; then
     echo "[INFO] No vector database found. Running ingestion..."
-    python ingest.py
+    HF_HUB_OFFLINE=0 python ingest.py
 fi
 
-# 6. Launch Streamlit
-echo ""
-echo "[INFO] Launching Streamlit app..."
-echo "       Open http://localhost:8501 in your browser"
-echo "=================================================="
-streamlit run app.py --server.headless true
+# 6. Determine launch mode
+MODE="${1:-api}"
+
+if [ "$MODE" = "streamlit" ]; then
+    echo ""
+    echo "[INFO] Launching Streamlit app..."
+    echo "       Open http://localhost:8501 in your browser"
+    echo "=================================================="
+    streamlit run app.py --server.headless true
+else
+    echo ""
+    echo "[INFO] Launching FastAPI backend + React frontend..."
+    echo "       API:      http://localhost:8000"
+    echo "       Frontend: http://localhost:5173"
+    echo "=================================================="
+
+    # Start FastAPI backend
+    HF_HUB_OFFLINE=1 python -m uvicorn api:app --host 0.0.0.0 --port 8000 --reload &
+    API_PID=$!
+
+    # Start React frontend
+    if [ -d "web-app" ]; then
+        cd web-app
+        if [ ! -d "node_modules" ]; then
+            echo "[INFO] Installing frontend dependencies..."
+            npm install
+        fi
+        npm run dev &
+        FRONTEND_PID=$!
+        cd ..
+    fi
+
+    # Trap Ctrl+C to kill both
+    trap "echo ''; echo '[INFO] Shutting down...'; kill $API_PID $FRONTEND_PID 2>/dev/null; exit 0" INT TERM
+    wait
+fi
