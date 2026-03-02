@@ -38,18 +38,27 @@ body {
   table-layout: auto;
 }
 
-/* ─── Animated Gradient Text ──────────────────────── */
+/* ─── Hero Gradient Text ──────────────────────────── */
 .gradient-text {
-  background: linear-gradient(135deg, #8B5CF6, #EC4899, #F97316, #06B6D4, #8B5CF6);
-  background-size: 300% 300%;
+  background: linear-gradient(135deg, #F43F5E, #F97316, #FBBF24, #34D399, #22D3EE, #818CF8, #F43F5E);
+  background-size: 500% 500%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: gradient-flow 4s ease infinite;
+  animation: gradient-flow 6s ease infinite;
 }
 
-.gradient-text-subtle {
-  background: linear-gradient(135deg, #7C3AED, #DB2777, #7C3AED);
+.gradient-text-teal {
+  background: linear-gradient(135deg, #14B8A6, #0EA5E9, #14B8A6);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-flow 3s ease infinite;
+}
+
+.gradient-text-warm {
+  background: linear-gradient(135deg, #F97316, #F43F5E, #F97316);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -145,39 +154,63 @@ body {
   }
 }
 
-/* ─── Shimmer ─────────────────────────────────────── */
+/* ─── Pulse Ring ──────────────────────────────────── */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+}
+
+/* ─── Shimmer sweep for cards ─────────────────────── */
 @keyframes shimmer {
   0% {
     transform: translateX(-100%);
   }
 
   100% {
-    transform: translateX(100%);
+    transform: translateX(200%);
   }
 }
 
 /* ─── Glassmorphism ───────────────────────────────── */
 .glass {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(24px) saturate(180%);
+  background: rgba(255, 255, 255, 0.70);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
 }
 
 .glass-dark {
-  background: rgba(12, 12, 12, 0.72);
-  backdrop-filter: blur(24px) saturate(180%);
+  background: rgba(10, 15, 30, 0.82);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
 }
 
-/* ─── Gradient Border Glow on Input Focus ─────────── */
+/* ─── Input Glow ──────────────────────────────────── */
 .input-glow {
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .input-glow:focus-within {
   box-shadow:
-    0 0 0 3px rgba(139, 92, 246, 0.15),
-    0 8px 32px rgba(139, 92, 246, 0.10);
+    0 0 0 3px rgba(20, 184, 166, 0.15),
+    0 8px 32px rgba(20, 184, 166, 0.10);
+}
+
+.dark .input-glow:focus-within {
+  box-shadow:
+    0 0 0 3px rgba(249, 115, 22, 0.15),
+    0 8px 32px rgba(249, 115, 22, 0.10);
 }
 
 /* ─── Touch Feedback ──────────────────────────────── */
@@ -190,6 +223,45 @@ body {
 
 /* ─── Selection Color ─────────────────────────────── */
 ::selection {
-  background: rgba(139, 92, 246, 0.25);
+  background: rgba(20, 184, 166, 0.25);
   color: inherit;
+}
+
+/* ─── Typing Cursor Blink ─────────────────────────── */
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* ─── Card hover shimmer effect ───────────────────── */
+.card-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  transform: translateX(-100%);
+  transition: none;
+}
+
+.card-shimmer:hover::after {
+  animation: shimmer 0.8s ease forwards;
 }

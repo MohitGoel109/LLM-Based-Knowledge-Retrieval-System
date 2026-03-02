@@ -26,7 +26,7 @@ import re
 
 SLANG_MAP = {
     # Common abbreviations
-    r'\buk\b': 'you know',
+    r'\byk\b': 'you know',
     r'\bidk\b': "I don't know",
     r'\bimo\b': 'in my opinion',
     r'\bbtw\b': 'by the way',
