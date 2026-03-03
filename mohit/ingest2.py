@@ -10,3 +10,4 @@ DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 CHROMA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "chroma_db")
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 CHUNK_SIZE = 1000
+CHUNK_OVERLAP = 200
