@@ -1,62 +1,307 @@
 @import "tailwindcss";
 
-@theme {
-  /* piplanning.io minimalist palette */
-  --color-surface-light: #F5F5F3;
-  --color-surface-white: #FFFFFF;
-  --color-surface-dark: #1C1917;
+/* ─── Base Variables & Themes ─────────────────────── */
+:root {
+  /* Default: Cyberpunk (Pink/Cyan/Purple) */
+  --bg-base: #050510;
+  --text-main: #ffffff;
 
-  --color-accent-pink: #F472B6;
-  --color-accent-blue: #60A5FA;
+  --aurora-1: rgba(99, 102, 241, 0.4);
+  --aurora-2: rgba(236, 72, 153, 0.3);
+  --aurora-3: rgba(139, 92, 246, 0.4);
+  --aurora-4: rgba(16, 185, 129, 0.2);
+  --aurora-5: rgba(245, 158, 11, 0.25);
 
-  /* Typography */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --primary-glow: rgba(116, 0, 255, 0.5);
+  --secondary-glow: rgba(255, 0, 127, 0.4);
 
-  /* Custom animations */
-  --animate-fade-in-up: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  --animate-fade-in: fade-in 0.5s ease-out forwards;
-  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  --animate-slide-down: slide-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.15);
 }
 
-@keyframes fade-in-up {
-  0% {
-    opacity: 0;
-    transform: translateY(15px);
-  }
+.theme-sunset {
+  --bg-base: #1a0b0b;
+  --aurora-1: rgba(239, 68, 68, 0.4);
+  /* Red */
+  --aurora-2: rgba(249, 115, 22, 0.4);
+  /* Orange */
+  --aurora-3: rgba(234, 179, 8, 0.3);
+  /* Yellow */
+  --aurora-4: rgba(217, 70, 239, 0.3);
+  /* Fuchsia */
+  --aurora-5: rgba(225, 29, 72, 0.25);
+  /* Rose */
 
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  --primary-glow: rgba(239, 68, 68, 0.5);
+  --secondary-glow: rgba(249, 115, 22, 0.4);
 }
 
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-  }
+.theme-emerald {
+  --bg-base: #061810;
+  --aurora-1: rgba(16, 185, 129, 0.4);
+  /* Emerald */
+  --aurora-2: rgba(5, 150, 105, 0.3);
+  /* Green */
+  --aurora-3: rgba(34, 211, 238, 0.3);
+  /* Cyan */
+  --aurora-4: rgba(132, 204, 22, 0.2);
+  /* Lime */
+  --aurora-5: rgba(6, 182, 212, 0.25);
+  /* Aqua */
 
-  100% {
-    opacity: 1;
-  }
+  --primary-glow: rgba(16, 185, 129, 0.5);
+  --secondary-glow: rgba(34, 211, 238, 0.4);
 }
 
-@keyframes slide-down {
-  0% {
-    opacity: 0;
-    transform: translateY(-15px);
-  }
+.theme-ocean {
+  --bg-base: #020617;
+  --aurora-1: rgba(59, 130, 246, 0.4);
+  /* Blue */
+  --aurora-2: rgba(6, 182, 212, 0.4);
+  /* Cyan */
+  --aurora-3: rgba(99, 102, 241, 0.3);
+  /* Indigo */
+  --aurora-4: rgba(14, 165, 233, 0.3);
+  /* Sky */
+  --aurora-5: rgba(139, 92, 246, 0.2);
+  /* Violet */
 
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  --primary-glow: rgba(59, 130, 246, 0.5);
+  --secondary-glow: rgba(6, 182, 212, 0.4);
+}
+
+/* Light mode overrides on top of themes */
+.light-mode-bg {
+  --bg-base: #f8f9fc;
+  --text-main: #1f2937;
+
+  --aurora-1: rgba(99, 102, 241, 0.15);
+  --aurora-2: rgba(236, 72, 153, 0.1);
+  --aurora-3: rgba(139, 92, 246, 0.15);
+  --aurora-4: rgba(16, 185, 129, 0.1);
+  --aurora-5: rgba(245, 158, 11, 0.1);
+
+  --primary-glow: rgba(116, 0, 255, 0.2);
+  --secondary-glow: rgba(255, 0, 127, 0.15);
+
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.7);
+}
+
+
+/* ─── Base ─────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
 }
 
 body {
-  font-family: var(--font-sans);
-  background-color: var(--color-surface-light);
-  color: var(--color-surface-dark);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-base);
+  color: var(--text-main);
+  transition: background-color 0.8s ease, color 0.6s ease;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 9999px;
+  backdrop-filter: blur(10px);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.prose table {
+  width: 100%;
+  table-layout: auto;
+}
+
+/* ─── Intense Gradient Backgrounds ──────────────────── */
+/* The main liquid Aurora background utilizing variables */
+.bg-liquid-aurora {
+  position: absolute;
+  inset: -50%;
+  background:
+    radial-gradient(circle at 50% 50%, var(--aurora-1) 0%, transparent 60%),
+    radial-gradient(circle at 80% 20%, var(--aurora-2) 0%, transparent 50%),
+    radial-gradient(circle at 20% 80%, var(--aurora-3) 0%, transparent 60%),
+    radial-gradient(circle at 10% 20%, var(--aurora-4) 0%, transparent 40%),
+    radial-gradient(circle at 90% 90%, var(--aurora-5) 0%, transparent 50%);
+  filter: blur(80px);
+  animation: liquid-rotate 30s linear infinite;
+  z-index: 0;
+  mix-blend-mode: screen;
+  transition: background 1.5s ease;
+}
+
+.light-mode-bg .bg-liquid-aurora {
+  mix-blend-mode: multiply;
+}
+
+@keyframes liquid-rotate {
+  0% {
+    transform: rotate(0deg) scale(1.1);
+  }
+
+  50% {
+    transform: rotate(180deg) scale(1.25);
+  }
+
+  100% {
+    transform: rotate(360deg) scale(1.1);
+  }
+}
+
+/* ─── Ultra Frosted Glassmorphism ─────────────────── */
+.ultra-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(40px) saturate(250%);
+  -webkit-backdrop-filter: blur(40px) saturate(250%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  transition: background-color 0.8s ease, border-color 0.8s ease;
+}
+
+/* For main content areas to let background shine */
+.clear-glass {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+}
+
+.light-mode-bg .ultra-glass {
+  box-shadow:
+    0 12px 40px -10px rgba(31, 38, 135, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+.light-mode-bg .clear-glass {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+}
+
+/* ─── Vivid Chat Bubbles ──────────────────────────── */
+.user-bubble-vivid {
+  background: linear-gradient(135deg, var(--aurora-2) 0%, var(--aurora-3) 100%);
+  /* Boost opacity for the bubble background since aurora vars are usually transparent */
+  background: linear-gradient(135deg, color-mix(in srgb, var(--aurora-2) 100%, white) 0%, color-mix(in srgb, var(--aurora-3) 90%, black) 100%);
+  box-shadow: 0 10px 40px -10px var(--secondary-glow);
+  color: white;
+}
+
+.bot-bubble-glass {
+  background: rgba(20, 20, 30, 0.6);
+  backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  color: #f3f4f6;
+}
+
+.light-mode-bg .bot-bubble-glass {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 1);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  color: #1f2937;
+}
+
+/* ─── Glowing Input Field ─────────────────────────── */
+.input-glow-extreme {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.input-glow-extreme:focus-within {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 4px var(--primary-glow),
+    0 20px 50px -15px var(--secondary-glow);
+  border-color: var(--secondary-glow);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.light-mode-bg .input-glow-extreme:focus-within {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* ─── Floating Star Animations ─────────────────────── */
+@keyframes float-star {
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 0.3;
+  }
+
+  50% {
+    transform: translateY(-30px) scale(1.2) rotate(45deg);
+    opacity: 0.8;
+  }
+}
+
+.animate-float-star {
+  animation: float-star 6s ease-in-out infinite;
+}
+
+@keyframes float-star-delayed {
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 0.2;
+  }
+
+  50% {
+    transform: translateY(-40px) scale(0.9) rotate(-30deg);
+    opacity: 0.6;
+  }
+}
+
+.animate-float-star-delayed {
+  animation: float-star-delayed 8s ease-in-out infinite 2s;
+}
+
+/* ─── Selection Color ─────────────────────────────── */
+::selection {
+  background: var(--secondary-glow);
+  color: white;
+}
+
+.light-mode-bg ::selection {
+  background: var(--primary-glow);
+  color: black;
+}
+
+/* ─── Spin Slow ────────────────────────────────────── */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 10s linear infinite;
 }
