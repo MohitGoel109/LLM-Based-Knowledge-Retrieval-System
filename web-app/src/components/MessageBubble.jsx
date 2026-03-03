@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Zap, ThumbsUp, ThumbsDown, Copy, Check } from 'lucide-react';
 import KRMAILogo from './KRMAILogo';
-import SourceBadge from './SourceBadge';
+import SourceBadge, { getSourceLabel } from './SourceBadge';
 import mdComponents from './MarkdownComponents';
 
 function timeAgo(timestamp) {
@@ -78,21 +78,30 @@ function MessageBubble({ message, index }) {
                                     {message.content}
                                 </ReactMarkdown>
                             </div>
-                            {message.sources && message.sources.length > 0 && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.3 }}
-                                    className="flex flex-wrap items-center gap-3 mt-5 pt-4 border-t border-[var(--border-subtle)]"
-                                >
-                                    <div className="px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-widest flex items-center gap-1 bg-[var(--bg-surface)] text-[var(--text-muted)]">
-                                        <Zap className="w-3.5 h-3.5" /> Sources
-                                    </div>
-                                    {message.sources.map((s, si) => (
-                                        <SourceBadge key={si} source={s.source} />
-                                    ))}
-                                </motion.div>
-                            )}
+                            {message.sources && message.sources.length > 0 && (() => {
+                                const seen = new Set();
+                                const uniqueSources = message.sources.filter((s) => {
+                                    const label = getSourceLabel(s.source);
+                                    if (seen.has(label)) return false;
+                                    seen.add(label);
+                                    return true;
+                                });
+                                return (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.3 }}
+                                        className="flex flex-wrap items-center gap-3 mt-5 pt-4 border-t border-[var(--border-subtle)]"
+                                    >
+                                        <div className="px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-widest flex items-center gap-1 bg-[var(--bg-surface)] text-[var(--text-muted)]">
+                                            <Zap className="w-3.5 h-3.5" /> Sources
+                                        </div>
+                                        {uniqueSources.map((s, si) => (
+                                            <SourceBadge key={si} source={s.source} />
+                                        ))}
+                                    </motion.div>
+                                );
+                            })()}
                         </div>
 
                         {/* Action bar: timestamp, feedback, copy */}
