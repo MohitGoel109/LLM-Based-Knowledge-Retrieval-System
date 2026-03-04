@@ -16,3 +16,4 @@ def load_documents(data_dir):
     """Loads PDFs, DOCX, and TXT files from the data directory."""
     documents = []
     if not os.path.exists(data_dir):
+        os.makedirs(data_dir)
