@@ -14,3 +14,4 @@ CHUNK_OVERLAP = 200
 
 def load_documents(data_dir):
     """Loads PDFs, DOCX, and TXT files from the data directory."""
+    documents = []
