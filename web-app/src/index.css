@@ -1,112 +1,49 @@
 @import "tailwindcss";
 
-/* ─── Base Variables & Themes ─────────────────────── */
+/* ─── Single Dark+Orange Theme ────────────────────── */
 :root {
-  /* Default: Cyberpunk (Pink/Cyan/Purple) */
-  --bg-base: #050510;
-  --text-main: #ffffff;
+  --bg-base: #0d0a08;
+  --bg-elevated: #1a1512;
+  --bg-surface: #231e1a;
+  --bg-hover: #2e2722;
 
-  --aurora-1: rgba(99, 102, 241, 0.4);
-  --aurora-2: rgba(236, 72, 153, 0.3);
-  --aurora-3: rgba(139, 92, 246, 0.4);
-  --aurora-4: rgba(16, 185, 129, 0.2);
-  --aurora-5: rgba(245, 158, 11, 0.25);
+  --accent: #ff4d00;
+  --accent-hover: #ff6a2a;
+  --accent-glow: rgba(255, 77, 0, 0.4);
+  --accent-subtle: rgba(255, 77, 0, 0.08);
 
-  --primary-glow: rgba(116, 0, 255, 0.5);
-  --secondary-glow: rgba(255, 0, 127, 0.4);
+  --text-primary: #ffffff;
+  --text-secondary: #a8a29e;
+  --text-muted: #6b6560;
 
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.15);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.10);
+
+  --glass-bg: rgba(26, 21, 18, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
 }
-
-.theme-sunset {
-  --bg-base: #1a0b0b;
-  --aurora-1: rgba(239, 68, 68, 0.4);
-  /* Red */
-  --aurora-2: rgba(249, 115, 22, 0.4);
-  /* Orange */
-  --aurora-3: rgba(234, 179, 8, 0.3);
-  /* Yellow */
-  --aurora-4: rgba(217, 70, 239, 0.3);
-  /* Fuchsia */
-  --aurora-5: rgba(225, 29, 72, 0.25);
-  /* Rose */
-
-  --primary-glow: rgba(239, 68, 68, 0.5);
-  --secondary-glow: rgba(249, 115, 22, 0.4);
-}
-
-.theme-emerald {
-  --bg-base: #061810;
-  --aurora-1: rgba(16, 185, 129, 0.4);
-  /* Emerald */
-  --aurora-2: rgba(5, 150, 105, 0.3);
-  /* Green */
-  --aurora-3: rgba(34, 211, 238, 0.3);
-  /* Cyan */
-  --aurora-4: rgba(132, 204, 22, 0.2);
-  /* Lime */
-  --aurora-5: rgba(6, 182, 212, 0.25);
-  /* Aqua */
-
-  --primary-glow: rgba(16, 185, 129, 0.5);
-  --secondary-glow: rgba(34, 211, 238, 0.4);
-}
-
-.theme-ocean {
-  --bg-base: #020617;
-  --aurora-1: rgba(59, 130, 246, 0.4);
-  /* Blue */
-  --aurora-2: rgba(6, 182, 212, 0.4);
-  /* Cyan */
-  --aurora-3: rgba(99, 102, 241, 0.3);
-  /* Indigo */
-  --aurora-4: rgba(14, 165, 233, 0.3);
-  /* Sky */
-  --aurora-5: rgba(139, 92, 246, 0.2);
-  /* Violet */
-
-  --primary-glow: rgba(59, 130, 246, 0.5);
-  --secondary-glow: rgba(6, 182, 212, 0.4);
-}
-
-/* Light mode overrides on top of themes */
-.light-mode-bg {
-  --bg-base: #f8f9fc;
-  --text-main: #1f2937;
-
-  --aurora-1: rgba(99, 102, 241, 0.15);
-  --aurora-2: rgba(236, 72, 153, 0.1);
-  --aurora-3: rgba(139, 92, 246, 0.15);
-  --aurora-4: rgba(16, 185, 129, 0.1);
-  --aurora-5: rgba(245, 158, 11, 0.1);
-
-  --primary-glow: rgba(116, 0, 255, 0.2);
-  --secondary-glow: rgba(255, 0, 127, 0.15);
-
-  --glass-bg: rgba(255, 255, 255, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.7);
-}
-
 
 /* ─── Base ─────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
 *,
 *::before,
 *::after {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
+  scrollbar-color: rgba(168, 162, 158, 0.3) transparent;
 }
 
 body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  font-family: 'DM Sans', 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg-base);
-  color: var(--text-main);
-  transition: background-color 0.8s ease, color 0.6s ease;
+  color: var(--text-primary);
 }
 
 ::-webkit-scrollbar {
@@ -119,189 +56,90 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(168, 162, 158, 0.3);
   border-radius: 9999px;
-  backdrop-filter: blur(10px);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(168, 162, 158, 0.5);
 }
 
+/* ─── Typography ──────────────────────────────────── */
+.font-display {
+  font-family: 'DM Serif Display', 'Georgia', serif;
+}
+
+/* ─── Warm Background Gradient ────────────────────── */
+.bg-warm-gradient {
+  background:
+    radial-gradient(ellipse 60% 50% at 15% 10%, rgba(255, 77, 0, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 85% 80%, rgba(255, 77, 0, 0.04) 0%, transparent 60%),
+    var(--bg-base);
+}
+
+/* ─── Frosted Glass ───────────────────────────────── */
+.ultra-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* ─── Chat Bubbles ────────────────────────────────── */
+.user-bubble {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 4px 16px rgba(255, 77, 0, 0.25);
+}
+
+.bot-bubble {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-left: 3px solid rgba(255, 77, 0, 0.4);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
+  color: var(--text-secondary);
+}
+
+/* ─── Input Glow ──────────────────────────────────── */
+.input-glow {
+  transition: all 0.3s ease;
+}
+
+.input-glow:focus-within {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 1px rgba(255, 77, 0, 0.15),
+    0 0 20px rgba(255, 77, 0, 0.08),
+    0 8px 32px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 77, 0, 0.2);
+  background: rgba(26, 21, 18, 0.85);
+}
+
+/* ─── Accent Button ───────────────────────────────── */
+.btn-accent {
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+  border-radius: 9999px;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-accent:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 0 24px var(--accent-glow);
+}
+
+/* ─── Selection ───────────────────────────────────── */
+::selection {
+  background: var(--accent-glow);
+  color: white;
+}
+
+/* ─── Prose ────────────────────────────────────────── */
 .prose table {
   width: 100%;
   table-layout: auto;
-}
-
-/* ─── Intense Gradient Backgrounds ──────────────────── */
-/* The main liquid Aurora background utilizing variables */
-.bg-liquid-aurora {
-  position: absolute;
-  inset: -50%;
-  background:
-    radial-gradient(circle at 50% 50%, var(--aurora-1) 0%, transparent 60%),
-    radial-gradient(circle at 80% 20%, var(--aurora-2) 0%, transparent 50%),
-    radial-gradient(circle at 20% 80%, var(--aurora-3) 0%, transparent 60%),
-    radial-gradient(circle at 10% 20%, var(--aurora-4) 0%, transparent 40%),
-    radial-gradient(circle at 90% 90%, var(--aurora-5) 0%, transparent 50%);
-  filter: blur(80px);
-  animation: liquid-rotate 30s linear infinite;
-  z-index: 0;
-  mix-blend-mode: screen;
-  transition: background 1.5s ease;
-}
-
-.light-mode-bg .bg-liquid-aurora {
-  mix-blend-mode: multiply;
-}
-
-@keyframes liquid-rotate {
-  0% {
-    transform: rotate(0deg) scale(1.1);
-  }
-
-  50% {
-    transform: rotate(180deg) scale(1.25);
-  }
-
-  100% {
-    transform: rotate(360deg) scale(1.1);
-  }
-}
-
-/* ─── Ultra Frosted Glassmorphism ─────────────────── */
-.ultra-glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(40px) saturate(250%);
-  -webkit-backdrop-filter: blur(40px) saturate(250%);
-  border: 1px solid var(--glass-border);
-  box-shadow:
-    0 8px 32px 0 rgba(0, 0, 0, 0.3),
-    inset 0 1px 1px rgba(255, 255, 255, 0.15);
-  transition: background-color 0.8s ease, border-color 0.8s ease;
-}
-
-/* For main content areas to let background shine */
-.clear-glass {
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-}
-
-.light-mode-bg .ultra-glass {
-  box-shadow:
-    0 12px 40px -10px rgba(31, 38, 135, 0.15),
-    inset 0 1px 1px rgba(255, 255, 255, 0.8);
-}
-
-.light-mode-bg .clear-glass {
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-}
-
-/* ─── Vivid Chat Bubbles ──────────────────────────── */
-.user-bubble-vivid {
-  background: linear-gradient(135deg, var(--aurora-2) 0%, var(--aurora-3) 100%);
-  /* Boost opacity for the bubble background since aurora vars are usually transparent */
-  background: linear-gradient(135deg, color-mix(in srgb, var(--aurora-2) 100%, white) 0%, color-mix(in srgb, var(--aurora-3) 90%, black) 100%);
-  box-shadow: 0 10px 40px -10px var(--secondary-glow);
-  color: white;
-}
-
-.bot-bubble-glass {
-  background: rgba(20, 20, 30, 0.6);
-  backdrop-filter: blur(24px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-  color: #f3f4f6;
-}
-
-.light-mode-bg .bot-bubble-glass {
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(255, 255, 255, 1);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-  color: #1f2937;
-}
-
-/* ─── Glowing Input Field ─────────────────────────── */
-.input-glow-extreme {
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.input-glow-extreme:focus-within {
-  transform: translateY(-2px);
-  box-shadow:
-    0 0 0 4px var(--primary-glow),
-    0 20px 50px -15px var(--secondary-glow);
-  border-color: var(--secondary-glow);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.light-mode-bg .input-glow-extreme:focus-within {
-  background: rgba(255, 255, 255, 0.95);
-}
-
-/* ─── Floating Star Animations ─────────────────────── */
-@keyframes float-star {
-
-  0%,
-  100% {
-    transform: translateY(0) scale(1) rotate(0deg);
-    opacity: 0.3;
-  }
-
-  50% {
-    transform: translateY(-30px) scale(1.2) rotate(45deg);
-    opacity: 0.8;
-  }
-}
-
-.animate-float-star {
-  animation: float-star 6s ease-in-out infinite;
-}
-
-@keyframes float-star-delayed {
-
-  0%,
-  100% {
-    transform: translateY(0) scale(1) rotate(0deg);
-    opacity: 0.2;
-  }
-
-  50% {
-    transform: translateY(-40px) scale(0.9) rotate(-30deg);
-    opacity: 0.6;
-  }
-}
-
-.animate-float-star-delayed {
-  animation: float-star-delayed 8s ease-in-out infinite 2s;
-}
-
-/* ─── Selection Color ─────────────────────────────── */
-::selection {
-  background: var(--secondary-glow);
-  color: white;
-}
-
-.light-mode-bg ::selection {
-  background: var(--primary-glow);
-  color: black;
-}
-
-/* ─── Spin Slow ────────────────────────────────────── */
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin-slow {
-  animation: spin-slow 10s linear infinite;
 }
