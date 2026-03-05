@@ -65,7 +65,49 @@ function Sidebar({ sidebarOpen, setSidebarOpen, isMobile, onSend, onNewSession, 
 
                             {/* Scrollable Content */}
                             <div className="flex-1 overflow-y-auto px-3 pb-6">
-                                {/* Chat History */}
+                                {/* Topics — now first */}
+                                <div className="mb-1">
+                                    <h4 className="px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] flex items-center gap-2 text-[var(--text-muted)]">
+                                        <Zap size={12} /> Topics
+                                    </h4>
+                                    <div className="space-y-0.5">
+                                        {CATEGORIES.map((cat, i) => {
+                                            const Icon = cat.icon;
+                                            return (
+                                                <motion.button
+                                                    key={i}
+                                                    initial={{ opacity: 0, x: -20 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    transition={{ delay: i * 0.04, type: 'spring', stiffness: 200, damping: 20 }}
+                                                    whileHover={{ scale: 1.03, x: 4 }}
+                                                    whileTap={{ scale: 0.97 }}
+                                                    onClick={() => {
+                                                        onSend(`Tell me about ${cat.name}`);
+                                                        if (isMobile) setSidebarOpen(false);
+                                                    }}
+                                                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all text-left group text-[var(--text-secondary)] hover:text-white hover:bg-[var(--bg-surface)]"
+                                                >
+                                                    <motion.div
+                                                        whileHover={{ rotate: [0, -10, 10, 0], scale: 1.15 }}
+                                                        transition={{ duration: 0.4 }}
+                                                        className={`w-7 h-7 rounded-lg bg-gradient-to-br ${cat.color} flex items-center justify-center shrink-0 shadow-[0_2px_8px_rgba(255,77,0,0.2)]`}
+                                                    >
+                                                        <Icon className="w-3.5 h-3.5 text-white" />
+                                                    </motion.div>
+                                                    <span className="truncate flex-1">
+                                                        {cat.name}
+                                                    </span>
+                                                    <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-60 transition-all group-hover:translate-x-0.5 text-[#ff4d00]" />
+                                                </motion.button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                {/* Divider */}
+                                <div className="mx-3 my-3 border-t border-[var(--border-subtle)]" />
+
+                                {/* Chat History — now second */}
                                 <div className="mb-1">
                                     <h4 className="px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] flex items-center gap-2 text-[var(--text-muted)]">
                                         <Clock size={12} /> History
@@ -82,11 +124,10 @@ function Sidebar({ sidebarOpen, setSidebarOpen, isMobile, onSend, onNewSession, 
                                                             onLoadSession(session.id);
                                                             if (isMobile) setSidebarOpen(false);
                                                         }}
-                                                        className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all text-left ${
-                                                            activeSessionId === session.id
+                                                        className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all text-left ${activeSessionId === session.id
                                                                 ? 'bg-[rgba(255,77,0,0.08)] text-white border-l-2 border-[#ff4d00] pl-2.5'
                                                                 : 'text-[var(--text-secondary)] hover:text-white hover:bg-[var(--bg-surface)]'
-                                                        }`}
+                                                            }`}
                                                     >
                                                         <MessageSquare className={`w-3.5 h-3.5 shrink-0 ${activeSessionId === session.id ? 'text-[#ff4d00]' : 'opacity-40'}`} />
                                                         <div className="flex-1 min-w-0">
@@ -108,41 +149,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen, isMobile, onSend, onNewSession, 
                                         ) : (
                                             <p className="text-[11px] text-[var(--text-muted)] px-3 py-1.5 italic">No conversations yet</p>
                                         )}
-                                    </div>
-                                </div>
-
-                                {/* Divider */}
-                                <div className="mx-3 my-3 border-t border-[var(--border-subtle)]" />
-
-                                {/* Topics */}
-                                <div>
-                                    <h4 className="px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] flex items-center gap-2 text-[var(--text-muted)]">
-                                        <Zap size={12} /> Topics
-                                    </h4>
-                                    <div className="space-y-0.5">
-                                        {CATEGORIES.map((cat, i) => {
-                                            const Icon = cat.icon;
-                                            return (
-                                                <button
-                                                    key={i}
-                                                    onClick={() => {
-                                                        onSend(`Tell me about ${cat.name}`);
-                                                        if (isMobile) setSidebarOpen(false);
-                                                    }}
-                                                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all text-left group text-[var(--text-secondary)] hover:text-white hover:bg-[var(--bg-surface)]"
-                                                >
-                                                    <div
-                                                        className={`w-7 h-7 rounded-lg bg-gradient-to-br ${cat.color} flex items-center justify-center shrink-0`}
-                                                    >
-                                                        <Icon className="w-3.5 h-3.5 text-white" />
-                                                    </div>
-                                                    <span className="truncate flex-1">
-                                                        {cat.name}
-                                                    </span>
-                                                    <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-40 transition-opacity text-[var(--text-muted)]" />
-                                                </button>
-                                            );
-                                        })}
                                     </div>
                                 </div>
                             </div>

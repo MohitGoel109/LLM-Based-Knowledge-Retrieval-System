@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import {
     ArrowRight, GraduationCap, CreditCard, Briefcase,
-    Shield, BookOpen, MessageSquare, Zap, Quote
+    Shield, BookOpen, MessageSquare, Zap, Quote, Users
 } from 'lucide-react';
 
 const FEATURES = [
@@ -52,6 +52,33 @@ const TESTIMONIALS = [
         quote: "As a hosteler, I always had questions about rules and timings. KRMAI gives me instant, accurate answers anytime I need them.",
         name: "Ananya Singh",
         role: "BTech Data Science, 1st Year",
+    },
+];
+
+const SOET_FACULTY = [
+    {
+        name: "Dr. Pankaj Agarwal",
+        title: "Dean, School of Engineering & Technology",
+        initials: "PA",
+        color: "from-[#ff4d00] to-[#ff8040]",
+    },
+    {
+        name: "Prof. (Dr.) Shweta A. Bansal",
+        title: "Professor, SOET",
+        initials: "SB",
+        color: "from-[#cc3d00] to-[#ff4d00]",
+    },
+    {
+        name: "Dr. Meenu Gupta",
+        title: "Professor, SOET",
+        initials: "MG",
+        color: "from-[#e64500] to-[#ff6a2a]",
+    },
+    {
+        name: "Dr. B.K. Verma",
+        title: "HOD, Dept. of Computer Science & Engineering",
+        initials: "BV",
+        color: "from-[#ff4d00] to-[#e64500]",
     },
 ];
 
@@ -241,6 +268,55 @@ function LandingPage({ onEnterChat }) {
                                 <p className="text-[var(--text-secondary)] leading-relaxed text-[15px]">
                                     {feat.desc}
                                 </p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ── SOET Faculty Section ── */}
+            <section className="py-20 px-6 md:px-12 border-t border-[var(--border-subtle)]">
+                <div className="max-w-7xl mx-auto">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="text-center mb-14"
+                    >
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[rgba(255,77,0,0.08)] border border-[rgba(255,77,0,0.15)] mb-5">
+                            <Users className="w-4 h-4 text-[#ff4d00]" />
+                            <span className="text-sm font-medium text-[#ff4d00]">School of Engineering & Technology</span>
+                        </div>
+                        <h2 className="font-display text-4xl md:text-5xl mb-4">
+                            Meet Our <span className="text-[#ff4d00]">SOET Leaders</span>
+                        </h2>
+                        <p className="text-[var(--text-secondary)] max-w-xl mx-auto">
+                            The faculty driving innovation and excellence at KR Mangalam University
+                        </p>
+                    </motion.div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-5 max-w-4xl mx-auto">
+                        {SOET_FACULTY.map((member, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1, type: 'spring', stiffness: 150 }}
+                                whileHover={{ y: -6, scale: 1.03 }}
+                                className="flex flex-col items-center gap-4 p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-elevated)]/60 hover:border-[rgba(255,77,0,0.25)] transition-colors group cursor-default"
+                            >
+                                <motion.div
+                                    whileHover={{ rotate: [0, -5, 5, 0] }}
+                                    transition={{ duration: 0.5 }}
+                                    className={`w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br ${member.color} flex items-center justify-center shadow-[0_4px_20px_rgba(255,77,0,0.2)] group-hover:shadow-[0_4px_30px_rgba(255,77,0,0.35)] transition-shadow`}
+                                >
+                                    <span className="text-white font-bold text-lg md:text-xl">{member.initials}</span>
+                                </motion.div>
+                                <div className="text-center">
+                                    <p className="text-white font-semibold text-sm leading-tight">{member.name}</p>
+                                    <p className="text-[var(--text-muted)] text-[11px] mt-1.5 leading-snug">{member.title}</p>
+                                </div>
                             </motion.div>
                         ))}
                     </div>

@@ -1,6 +1,57 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
+
+/* Smiley-to-dots thinking animation component */
+function ThinkingLoader() {
+    const [phase, setPhase] = useState(0); // 0 = smiley, 1 = dots
+    useEffect(() => {
+        const interval = setInterval(() => setPhase((p) => (p + 1) % 2), 1800);
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex gap-4 md:gap-5 w-full max-w-[85%]"
+        >
+            <div className="shrink-0 mt-2 hidden sm:block">
+                <KRMAILogo size={44} animate />
+            </div>
+            <div className="rounded-3xl rounded-tl-sm px-7 py-4 bot-bubble flex items-center gap-3 min-w-[140px]">
+                <AnimatePresence mode="wait">
+                    {phase === 0 ? (
+                        <motion.span
+                            key="smiley"
+                            initial={{ opacity: 0, scale: 0.5 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.5 }}
+                            transition={{ duration: 0.3 }}
+                            className="text-xl"
+                        >
+                            🤔
+                        </motion.span>
+                    ) : (
+                        <motion.span
+                            key="dots"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="thinking-loop flex gap-0.5 text-[18px] font-bold text-[#ff4d00]"
+                        >
+                            <span>.</span><span>.</span><span>.</span>
+                        </motion.span>
+                    )}
+                </AnimatePresence>
+                <span className="text-[14px] font-medium text-[var(--text-secondary)]">
+                    {phase === 0 ? 'Hmm...' : 'Thinking...'}
+                </span>
+            </div>
+        </motion.div>
+    );
+}
 import Sidebar from './Sidebar';
 import ChatHeader from './ChatHeader';
 import MessageBubble from './MessageBubble';
@@ -21,8 +72,10 @@ function ChatInterface({
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [sendPop, setSendPop] = useState(false);
     const bottomRef = useRef(null);
     const inputRef = useRef(null);
+    const sendBtnRef = useRef(null);
 
     const [isMobile, setIsMobile] = useState(false);
 
@@ -55,6 +108,10 @@ function ChatInterface({
         if (!text.trim() || loading) return;
         const msg = text.trim();
         setInput('');
+
+        // Trigger send pop animation
+        setSendPop(true);
+        setTimeout(() => setSendPop(false), 500);
 
         const updated = [
             ...messages,
@@ -179,32 +236,8 @@ function ChatInterface({
                             </AnimatePresence>
                         )}
 
-                        {/* Typing Indicator */}
-                        {loading && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 15 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="flex gap-4 md:gap-5 w-full max-w-[85%]"
-                            >
-                                <div className="shrink-0 mt-2 hidden sm:block">
-                                    <KRMAILogo size={44} animate />
-                                </div>
-                                <div className="rounded-3xl rounded-tl-sm px-7 py-4 bot-bubble flex items-center gap-3">
-                                    <motion.span
-                                        animate={{ opacity: [0.4, 1, 0.4] }}
-                                        transition={{
-                                            duration: 1.4,
-                                            repeat: Infinity,
-                                            ease: 'easeInOut',
-                                        }}
-                                        className="inline-block w-2 h-2 rounded-full bg-[#ff4d00]"
-                                    />
-                                    <span className="text-[14px] font-medium text-[var(--text-secondary)]">
-                                        KRMAI is thinking...
-                                    </span>
-                                </div>
-                            </motion.div>
-                        )}
+                        {/* Thinking Indicator — smiley to dots loop */}
+                        {loading && <ThinkingLoader />}
 
                         <div ref={bottomRef} className="h-8" />
                     </div>
@@ -214,7 +247,7 @@ function ChatInterface({
                 <div className="absolute bottom-0 inset-x-0 p-4 md:px-10 md:pb-6 pt-16 pointer-events-none z-30 bg-gradient-to-t from-[#0d0a08] via-[#0d0a08]/70 to-transparent">
                     <div className="max-w-4xl mx-auto w-full pointer-events-auto flex flex-col gap-2">
                         {/* Input */}
-                        <div className="relative flex items-end gap-2 p-1.5 pl-5 rounded-3xl bg-[var(--bg-elevated)] border border-[var(--border-default)] transition-colors focus-within:border-[rgba(255,255,255,0.15)]">
+                        <div className="input-glow relative flex items-end gap-2 p-1.5 pl-5 rounded-3xl bg-[var(--bg-elevated)] border border-[var(--border-default)]">
                             <textarea
                                 ref={inputRef}
                                 value={input}
@@ -225,9 +258,10 @@ function ChatInterface({
                                 rows={1}
                             />
                             <button
+                                ref={sendBtnRef}
                                 onClick={() => send(input)}
                                 disabled={!input.trim() || loading}
-                                className={`p-2.5 rounded-full transition-all shrink-0 mb-0.5 ${!input.trim() || loading
+                                className={`p-2.5 rounded-full transition-all shrink-0 mb-0.5 ${sendPop ? 'send-pop' : ''} ${!input.trim() || loading
                                     ? 'opacity-25 cursor-not-allowed bg-[var(--bg-surface)] text-[var(--text-muted)]'
                                     : 'bg-white text-[var(--bg-base)] hover:bg-gray-200'
                                     }`}
