@@ -21,3 +21,5 @@ def load_documents(data_dir):
         return []
 
     supported = {".pdf": PyPDFLoader, ".docx": Docx2txtLoader, ".txt": TextLoader}
+    for filename in sorted(os.listdir(data_dir)):
+        
