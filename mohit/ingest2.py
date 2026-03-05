@@ -19,3 +19,5 @@ def load_documents(data_dir):
         os.makedirs(data_dir)
         print(f"Created '{data_dir}' directory. Please add documents there.")
         return []
+
+    supported = 
