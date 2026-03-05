@@ -101,19 +101,70 @@ body {
   color: var(--text-secondary);
 }
 
-/* ─── Input Glow ──────────────────────────────────── */
+/* ─── Input Glow on Focus ─────────────────────────── */
 .input-glow {
-  transition: all 0.3s ease;
+  transition: box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s ease;
 }
 
 .input-glow:focus-within {
-  transform: translateY(-1px);
-  box-shadow:
-    0 0 0 1px rgba(255, 77, 0, 0.15),
-    0 0 20px rgba(255, 77, 0, 0.08),
-    0 8px 32px rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 77, 0, 0.2);
-  background: rgba(26, 21, 18, 0.85);
+  box-shadow: 0 0 0 2px rgba(255, 77, 0, 0.15), 0 0 30px rgba(255, 77, 0, 0.12), 0 0 60px rgba(255, 77, 0, 0.06);
+  border-color: rgba(255, 77, 0, 0.35) !important;
+}
+
+/* ─── Send Button Pop Keyframes ───────────────────── */
+@keyframes sendPop {
+  0% {
+    transform: scale(1);
+  }
+
+  30% {
+    transform: scale(0.85);
+  }
+
+  60% {
+    transform: scale(1.2);
+  }
+
+  80% {
+    transform: scale(0.95);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.send-pop {
+  animation: sendPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ─── Smiley-to-Dots Thinking Animation ───────────── */
+@keyframes thinkPulse {
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.thinking-loop span {
+  animation: thinkPulse 1.6s ease-in-out infinite;
+}
+
+.thinking-loop span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.thinking-loop span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.thinking-loop span:nth-child(4) {
+  animation-delay: 0.45s;
 }
 
 /* ─── Accent Button ───────────────────────────────── */
