@@ -20,4 +20,4 @@ def load_documents(data_dir):
         print(f"Created '{data_dir}' directory. Please add documents there.")
         return []
 
-    supported = 
+    supported = {".pdf": PyPDFLoader, ".docx": Docx2txtLoader, ".txt": TextLoader}
