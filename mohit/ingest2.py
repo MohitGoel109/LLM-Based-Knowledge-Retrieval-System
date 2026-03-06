@@ -23,3 +23,6 @@ def load_documents(data_dir):
     supported = {".pdf": PyPDFLoader, ".docx": Docx2txtLoader, ".txt": TextLoader}
     for filename in sorted(os.listdir(data_dir)):
         exit = os.path.splitext(filename)[1].lower()
+        file_path = os.path.join(data_dir, filename)
+        loader_cls = supported.get(ext)
+
