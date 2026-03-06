@@ -25,4 +25,8 @@ def load_documents(data_dir):
         ext = os.path.splitext(filename)[1].lower()
         file_path = os.path.join(data_dir, filename)
         loader_cls = supported.get(ext)
+        if loader_cls:
+            try:
+                loader = loader_cls(file_path)
+                docs = loader.load()
 
