@@ -37,4 +37,5 @@ def load_documents(data_dir):
             except Exception as e:
                 print(f"  Error loading {filename}: {e}")
         else:
+            print(f"  Skipping unsupported file: {filename}")
 
