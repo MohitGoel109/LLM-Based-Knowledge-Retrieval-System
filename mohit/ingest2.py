@@ -36,4 +36,5 @@ def load_documents(data_dir):
                 print(f"  Loaded: {filename} ({len(docs)} page(s))")
             except Exception as e:
                 print(f"  Error loading {filename}: {e}")
+        else:
 
