@@ -30,4 +30,8 @@ def load_documents(data_dir):
                 loader = loader_cls(file_path)
                 docs = loader.load()
                 # Tag every doc with the original filename for citations
+                for doc in docs:
+                    doc.metadata["source"] = filename
+                documents.extend(docs)
+                print(f"  Loaded: {filename} ({len(docs)} page(s))")
 
