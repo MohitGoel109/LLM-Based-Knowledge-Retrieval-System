@@ -34,4 +34,5 @@ def load_documents(data_dir):
                     doc.metadata["source"] = filename
                 documents.extend(docs)
                 print(f"  Loaded: {filename} ({len(docs)} page(s))")
+            except Exception as e:
 
