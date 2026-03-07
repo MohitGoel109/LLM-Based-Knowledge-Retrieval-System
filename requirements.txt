@@ -1,14 +1,23 @@
+# LangChain ecosystem
 langchain
+langchain-core
 langchain-community
 langchain-huggingface
 langchain-chroma
 langchain-ollama
 langchain-text-splitters
+
+# Vector DB & embeddings
 chromadb
 sentence-transformers
-streamlit
+
+# Document loaders
 pypdf
 docx2txt
-requests
+
+# Web frameworks & utilities
 fastapi
 uvicorn
+pydantic
+streamlit
+requests
