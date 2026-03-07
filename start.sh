@@ -56,8 +56,8 @@ else
     echo "       Frontend: http://localhost:5173"
     echo "=================================================="
 
-    # Start FastAPI backend
-    HF_HUB_OFFLINE=1 python -m uvicorn api:app --host 0.0.0.0 --port 8000 --reload &
+    # Start FastAPI backend (rag_engine auto-detects offline mode)
+    python -m uvicorn api:app --host 0.0.0.0 --port 8000 --reload &
     API_PID=$!
 
     # Start React frontend

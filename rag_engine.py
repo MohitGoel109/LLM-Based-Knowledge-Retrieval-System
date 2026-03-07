@@ -15,9 +15,17 @@ LLM_MODEL = "llama3.2:3b"
 OLLAMA_BASE_URL = "http://localhost:11434"
 OLLAMA_TIMEOUT = 300  # seconds — CPU inference can be slow
 
-# Use cached model to avoid hanging on HuggingFace metadata checks
-os.environ.setdefault("HF_HUB_OFFLINE", "1")
-os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+# Use cached model when available to avoid hanging on HuggingFace metadata checks.
+# On first run the model must be downloaded, so we only go offline if it's already cached.
+_model_cache = os.path.join(os.path.expanduser("~"), ".cache", "huggingface", "hub")
+_model_cached = any(
+    EMBEDDING_MODEL.replace("/", "--") in d
+    for d in os.listdir(_model_cache)
+) if os.path.isdir(_model_cache) else False
+
+if _model_cached:
+    os.environ.setdefault("HF_HUB_OFFLINE", "1")
+    os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
 
 # ── Slang / Abbreviation Dictionary ───────────────────────────
 # Maps common student slang and internet abbreviations to their

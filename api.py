@@ -5,10 +5,7 @@ from typing import List, Optional, Dict, Any
 from contextlib import asynccontextmanager
 import os
 
-# Set HuggingFace to offline mode before importing rag_engine
-os.environ.setdefault("HF_HUB_OFFLINE", "1")
-os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
-
+# rag_engine handles HF offline mode automatically based on cache state
 from rag_engine import RAGEngine
 
 # Global RAG engine (initialized at startup)
