@@ -1,5 +1,3 @@
-import { Zap } from 'lucide-react';
-
 const mdComponents = {
     h1: ({ node, ...props }) => (
         <h1 className="text-2xl font-bold mt-6 mb-3 tracking-tight text-[#ff4d00]" {...props} />
@@ -39,13 +37,18 @@ const mdComponents = {
     strong: ({ node, ...props }) => (
         <strong className="font-bold text-white" {...props} />
     ),
-    code: ({ node, inline, children, ...props }) => {
-        return inline ? (
+    pre: ({ node, children, ...props }) => (
+        <pre className="p-5 rounded-2xl overflow-x-auto text-[14px] font-mono mb-4 bg-[#0a0906] border border-[var(--border-subtle)] text-[#ff8040]" {...props}>
+            {children}
+        </pre>
+    ),
+    code: ({ node, className, children, ...props }) => {
+        // Fenced code blocks have a language className and are wrapped in <pre>
+        if (className) {
+            return <code className={className} {...props}>{children}</code>;
+        }
+        return (
             <code className="px-2 py-1 rounded-lg text-[14px] font-mono bg-[var(--bg-surface)] text-[#ff8040] border border-[var(--border-default)]" {...props}>{children}</code>
-        ) : (
-            <pre className="p-5 rounded-2xl overflow-x-auto text-[14px] font-mono mb-4 bg-[#0a0906] border border-[var(--border-subtle)] text-[#ff8040]">
-                <code {...props}>{children}</code>
-            </pre>
         );
     },
 };

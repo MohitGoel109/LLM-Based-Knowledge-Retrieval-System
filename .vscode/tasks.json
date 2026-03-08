@@ -14,6 +14,20 @@
 			"command": "cd web-app && npm run dev",
 			"isBackground": true,
 			"group": "build"
+		},
+		{
+			"label": "Start Backend API",
+			"type": "shell",
+			"command": "eval \"$(conda shell.bash hook 2>/dev/null)\" && conda activate rag && HF_HUB_OFFLINE=1 python -m uvicorn api:app --host 0.0.0.0 --port 8000 --reload",
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "Start Frontend",
+			"type": "shell",
+			"command": "cd web-app && npx vite --host",
+			"isBackground": true,
+			"group": "build"
 		}
 	]
 }
