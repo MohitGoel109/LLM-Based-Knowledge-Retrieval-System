@@ -39,3 +39,15 @@ def load_documents(data_dir):
         else:
             print(f"  Skipping unsupported file: {filename}")
 
+    return documents
+
+
+def chunk_documents(documents):
+    """Splits documents into smaller overlapping chunks."""
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP,
+        length_function=len,
+        is_separator_regex=False,
+    )
+    return text_splitter.split_documents(documents)
