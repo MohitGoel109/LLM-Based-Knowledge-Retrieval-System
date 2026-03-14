@@ -41,11 +41,11 @@ for msg in st.session_state.messages:
 if prompt := st.chat_input("Ask a question about college documents..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
+        
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
         placeholder = st.empty()
-
         with st.spinner("Searching documents and thinking..."):
             result = engine.query(prompt)
 
