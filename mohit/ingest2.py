@@ -39,3 +39,37 @@ def load_documents(data_dir):
         else:
             print(f"  Skipping unsupported file: {filename}")
 
+    return documents
+
+
+def chunk_documents(documents):
+    """Splits documents into smaller overlapping chunks."""
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP,
+        length_function=len,
+        is_separator_regex=False,
+    )
+    return text_splitter.split_documents(documents)
+
+def create_vector_store(chunks):
+    """Creates the ChromaDB vector store (wipes old DB first for a clean rebuild)."""
+    if not chunks:
+        print("No chunks to ingest.")
+        return
+
+    # Wipe stale DB so we always have a clean, consistent store
+    if os.path.exists(CHROMA_PATH):
+        shutil.rmtree(CHROMA_PATH)
+        print(f"Cleared old vector store at {CHROMA_PATH}")
+
+    print("Initializing embedding model (first run downloads ~80 MB)...")
+    embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+
+    print(f"Creating vector store...")
+    Chroma.from_documents(
+        documents=chunks,
+        embedding=embeddings,
+        persist_directory=CHROMA_PATH,
+    )
+    print(f"Successfully ingested {len(chunks)} chunks into ChromaDB at {CHROMA_PATH}")
