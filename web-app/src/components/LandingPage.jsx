@@ -1,9 +1,11 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
     ArrowRight, GraduationCap, CreditCard, Briefcase,
     Shield, BookOpen, MessageSquare, Quote,
     Sparkles, Bot, BarChart3, Globe, Users, ChevronRight,
-    Cpu, Clock, Star
+    Cpu, Clock, Star, FolderKanban, Settings, HelpCircle,
+    Zap, Layers, Code
 } from 'lucide-react';
 
 const FEATURES = [
@@ -54,10 +56,10 @@ const DEPARTMENTS = [
 ];
 
 const STATS = [
-    { value: '56.6', suffix: ' LPA', label: 'Highest Package' },
-    { value: '800', suffix: '+', label: 'Campus Recruiters' },
-    { value: '100', suffix: '+', label: 'Programs Offered' },
-    { value: '28', suffix: ' Acres', label: 'Campus Area' },
+    { value: 56.6, suffix: ' LPA', label: 'Highest Package' },
+    { value: 800, suffix: '+', label: 'Campus Recruiters' },
+    { value: 100, suffix: '+', label: 'Programs Offered' },
+    { value: 28, suffix: ' Acres', label: 'Campus Area' },
 ];
 
 const TESTIMONIALS = [
@@ -87,8 +89,57 @@ const HOW_IT_WORKS = [
     { step: '03', title: 'Get Accurate Answer', desc: 'Receive a clear, sourced response with citations.' },
 ];
 
+const HERO_WORDS = ['Fees', 'Placements', 'Scholarships', 'Hostel Rules', 'Admissions'];
 
-function LandingPage({ onEnterChat }) {
+/* Animated word cycling for hero section */
+function AnimatedWords() {
+    const [index, setIndex] = useState(0);
+    useEffect(() => {
+        const timer = setInterval(() => setIndex((i) => (i + 1) % HERO_WORDS.length), 2500);
+        return () => clearInterval(timer);
+    }, []);
+
+    return (
+        <span className="inline-block relative">
+            <motion.span
+                key={index}
+                initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, y: -20, filter: 'blur(4px)' }}
+                transition={{ duration: 0.5 }}
+                className="gradient-text"
+            >
+                {HERO_WORDS[index]}
+            </motion.span>
+        </span>
+    );
+}
+
+/* Animated counter for stats */
+function AnimatedStat({ value, suffix }) {
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+        let start = 0;
+        const end = value;
+        const duration = 2000;
+        const increment = end / (duration / 16);
+        const timer = setInterval(() => {
+            start += increment;
+            if (start >= end) {
+                setCount(end);
+                clearInterval(timer);
+            } else {
+                setCount(Math.floor(start * 10) / 10);
+            }
+        }, 16);
+        return () => clearInterval(timer);
+    }, [value]);
+
+    return <>{Number.isInteger(value) ? Math.floor(count) : count.toFixed(1)}{suffix}</>;
+}
+
+
+function LandingPage({ onEnterChat, onNavigate }) {
     return (
         <div className="min-h-screen bg-[var(--landing-bg)] text-[var(--text-primary)] overflow-y-auto">
             {/* ── Decorative Background Orbs ── */}
@@ -97,13 +148,19 @@ function LandingPage({ onEnterChat }) {
                     animate={{ x: [0, 40, -20, 40, 0], y: [0, -30, 20, -10, 0], opacity: [0.15, 0.3, 0.15] }}
                     transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
                     className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full"
-                    style={{ background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)' }}
+                    style={{
+                        background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
+                        backdropFilter: 'blur(1px)',
+                    }}
                 />
                 <motion.div
                     animate={{ x: [0, -30, 20, -30, 0], y: [0, 20, -30, 10, 0], opacity: [0.1, 0.25, 0.1] }}
                     transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
                     className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full"
-                    style={{ background: 'radial-gradient(circle, rgba(96, 165, 250, 0.12) 0%, transparent 70%)' }}
+                    style={{
+                        background: 'radial-gradient(circle, rgba(96, 165, 250, 0.12) 0%, transparent 70%)',
+                        backdropFilter: 'blur(1px)',
+                    }}
                 />
                 <motion.div
                     animate={{ opacity: [0.05, 0.12, 0.05] }}
@@ -126,7 +183,7 @@ function LandingPage({ onEnterChat }) {
             <nav className="fixed top-0 w-full z-50 px-6 md:px-12 py-4">
                 <div className="max-w-7xl mx-auto flex items-center justify-between rounded-2xl px-6 py-3 bg-[var(--nav-bg)] backdrop-blur-xl border border-[var(--border-subtle)]">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-[#3b82f6] flex items-center justify-center shadow-[0_4px_12px_rgba(59,130,246,0.3)]">
+                        <div className="w-10 h-10 rounded-xl bg-[var(--accent)] flex items-center justify-center shadow-[0_4px_12px_var(--accent-glow)]">
                             <GraduationCap className="w-5 h-5 text-white" />
                         </div>
                         <span className="font-display text-2xl text-[var(--text-heading)]">KRMAI</span>
@@ -177,9 +234,9 @@ function LandingPage({ onEnterChat }) {
                             transition={{ delay: 0.1, duration: 0.7 }}
                             className="font-display text-5xl md:text-7xl lg:text-[5.5rem] leading-[1.05] mb-7 text-[var(--text-heading)]"
                         >
-                            Unlock Deeper Insights with{' '}
-                            <span className="gradient-text">KR Mangalam</span>{' '}
-                            University AI
+                            Your Questions About{' '}<br className="hidden md:block" />
+                            <AnimatedWords />{' '}
+                            Answered Instantly
                         </motion.h1>
 
                         <motion.p
@@ -204,7 +261,7 @@ function LandingPage({ onEnterChat }) {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={onEnterChat}
-                                className="btn-accent px-8 py-4 text-base flex items-center gap-3 shadow-[0_0_40px_rgba(59,130,246,0.25)]"
+                                className="btn-accent px-8 py-4 text-base flex items-center gap-3 shadow-[0_0_40px_var(--accent-glow)]"
                             >
                                 <MessageSquare className="w-5 h-5" />
                                 Start Chatting
@@ -267,7 +324,7 @@ function LandingPage({ onEnterChat }) {
                 </motion.div>
             </section>
 
-            {/* ── Stats Row ── */}
+            {/* ── Stats Row — animated counters ── */}
             <section className="py-12 border-t border-b border-[var(--border-subtle)] relative z-10">
                 <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-wrap justify-center gap-12 md:gap-20">
                     {STATS.map((stat, i) => (
@@ -280,13 +337,73 @@ function LandingPage({ onEnterChat }) {
                             className="text-center"
                         >
                             <div className="text-3xl md:text-4xl font-display gradient-text mb-1">
-                                {stat.value}{stat.suffix}
+                                <AnimatedStat value={stat.value} suffix={stat.suffix} />
                             </div>
                             <div className="text-sm text-[var(--text-muted)] uppercase tracking-wider font-medium">
                                 {stat.label}
                             </div>
                         </motion.div>
                     ))}
+                </div>
+            </section>
+
+            {/* ── Quick Links Bar — Student Projects, Settings, Updates ── */}
+            <section className="py-8 relative z-10">
+                <div className="max-w-7xl mx-auto px-6 md:px-12">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {[
+                            {
+                                icon: FolderKanban,
+                                title: 'Student Projects',
+                                desc: 'Explore AI-powered projects built by KRM students',
+                                page: 'projects',
+                                gradient: 'from-blue-500/10 to-cyan-500/10',
+                            },
+                            {
+                                icon: HelpCircle,
+                                title: 'Updates & FAQ',
+                                desc: 'Changelog, version history, and common questions',
+                                page: 'updates',
+                                gradient: 'from-purple-500/10 to-pink-500/10',
+                            },
+                            {
+                                icon: Settings,
+                                title: 'Settings',
+                                desc: 'Theme, voice preferences, and app configuration',
+                                page: 'settings',
+                                gradient: 'from-emerald-500/10 to-teal-500/10',
+                            },
+                        ].map((item, i) => (
+                            <motion.button
+                                key={i}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1 }}
+                                whileHover={{ scale: 1.02, y: -4 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => {
+                                    if (item.page === 'settings') {
+                                        // Enter chat first, then navigate
+                                        onEnterChat();
+                                        setTimeout(() => onNavigate && onNavigate(item.page), 100);
+                                    } else {
+                                        onNavigate && onNavigate(item.page);
+                                    }
+                                }}
+                                className={`glass-card rounded-2xl p-6 text-left flex items-center gap-4 group cursor-pointer bg-gradient-to-br ${item.gradient}`}
+                            >
+                                <div className="w-12 h-12 rounded-xl bg-[var(--accent)]/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                    <item.icon className="w-6 h-6 text-[var(--accent)]" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-base font-semibold text-[var(--text-heading)] mb-0.5">{item.title}</h3>
+                                    <p className="text-xs text-[var(--text-muted)]">{item.desc}</p>
+                                </div>
+                                <ChevronRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-[var(--accent)] group-hover:translate-x-1 transition-all shrink-0" />
+                            </motion.button>
+                        ))}
+                    </div>
                 </div>
             </section>
 
@@ -328,6 +445,44 @@ function LandingPage({ onEnterChat }) {
                                 </div>
                                 <h3 className="text-xl font-semibold mb-3 text-[var(--text-heading)]">{feat.title}</h3>
                                 <p className="text-[var(--text-secondary)] leading-relaxed text-[15px]">{feat.desc}</p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ── Tech Stack Showcase ── */}
+            <section className="py-16 px-6 md:px-12 border-t border-[var(--border-subtle)] relative z-10">
+                <div className="max-w-7xl mx-auto">
+                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+                        <span className="px-3 py-1.5 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-xs font-semibold text-[var(--accent)] inline-flex items-center gap-1.5 mb-4">
+                            <Code className="w-3.5 h-3.5" /> Technology
+                        </span>
+                        <h2 className="font-display text-3xl md:text-4xl text-[var(--text-heading)] mb-3">
+                            Built With <span className="gradient-text">Cutting-Edge</span> Tech
+                        </h2>
+                    </motion.div>
+
+                    <div className="flex flex-wrap justify-center gap-4">
+                        {[
+                            { name: 'React 19', icon: Layers },
+                            { name: 'FastAPI', icon: Zap },
+                            { name: 'LangChain', icon: Code },
+                            { name: 'ChromaDB', icon: Cpu },
+                            { name: 'Ollama', icon: Bot },
+                            { name: 'Qwen3:8B', icon: Sparkles },
+                        ].map((tech, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.08 }}
+                                whileHover={{ y: -4, scale: 1.05 }}
+                                className="glass-card px-5 py-3 rounded-xl flex items-center gap-3 cursor-default"
+                            >
+                                <tech.icon className="w-4 h-4 text-[var(--accent)]" />
+                                <span className="text-sm font-medium text-[var(--text-heading)]">{tech.name}</span>
                             </motion.div>
                         ))}
                     </div>
@@ -444,7 +599,7 @@ function LandingPage({ onEnterChat }) {
                             Ready to Get <span className="gradient-text">Started</span>?
                         </h2>
                         <p className="text-[var(--text-secondary)] mb-8 text-lg">Start chatting with KRMAI and get instant answers to all your university questions.</p>
-                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={onEnterChat} className="btn-accent px-10 py-4 text-lg flex items-center gap-3 mx-auto shadow-[0_0_40px_rgba(59,130,246,0.25)]">
+                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={onEnterChat} className="btn-accent px-10 py-4 text-lg flex items-center gap-3 mx-auto shadow-[0_0_40px_var(--accent-glow)]">
                             Start Chatting Now <ArrowRight className="w-5 h-5" />
                         </motion.button>
                     </motion.div>
@@ -457,6 +612,11 @@ function LandingPage({ onEnterChat }) {
                     <div className="flex items-center gap-2">
                         <GraduationCap className="w-5 h-5 text-[var(--accent)]" />
                         <span className="font-display text-lg text-[var(--text-heading)]">KRMAI</span>
+                    </div>
+                    <div className="flex items-center gap-6">
+                        <button onClick={() => onNavigate && onNavigate('projects')} className="text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer">Projects</button>
+                        <button onClick={() => onNavigate && onNavigate('updates')} className="text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer">Updates</button>
+                        <a href="#features" className="text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition">Features</a>
                     </div>
                     <p className="text-sm text-[var(--text-muted)]">KR Mangalam University AI Assistant — Built with RAG + Ollama</p>
                 </div>

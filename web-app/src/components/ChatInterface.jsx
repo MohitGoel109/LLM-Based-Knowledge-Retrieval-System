@@ -29,7 +29,7 @@ function ThinkingLoader() {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.8, y: -5 }}
                         transition={{ duration: 0.15 }}
-                        className="text-[18px] font-mono font-bold text-[#3b82f6] tracking-widest"
+                        className="text-[18px] font-mono font-bold text-[var(--accent)] tracking-widest"
                     >
                         {emojis[phase]}
                     </motion.span>
@@ -60,6 +60,10 @@ function ChatInterface({
     onNewSession,
     onLoadSession,
     onDeleteSession,
+    onClearAll,
+    onNavigate,
+    voiceLang: externalVoiceLang,
+    setVoiceLang: externalSetVoiceLang,
 }) {
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
@@ -73,7 +77,8 @@ function ChatInterface({
     const recognitionRef = useRef(null);
     const mainRef = useRef(null);
     const [prevMsgCount, setPrevMsgCount] = useState(0);
-    const [voiceLang, setVoiceLang] = useState('EN');
+    const voiceLang = externalVoiceLang || 'EN';
+    const setVoiceLang = externalSetVoiceLang || (() => {});
     const [interimText, setInterimText] = useState('');
     const [voiceJustCaptured, setVoiceJustCaptured] = useState(false);
     const baseTextRef = useRef('');
@@ -81,7 +86,7 @@ function ChatInterface({
     const cycleVoiceLang = useCallback(() => {
         if (isListening) return;
         setVoiceLang((prev) => VOICE_LANG_ORDER[(VOICE_LANG_ORDER.indexOf(prev) + 1) % VOICE_LANG_ORDER.length]);
-    }, [isListening]);
+    }, [isListening, setVoiceLang]);
 
     const [isMobile, setIsMobile] = useState(false);
 
@@ -197,7 +202,7 @@ function ChatInterface({
         }
     };
 
-    /* ─── Voice Input (Web Speech API) ─────────────── */
+    /* ─── Voice Input (Web Speech API) — FIXED append bug ─── */
     const toggleListening = useCallback(() => {
         if (isListening) {
             if (recognitionRef.current) {
@@ -220,25 +225,34 @@ function ChatInterface({
         recognition.continuous = true;
         recognition.interimResults = true;
 
+        // Save the current input text as the base — voice will append to this
         baseTextRef.current = inputRef.current?.value || '';
 
+        // Track accumulated final transcript from this session
+        let accumulatedFinal = '';
+
         recognition.onresult = (event) => {
-            let finalTranscript = '';
+            let newFinal = '';
             let interim = '';
-            for (let i = 0; i < event.results.length; i++) {
+
+            // KEY FIX: Only process results from event.resultIndex onwards
+            // This prevents replaying all previously finalized results
+            for (let i = event.resultIndex; i < event.results.length; i++) {
                 const transcript = event.results[i][0].transcript;
                 if (event.results[i].isFinal) {
-                    finalTranscript += transcript;
+                    newFinal += transcript;
                 } else {
                     interim += transcript;
                 }
             }
-            const base = baseTextRef.current;
-            const separator = base && !base.endsWith(' ') ? ' ' : '';
-            if (finalTranscript) {
-                const newText = base + separator + finalTranscript;
-                setInput(newText);
-                baseTextRef.current = newText;
+
+            if (newFinal) {
+                // Append new final text to accumulated
+                accumulatedFinal += newFinal;
+                const base = baseTextRef.current;
+                const separator = base && !base.endsWith(' ') ? ' ' : '';
+                const fullText = base + separator + accumulatedFinal;
+                setInput(fullText);
                 setVoiceJustCaptured(true);
                 setTimeout(() => setVoiceJustCaptured(false), 800);
             }
@@ -259,7 +273,7 @@ function ChatInterface({
         recognitionRef.current = recognition;
         recognition.start();
         setIsListening(true);
-    }, [isListening, voiceLang]);
+    }, [isListening, voiceLang, setVoiceLang]);
 
     // Cleanup speech recognition on unmount
     useEffect(() => {
@@ -286,6 +300,7 @@ function ChatInterface({
                 activeSessionId={activeSessionId}
                 onLoadSession={onLoadSession}
                 onDeleteSession={onDeleteSession}
+                onNavigate={onNavigate}
             />
 
             {/* Main Chat Area */}
@@ -296,6 +311,7 @@ function ChatInterface({
                     setSidebarOpen={setSidebarOpen}
                     loading={loading}
                     onGoHome={onGoHome}
+                    messages={messages}
                 />
 
                 {/* Messages */}
@@ -322,7 +338,7 @@ function ChatInterface({
                                     initial={{ opacity: 0, y: 15 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.15, duration: 0.5 }}
-                                    className="text-2xl md:text-3xl font-medium text-center text-white mb-10"
+                                    className="text-2xl md:text-3xl font-medium text-center text-[var(--text-heading)] mb-10"
                                 >
                                     What would you like to know?
                                 </motion.h1>
@@ -350,7 +366,7 @@ function ChatInterface({
                                             }}
                                             whileTap={{ scale: 0.93 }}
                                             onClick={() => send(faq.text)}
-                                            className="px-4 py-2.5 rounded-full text-[14px] font-medium transition-colors bg-[var(--bg-elevated)] border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-gray-900 hover:border-[rgba(255,255,255,0.2)] hover:bg-[var(--bg-surface)]"
+                                            className="px-4 py-2.5 rounded-full text-[14px] font-medium transition-colors bg-[var(--bg-elevated)] border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[rgba(255,255,255,0.2)] hover:bg-[var(--bg-surface)]"
                                         >
                                             {faq.text}
                                         </motion.button>
@@ -386,7 +402,7 @@ function ChatInterface({
                                 exit={{ opacity: 0, scale: 0.7 }}
                                 transition={{ type: 'spring', bounce: 0.4 }}
                                 onClick={scrollToBottom}
-                                className="scroll-fab fixed bottom-36 right-8 z-40 p-3 rounded-full bg-[var(--accent)] text-gray-900 shadow-lg hover:bg-[var(--accent-hover)]"
+                                className="scroll-fab fixed bottom-36 right-8 z-40 p-3 rounded-full bg-[var(--accent)] text-white shadow-lg hover:bg-[var(--accent-hover)]"
                                 title="Scroll to bottom"
                             >
                                 <ArrowDown className="w-5 h-5" />
@@ -406,7 +422,7 @@ function ChatInterface({
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, y: 8, scale: 0.95 }}
                                     transition={{ duration: 0.2 }}
-                                    className="mx-4 mb-1 px-4 py-2.5 rounded-2xl bg-[var(--bg-surface)] border border-[rgba(59, 130, 246,0.25)] text-[14px] text-[var(--text-secondary)] italic"
+                                    className="mx-4 mb-1 px-4 py-2.5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--accent)]/25 text-[14px] text-[var(--text-secondary)] italic"
                                 >
                                     <span className="text-[var(--text-muted)] text-[11px] uppercase tracking-wider font-semibold mr-2 not-italic">Hearing:</span>
                                     <motion.span
@@ -420,14 +436,14 @@ function ChatInterface({
                         </AnimatePresence>
 
                         {/* Input Area */}
-                        <div className={`relative flex items-end gap-2 p-1.5 pl-5 rounded-3xl macos-glass border border-[var(--border-subtle)] shadow-[0_4px_24px_rgba(0,0,0,0.5)] focus-within:border-[#10b981]/50 focus-within:shadow-[0_4px_24px_rgba(16,185,129,0.15)] transition-all ${voiceJustCaptured ? 'ring-2 ring-[#10b981]' : ''}`}>
+                        <div className={`relative flex items-end gap-2 p-1.5 pl-5 rounded-3xl macos-glass border border-[var(--border-subtle)] shadow-[0_4px_24px_rgba(0,0,0,0.5)] focus-within:border-[var(--accent)]/50 focus-within:shadow-[0_4px_24px_rgba(59,130,246,0.15)] transition-all ${voiceJustCaptured ? 'ring-2 ring-[var(--accent)]' : ''}`}>
                             <textarea
                                 ref={inputRef}
                                 value={input}
                                 onChange={handleInput}
                                 onKeyDown={handleKeyDown}
                                 placeholder="Ask KRMAI anything..."
-                                className="flex-1 max-h-[200px] min-h-[44px] py-3 bg-transparent resize-none outline-none text-[15px] font-medium leading-relaxed text-white placeholder:text-[var(--text-muted)] mt-1"
+                                className="flex-1 max-h-[200px] min-h-[44px] py-3 bg-transparent resize-none outline-none text-[15px] font-medium leading-relaxed text-[var(--text-primary)] placeholder:text-[var(--text-muted)] mt-1"
                                 rows={1}
                             />
 
@@ -437,7 +453,7 @@ function ChatInterface({
                                 disabled={isListening}
                                 className={`flex items-center gap-1 px-2 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider shrink-0 mb-1 transition-all ${isListening
                                     ? 'opacity-40 cursor-not-allowed text-[var(--text-muted)]'
-                                    : 'text-[var(--text-secondary)] hover:text-[#3b82f6] hover:bg-[var(--bg-surface)]'
+                                    : 'text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)]'
                                     }`}
                                 title={`Voice language: ${VOICE_LANG_LABELS[voiceLang]}. Click to change.`}
                             >
@@ -452,7 +468,7 @@ function ChatInterface({
                                         <>
                                             <motion.div
                                                 key="ring1"
-                                                className="absolute inset-0 rounded-full border-2 border-[#3b82f6]"
+                                                className="absolute inset-0 rounded-full border-2 border-[var(--accent)]"
                                                 initial={{ scale: 1, opacity: 0.5 }}
                                                 animate={{ scale: 2, opacity: 0 }}
                                                 exit={{ opacity: 0 }}
@@ -460,7 +476,7 @@ function ChatInterface({
                                             />
                                             <motion.div
                                                 key="ring2"
-                                                className="absolute inset-0 rounded-full border-2 border-[#3b82f6]"
+                                                className="absolute inset-0 rounded-full border-2 border-[var(--accent)]"
                                                 initial={{ scale: 1, opacity: 0.4 }}
                                                 animate={{ scale: 2.5, opacity: 0 }}
                                                 exit={{ opacity: 0 }}
@@ -468,7 +484,7 @@ function ChatInterface({
                                             />
                                             <motion.div
                                                 key="ring3"
-                                                className="absolute inset-0 rounded-full border border-[#3b82f6]/60"
+                                                className="absolute inset-0 rounded-full border border-[var(--accent)]/60"
                                                 initial={{ scale: 1, opacity: 0.3 }}
                                                 animate={{ scale: 3, opacity: 0 }}
                                                 exit={{ opacity: 0 }}
@@ -481,8 +497,8 @@ function ChatInterface({
                                     onClick={toggleListening}
                                     whileTap={{ scale: 0.85 }}
                                     className={`relative z-10 p-2.5 rounded-full transition-all ${isListening
-                                        ? 'bg-[#10b981] text-black shadow-[0_0_20px_rgba(16,185,129,0.5)]'
-                                        : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-white hover:bg-[#10b981]/20'
+                                        ? 'bg-[var(--accent)] text-white shadow-[0_0_20px_var(--accent-glow)]'
+                                        : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--accent)]/20'
                                         }`}
                                     title={isListening ? 'Stop recording' : `Voice input (${VOICE_LANG_LABELS[voiceLang]})`}
                                 >
@@ -500,7 +516,7 @@ function ChatInterface({
                                 disabled={!input.trim() || loading}
                                 className={`p-2.5 rounded-full transition-all shrink-0 mb-0.5 ${!input.trim() || loading
                                     ? 'opacity-25 cursor-not-allowed bg-[var(--bg-surface)] text-[var(--text-muted)]'
-                                    : 'bg-white text-black hover:bg-gray-200'
+                                    : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]'
                                     }`}
                             >
                                 <ArrowUp className="w-5 h-5" strokeWidth={2.5} />
@@ -513,7 +529,7 @@ function ChatInterface({
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: [0.5, 1, 0.5] }}
                                     transition={{ duration: 1.5, repeat: Infinity }}
-                                    className="text-[#3b82f6]"
+                                    className="text-[var(--accent)]"
                                 >
                                     Listening ({VOICE_LANG_LABELS[voiceLang]})... tap mic to stop
                                 </motion.span>
@@ -524,14 +540,14 @@ function ChatInterface({
                     </div>
                 </div>
             </div>
-            {/* Optional Mobile Overlays here */}
-            {/* History Sidebar - Only visible on Desktop normally, unless handled via a toggle state */}
+            {/* History Sidebar - Only visible on Desktop */}
             {!isMobile && (
                 <HistorySidebar
                     sessions={sessions}
                     activeSessionId={activeSessionId}
                     onLoadSession={onLoadSession}
                     onDeleteSession={onDeleteSession}
+                    onClearAll={onClearAll}
                 />
             )}
         </div>

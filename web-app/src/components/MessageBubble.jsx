@@ -230,7 +230,7 @@ function MessageBubble({ message, index, isNew }) {
                                         whileHover={{ scale: 1.15 }}
                                         whileTap={{ scale: 0.9 }}
                                         onClick={handleCopy}
-                                        className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-gray-900 hover:bg-[var(--bg-surface)] transition-all"
+                                        className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-all"
                                         title="Copy response"
                                     >
                                         {copied ? (
@@ -243,7 +243,7 @@ function MessageBubble({ message, index, isNew }) {
                                         whileHover={{ scale: 1.15 }}
                                         whileTap={{ scale: 0.9 }}
                                         onClick={() => handleFeedback('up')}
-                                        className={`p-1.5 rounded-lg transition-all ${feedback === 'up' ? 'text-green-400 bg-green-400/10' : 'text-[var(--text-muted)] hover:text-gray-900 hover:bg-[var(--bg-surface)]'}`}
+                                        className={`p-1.5 rounded-lg transition-all ${feedback === 'up' ? 'text-green-400 bg-green-400/10' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)]'}`}
                                         title="Helpful"
                                     >
                                         <ThumbsUp className="w-3.5 h-3.5" />
@@ -252,7 +252,7 @@ function MessageBubble({ message, index, isNew }) {
                                         whileHover={{ scale: 1.15 }}
                                         whileTap={{ scale: 0.9 }}
                                         onClick={() => handleFeedback('down')}
-                                        className={`p-1.5 rounded-lg transition-all ${feedback === 'down' ? 'text-red-400 bg-red-400/10' : 'text-[var(--text-muted)] hover:text-gray-900 hover:bg-[var(--bg-surface)]'}`}
+                                        className={`p-1.5 rounded-lg transition-all ${feedback === 'down' ? 'text-red-400 bg-red-400/10' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)]'}`}
                                         title="Not helpful"
                                     >
                                         <ThumbsDown className="w-3.5 h-3.5" />
