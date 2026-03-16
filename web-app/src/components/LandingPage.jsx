@@ -1,24 +1,47 @@
 import { motion } from 'framer-motion';
 import {
     ArrowRight, GraduationCap, CreditCard, Briefcase,
-    Shield, BookOpen, MessageSquare, Zap, Quote
+    Shield, BookOpen, MessageSquare, Quote,
+    Sparkles, Bot, BarChart3, Globe, Users, ChevronRight,
+    Cpu, Clock, Star
 } from 'lucide-react';
 
 const FEATURES = [
     {
+        icon: Bot,
+        title: 'AI-Powered Answers',
+        desc: 'Get instant, context-aware responses powered by advanced RAG technology and local LLMs.',
+        gradient: 'from-blue-500/20 to-cyan-500/20',
+    },
+    {
         icon: CreditCard,
         title: 'Fees & Scholarships',
         desc: 'Get detailed fee breakdowns and scholarship eligibility criteria across all programs.',
+        gradient: 'from-purple-500/20 to-blue-500/20',
     },
     {
         icon: Briefcase,
         title: 'Placement Guidance',
         desc: 'Learn about the placement process, top recruiters, and preparation strategies.',
+        gradient: 'from-emerald-500/20 to-teal-500/20',
     },
     {
         icon: Shield,
         title: 'Rules & Policies',
         desc: 'Access hostel rules, anti-ragging policies, exam schedules, and academic guidelines.',
+        gradient: 'from-orange-500/20 to-red-500/20',
+    },
+    {
+        icon: Globe,
+        title: 'Multilingual Support',
+        desc: 'Ask in English, Hindi, or Hinglish. KRMAI understands your language and responds clearly.',
+        gradient: 'from-pink-500/20 to-purple-500/20',
+    },
+    {
+        icon: Clock,
+        title: '24/7 Availability',
+        desc: 'No waiting for office hours. Get answers anytime, anywhere, on any device instantly.',
+        gradient: 'from-cyan-500/20 to-blue-500/20',
     },
 ];
 
@@ -42,40 +65,77 @@ const TESTIMONIALS = [
         quote: "KRMAI helped me understand the complete fee structure and scholarship eligibility within seconds. It saved me hours of searching through brochures.",
         name: "Priya Sharma",
         role: "BTech CSE, 2nd Year",
+        avatar: "PS",
     },
     {
         quote: "The placement guidance feature is incredible. I got all the details about the recruitment process and top recruiters in one conversation.",
         name: "Rahul Verma",
         role: "BTech AI & ML, 3rd Year",
+        avatar: "RV",
     },
     {
         quote: "As a hosteler, I always had questions about rules and timings. KRMAI gives me instant, accurate answers anytime I need them.",
         name: "Ananya Singh",
         role: "BTech Data Science, 1st Year",
+        avatar: "AS",
     },
+];
+
+const HOW_IT_WORKS = [
+    { step: '01', title: 'Ask a Question', desc: 'Type or speak your question in any language you prefer.' },
+    { step: '02', title: 'AI Retrieves Context', desc: 'RAG engine searches through verified university documents.' },
+    { step: '03', title: 'Get Accurate Answer', desc: 'Receive a clear, sourced response with citations.' },
 ];
 
 
 function LandingPage({ onEnterChat }) {
     return (
-        <div className="min-h-screen bg-warm-gradient text-gray-900 overflow-y-auto">
+        <div className="min-h-screen bg-[var(--landing-bg)] text-[var(--text-primary)] overflow-y-auto">
+            {/* ── Decorative Background Orbs ── */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+                <motion.div
+                    animate={{ x: [0, 40, -20, 40, 0], y: [0, -30, 20, -10, 0], opacity: [0.15, 0.3, 0.15] }}
+                    transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full"
+                    style={{ background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)' }}
+                />
+                <motion.div
+                    animate={{ x: [0, -30, 20, -30, 0], y: [0, 20, -30, 10, 0], opacity: [0.1, 0.25, 0.1] }}
+                    transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full"
+                    style={{ background: 'radial-gradient(circle, rgba(96, 165, 250, 0.12) 0%, transparent 70%)' }}
+                />
+                <motion.div
+                    animate={{ opacity: [0.05, 0.12, 0.05] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute top-[40%] left-[50%] -translate-x-1/2 w-[800px] h-[400px] rounded-full"
+                    style={{ background: 'radial-gradient(ellipse, rgba(59, 130, 246, 0.08) 0%, transparent 60%)' }}
+                />
+                <div
+                    className="absolute inset-0 grid-overlay"
+                    style={{
+                        backgroundImage: `linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px)`,
+                        backgroundSize: '80px 80px',
+                        maskImage: 'radial-gradient(ellipse 70% 60% at 50% 30%, black 20%, transparent 70%)',
+                        WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 30%, black 20%, transparent 70%)',
+                    }}
+                />
+            </div>
+
             {/* ── Navbar ── */}
-            <nav className="fixed top-0 w-full z-50 px-6 md:px-12 py-5 bg-[#fafafa]/80 backdrop-blur-xl border-b border-[var(--border-subtle)]">
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <nav className="fixed top-0 w-full z-50 px-6 md:px-12 py-4">
+                <div className="max-w-7xl mx-auto flex items-center justify-between rounded-2xl px-6 py-3 bg-[var(--nav-bg)] backdrop-blur-xl border border-[var(--border-subtle)]">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-[#3b82f6] flex items-center justify-center shadow-[0_4px_12px_rgba(59, 130, 246,0.3)]">
-                            <GraduationCap className="w-5 h-5 text-gray-900" />
+                        <div className="w-10 h-10 rounded-xl bg-[#3b82f6] flex items-center justify-center shadow-[0_4px_12px_rgba(59,130,246,0.3)]">
+                            <GraduationCap className="w-5 h-5 text-white" />
                         </div>
-                        <span className="font-display text-2xl text-gray-900">KRMAI</span>
+                        <span className="font-display text-2xl text-[var(--text-heading)]">KRMAI</span>
                     </div>
 
                     <div className="hidden md:flex items-center gap-8">
-                        <a href="#features" className="text-sm font-medium text-[var(--text-secondary)] hover:text-gray-900 transition">
-                            Features
-                        </a>
-                        <a href="#about" className="text-sm font-medium text-[var(--text-secondary)] hover:text-gray-900 transition">
-                            About
-                        </a>
+                        <a href="#features" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition">Features</a>
+                        <a href="#how-it-works" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition">How it Works</a>
+                        <a href="#about" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition">About</a>
                     </div>
 
                     <motion.button
@@ -90,29 +150,18 @@ function LandingPage({ onEnterChat }) {
                 </div>
             </nav>
 
-            {/* ── Background Hand Animation ── */}
-            <div className="absolute top-20 right-[10%] lg:right-[20%] pointer-events-none opacity-[0.05] z-0 overflow-hidden">
-                <motion.div
-                    animate={{ rotate: [0, 15, -10, 15, -5, 10, 0, 0] }}
-                    transition={{ duration: 3, repeat: Infinity, repeatDelay: 1 }}
-                    className="text-[300px] md:text-[500px]"
-                >
-                    👋
-                </motion.div>
-            </div>
-
             {/* ── Hero Section ── */}
-            <section className="relative pt-24 md:pt-32 pb-16 px-6 md:px-12 z-10">
+            <section className="relative pt-32 md:pt-40 pb-20 px-6 md:px-12 z-10">
                 <div className="max-w-7xl mx-auto">
                     <div className="max-w-3xl">
-                        {/* Badge */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-50px" }}
                             className="inline-flex items-center gap-3 mb-8"
                         >
-                            <span className="px-3 py-1 rounded-full bg-[#3b82f6] text-xs font-semibold text-gray-900">
+                            <span className="px-3 py-1.5 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-xs font-semibold text-[var(--accent)] flex items-center gap-1.5">
+                                <Sparkles className="w-3.5 h-3.5" />
                                 AI-Powered
                             </span>
                             <span className="text-sm text-[var(--text-secondary)] flex items-center gap-1.5">
@@ -121,27 +170,18 @@ function LandingPage({ onEnterChat }) {
                             </span>
                         </motion.div>
 
-                        {/* Hero Heading */}
                         <motion.h1
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-50px" }}
                             transition={{ delay: 0.1, duration: 0.7 }}
-                            className="font-display text-5xl md:text-7xl lg:text-[5.5rem] leading-[1.05] mb-7"
+                            className="font-display text-5xl md:text-7xl lg:text-[5.5rem] leading-[1.05] mb-7 text-[var(--text-heading)]"
                         >
-                            <motion.div 
-                                className="inline-block origin-[70%_70%]"
-                                animate={{ rotate: [0, 14, -8, 14, -4, 10, 0, 0] }}
-                                transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1 }}
-                            >
-                                👋
-                            </motion.div>{' '}
                             Unlock Deeper Insights with{' '}
-                            <span className="text-[#3b82f6]">KR Mangalam</span>{' '}
+                            <span className="gradient-text">KR Mangalam</span>{' '}
                             University AI
                         </motion.h1>
 
-                        {/* Subtitle */}
                         <motion.p
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -154,45 +194,92 @@ function LandingPage({ onEnterChat }) {
                             KR Mangalam University student.
                         </motion.p>
 
-                        {/* CTA Button */}
-                        <motion.button
+                        <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.35 }}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={onEnterChat}
-                            className="btn-accent px-8 py-4 text-base flex items-center gap-3 shadow-[0_0_40px_rgba(59, 130, 246,0.25)]"
+                            className="flex flex-wrap items-center gap-4"
                         >
-                            Start Chatting
-                            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                                <ArrowRight className="w-4 h-4" />
-                            </div>
-                        </motion.button>
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={onEnterChat}
+                                className="btn-accent px-8 py-4 text-base flex items-center gap-3 shadow-[0_0_40px_rgba(59,130,246,0.25)]"
+                            >
+                                <MessageSquare className="w-5 h-5" />
+                                Start Chatting
+                                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                                    <ArrowRight className="w-4 h-4" />
+                                </div>
+                            </motion.button>
+                            <motion.a
+                                href="#features"
+                                whileHover={{ scale: 1.03 }}
+                                className="px-6 py-4 text-base font-medium rounded-full border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--accent)]/30 transition-all flex items-center gap-2 cursor-pointer"
+                            >
+                                Learn More
+                                <ChevronRight className="w-4 h-4" />
+                            </motion.a>
+                        </motion.div>
                     </div>
                 </div>
 
-                {/* Decorative gradient orb on right */}
-                <div
-                    className="hidden lg:block absolute top-1/2 right-0 -translate-y-1/2 w-[500px] h-[500px] pointer-events-none"
-                    style={{
-                        background: 'radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%)',
-                    }}
-                />
+                {/* Floating chat mockup */}
+                <motion.div
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5, duration: 0.8 }}
+                    className="hidden lg:block absolute top-1/2 right-12 -translate-y-1/2 w-[380px]"
+                >
+                    <motion.div
+                        animate={{ y: [0, -10, 0] }}
+                        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                        className="glass-card rounded-2xl p-6 space-y-4"
+                    >
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-8 h-8 rounded-lg bg-[var(--accent)] flex items-center justify-center">
+                                <Bot className="w-4 h-4 text-white" />
+                            </div>
+                            <div>
+                                <p className="text-sm font-semibold text-[var(--text-heading)]">KRMAI Assistant</p>
+                                <div className="flex items-center gap-1.5">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-green-400 status-pulse" />
+                                    <span className="text-[10px] text-green-400 font-medium">Online</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="space-y-3">
+                            <div className="bg-[var(--accent)] text-white px-4 py-2.5 rounded-2xl rounded-br-sm text-sm ml-auto max-w-[85%]">
+                                What's the BTech CSE fee structure?
+                            </div>
+                            <div className="bg-[var(--bg-surface)] px-4 py-2.5 rounded-2xl rounded-tl-sm text-sm text-[var(--text-secondary)] max-w-[90%]">
+                                The BTech CSE program has a semester fee of Rs 1,42,500 with additional one-time charges...
+                            </div>
+                        </div>
+                        <div className="flex gap-2 mt-3">
+                            {['Scholarships', 'Hostel', 'Placements'].map((t) => (
+                                <span key={t} className="px-3 py-1.5 rounded-full text-[11px] font-medium bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-muted)]">
+                                    {t}
+                                </span>
+                            ))}
+                        </div>
+                    </motion.div>
+                </motion.div>
             </section>
 
             {/* ── Stats Row ── */}
-            <section className="py-10 border-t border-b border-[var(--border-subtle)]">
+            <section className="py-12 border-t border-b border-[var(--border-subtle)] relative z-10">
                 <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-wrap justify-center gap-12 md:gap-20">
-                    {STATS.map((stat) => (
+                    {STATS.map((stat, i) => (
                         <motion.div
                             key={stat.label}
                             initial={{ opacity: 0, y: 15 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
+                            transition={{ delay: i * 0.1 }}
                             className="text-center"
                         >
-                            <div className="text-3xl md:text-4xl font-display text-[#3b82f6] mb-1">
+                            <div className="text-3xl md:text-4xl font-display gradient-text mb-1">
                                 {stat.value}{stat.suffix}
                             </div>
                             <div className="text-sm text-[var(--text-muted)] uppercase tracking-wider font-medium">
@@ -204,18 +291,15 @@ function LandingPage({ onEnterChat }) {
             </section>
 
             {/* ── Trust Bar ── */}
-            <section className="py-12">
+            <section className="py-12 relative z-10">
                 <div className="max-w-7xl mx-auto px-6 md:px-12 text-center">
                     <p className="text-sm text-[var(--text-muted)] uppercase tracking-widest mb-6 font-medium">
                         Covering all departments and university services
                     </p>
                     <div className="flex flex-wrap justify-center gap-3 md:gap-4">
                         {DEPARTMENTS.map((dept) => (
-                            <span
-                                key={dept}
-                                className="flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border-default)] bg-[var(--bg-elevated)]/40 text-sm text-[var(--text-secondary)] font-medium hover:border-[rgba(59, 130, 246,0.2)] transition"
-                            >
-                                <BookOpen className="w-3.5 h-3.5 text-[#3b82f6]/60" />
+                            <span key={dept} className="flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border-default)] bg-[var(--bg-elevated)] text-sm text-[var(--text-secondary)] font-medium hover:border-[var(--accent)]/30 hover:bg-[var(--bg-surface)] transition-all">
+                                <BookOpen className="w-3.5 h-3.5 text-[var(--accent)]" />
                                 {dept}
                             </span>
                         ))}
@@ -224,88 +308,82 @@ function LandingPage({ onEnterChat }) {
             </section>
 
             {/* ── Features Section ── */}
-            <section id="features" className="py-16 px-6 md:px-12">
+            <section id="features" className="py-20 px-6 md:px-12 relative z-10">
                 <div className="max-w-7xl mx-auto">
-                    <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="font-display text-4xl md:text-5xl text-center mb-4"
-                    >
-                        Everything You Need,{' '}
-                        <span className="text-[#3b82f6]">Instantly</span>
-                    </motion.h2>
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                        className="text-center text-[var(--text-secondary)] mb-14 max-w-xl mx-auto"
-                    >
-                        Get instant, AI-powered answers to all your university questions
-                    </motion.p>
+                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+                        <span className="px-3 py-1.5 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-xs font-semibold text-[var(--accent)] inline-flex items-center gap-1.5 mb-4">
+                            <Sparkles className="w-3.5 h-3.5" /> Features
+                        </span>
+                        <h2 className="font-display text-4xl md:text-5xl text-[var(--text-heading)] mb-4">
+                            Everything You Need, <span className="gradient-text">Instantly</span>
+                        </h2>
+                        <p className="text-[var(--text-secondary)] max-w-xl mx-auto">Get instant, AI-powered answers to all your university questions</p>
+                    </motion.div>
 
-                    <div className="grid md:grid-cols-3 gap-6">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {FEATURES.map((feat, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 25 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                                className="p-8 rounded-2xl border border-[var(--border-default)] bg-gradient-to-br from-white/90 to-[#f8f9fa]/80 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(59, 130, 246,0.15)] hover:-translate-y-2 hover:border-[#3b82f6]/40 transition-all duration-300 group"
-                            >
-                                <div className="w-12 h-12 rounded-xl bg-[rgba(59, 130, 246,0.1)] flex items-center justify-center mb-5 group-hover:bg-[rgba(59, 130, 246,0.2)] transition">
-                                    <feat.icon className="w-6 h-6 text-[#3b82f6]" />
+                            <motion.div key={i} initial={{ opacity: 0, y: 25 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="glass-card p-8 rounded-2xl group">
+                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feat.gradient} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform`}>
+                                    <feat.icon className="w-6 h-6 text-[var(--accent)]" />
                                 </div>
-                                <h3 className="text-xl font-semibold mb-3 text-gray-900">
-                                    {feat.title}
-                                </h3>
-                                <p className="text-[var(--text-secondary)] leading-relaxed text-[15px]">
-                                    {feat.desc}
-                                </p>
+                                <h3 className="text-xl font-semibold mb-3 text-[var(--text-heading)]">{feat.title}</h3>
+                                <p className="text-[var(--text-secondary)] leading-relaxed text-[15px]">{feat.desc}</p>
                             </motion.div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* ── Testimonials Section ── */}
-            <section className="py-16 px-6 md:px-12 border-t border-[var(--border-subtle)]">
+            {/* ── How it Works ── */}
+            <section id="how-it-works" className="py-20 px-6 md:px-12 border-t border-[var(--border-subtle)] relative z-10">
                 <div className="max-w-7xl mx-auto">
-                    <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="font-display text-4xl md:text-5xl text-center mb-4"
-                    >
-                        What Students <span className="text-[#3b82f6]">Say</span>
-                    </motion.h2>
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                        className="text-center text-[var(--text-secondary)] mb-14 max-w-xl mx-auto"
-                    >
-                        Real feedback from KR Mangalam University students
-                    </motion.p>
+                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+                        <span className="px-3 py-1.5 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-xs font-semibold text-[var(--accent)] inline-flex items-center gap-1.5 mb-4">
+                            <BarChart3 className="w-3.5 h-3.5" /> How it Works
+                        </span>
+                        <h2 className="font-display text-4xl md:text-5xl text-[var(--text-heading)] mb-4">
+                            Simple as <span className="gradient-text">1-2-3</span>
+                        </h2>
+                    </motion.div>
+
+                    <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                        {HOW_IT_WORKS.map((item, i) => (
+                            <motion.div key={i} initial={{ opacity: 0, y: 25 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }} className="text-center">
+                                <div className="w-16 h-16 rounded-2xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 flex items-center justify-center mx-auto mb-5">
+                                    <span className="text-2xl font-display gradient-text">{item.step}</span>
+                                </div>
+                                <h3 className="text-lg font-semibold text-[var(--text-heading)] mb-2">{item.title}</h3>
+                                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{item.desc}</p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ── Testimonials ── */}
+            <section className="py-20 px-6 md:px-12 border-t border-[var(--border-subtle)] relative z-10">
+                <div className="max-w-7xl mx-auto">
+                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+                        <span className="px-3 py-1.5 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-xs font-semibold text-[var(--accent)] inline-flex items-center gap-1.5 mb-4">
+                            <Users className="w-3.5 h-3.5" /> Testimonials
+                        </span>
+                        <h2 className="font-display text-4xl md:text-5xl text-[var(--text-heading)] mb-4">What Students <span className="gradient-text">Say</span></h2>
+                        <p className="text-[var(--text-secondary)] max-w-xl mx-auto">Real feedback from KR Mangalam University students</p>
+                    </motion.div>
 
                     <div className="grid md:grid-cols-3 gap-6">
                         {TESTIMONIALS.map((t, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 25 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                                className="p-8 rounded-2xl border border-[var(--border-default)] bg-gradient-to-br from-white/90 to-[#f8f9fa]/80 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(59, 130, 246,0.15)] hover:-translate-y-2 hover:border-[#3b82f6]/40 transition-all duration-300 relative"
-                            >
-                                <Quote className="w-8 h-8 text-[#3b82f6]/20 mb-4" />
-                                <p className="text-[var(--text-secondary)] leading-relaxed text-[15px] mb-6">
-                                    "{t.quote}"
-                                </p>
-                                <div>
-                                    <p className="text-gray-900 font-semibold text-sm">{t.name}</p>
-                                    <p className="text-[var(--text-muted)] text-xs mt-0.5">{t.role}</p>
+                            <motion.div key={i} initial={{ opacity: 0, y: 25 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="glass-card p-8 rounded-2xl relative">
+                                <Quote className="w-8 h-8 text-[var(--accent)]/20 mb-4" />
+                                <p className="text-[var(--text-secondary)] leading-relaxed text-[15px] mb-6">"{t.quote}"</p>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 flex items-center justify-center">
+                                        <span className="text-xs font-bold text-[var(--accent)]">{t.avatar}</span>
+                                    </div>
+                                    <div>
+                                        <p className="text-[var(--text-heading)] font-semibold text-sm">{t.name}</p>
+                                        <p className="text-[var(--text-muted)] text-xs mt-0.5">{t.role}</p>
+                                    </div>
                                 </div>
                             </motion.div>
                         ))}
@@ -314,50 +392,43 @@ function LandingPage({ onEnterChat }) {
             </section>
 
             {/* ── About Section ── */}
-            <section id="about" className="py-16 px-6 md:px-12 border-t border-[var(--border-subtle)]">
+            <section id="about" className="py-20 px-6 md:px-12 border-t border-[var(--border-subtle)] relative z-10">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
                     <div className="flex-1">
-                        <h2 className="font-display text-4xl md:text-5xl mb-5">
-                            Built for{' '}
-                            <span className="text-[#3b82f6]">Students</span>
+                        <span className="px-3 py-1.5 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-xs font-semibold text-[var(--accent)] inline-flex items-center gap-1.5 mb-4">
+                            <Star className="w-3.5 h-3.5" /> About
+                        </span>
+                        <h2 className="font-display text-4xl md:text-5xl mb-5 text-[var(--text-heading)]">
+                            Built for <span className="gradient-text">Students</span>
                         </h2>
                         <p className="text-[var(--text-secondary)] leading-relaxed mb-6 text-[16px]">
                             KRMAI is designed specifically for KR Mangalam University students.
                             It understands university policies, fee structures, placement procedures,
                             and campus information — giving you accurate, contextual answers instantly.
                         </p>
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={onEnterChat}
-                            className="btn-accent px-6 py-3 text-sm flex items-center gap-2"
-                        >
-                            <MessageSquare className="w-4 h-4" />
-                            Start a Conversation
+                        <p className="text-[var(--text-secondary)] leading-relaxed mb-8 text-[15px]">
+                            Built with cutting-edge RAG (Retrieval-Augmented Generation) technology,
+                            KRMAI ensures every answer is grounded in verified university documents,
+                            so you can trust the information you receive.
+                        </p>
+                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={onEnterChat} className="btn-accent px-6 py-3 text-sm flex items-center gap-2">
+                            <MessageSquare className="w-4 h-4" /> Start a Conversation
                         </motion.button>
                     </div>
                     <div className="flex-1 flex justify-center">
                         <div className="grid grid-cols-2 gap-4 max-w-sm">
                             {[
-                                { icon: GraduationCap, label: 'Academics' },
-                                { icon: Briefcase, label: 'Placements' },
-                                { icon: CreditCard, label: 'Fees' },
-                                { icon: Zap, label: 'Instant AI' },
+                                { icon: GraduationCap, label: 'Academics', stat: '100+ Programs' },
+                                { icon: Briefcase, label: 'Placements', stat: '56.6 LPA' },
+                                { icon: CreditCard, label: 'Fees', stat: 'Transparent' },
+                                { icon: Cpu, label: 'Instant AI', stat: 'RAG Powered' },
                             ].map((item, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    whileInView={{ opacity: 1, scale: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: i * 0.1 }}
-                                    className="flex flex-col items-center gap-3 p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-elevated)]/40"
-                                >
-                                    <div className="w-12 h-12 rounded-xl bg-[rgba(59, 130, 246,0.1)] flex items-center justify-center">
-                                        <item.icon className="w-6 h-6 text-[#3b82f6]" />
+                                <motion.div key={i} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="glass-card flex flex-col items-center gap-3 p-6 rounded-2xl">
+                                    <div className="w-12 h-12 rounded-xl bg-[var(--accent)]/10 flex items-center justify-center">
+                                        <item.icon className="w-6 h-6 text-[var(--accent)]" />
                                     </div>
-                                    <span className="text-sm font-medium text-[var(--text-secondary)]">
-                                        {item.label}
-                                    </span>
+                                    <span className="text-sm font-semibold text-[var(--text-heading)]">{item.label}</span>
+                                    <span className="text-xs text-[var(--text-muted)]">{item.stat}</span>
                                 </motion.div>
                             ))}
                         </div>
@@ -366,36 +437,28 @@ function LandingPage({ onEnterChat }) {
             </section>
 
             {/* ── CTA Section ── */}
-            <section className="py-16 px-6 md:px-12">
+            <section className="py-20 px-6 md:px-12 relative z-10">
                 <div className="max-w-3xl mx-auto text-center">
-                    <h2 className="font-display text-4xl md:text-5xl mb-5">
-                        Ready to Get <span className="text-[#3b82f6]">Started</span>?
-                    </h2>
-                    <p className="text-[var(--text-secondary)] mb-8 text-lg">
-                        Start chatting with KRMAI and get instant answers to all your university questions.
-                    </p>
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={onEnterChat}
-                        className="btn-accent px-10 py-4 text-lg flex items-center gap-3 mx-auto shadow-[0_0_40px_rgba(59, 130, 246,0.25)]"
-                    >
-                        Start Chatting Now
-                        <ArrowRight className="w-5 h-5" />
-                    </motion.button>
+                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-card rounded-3xl p-12 md:p-16">
+                        <h2 className="font-display text-4xl md:text-5xl mb-5 text-[var(--text-heading)]">
+                            Ready to Get <span className="gradient-text">Started</span>?
+                        </h2>
+                        <p className="text-[var(--text-secondary)] mb-8 text-lg">Start chatting with KRMAI and get instant answers to all your university questions.</p>
+                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={onEnterChat} className="btn-accent px-10 py-4 text-lg flex items-center gap-3 mx-auto shadow-[0_0_40px_rgba(59,130,246,0.25)]">
+                            Start Chatting Now <ArrowRight className="w-5 h-5" />
+                        </motion.button>
+                    </motion.div>
                 </div>
             </section>
 
             {/* ── Footer ── */}
-            <footer className="py-8 px-6 md:px-12 border-t border-[var(--border-subtle)]">
+            <footer className="py-8 px-6 md:px-12 border-t border-[var(--border-subtle)] relative z-10">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
-                        <GraduationCap className="w-5 h-5 text-[#3b82f6]" />
-                        <span className="font-display text-lg">KRMAI</span>
+                        <GraduationCap className="w-5 h-5 text-[var(--accent)]" />
+                        <span className="font-display text-lg text-[var(--text-heading)]">KRMAI</span>
                     </div>
-                    <p className="text-sm text-[var(--text-muted)]">
-                        KR Mangalam University AI Assistant
-                    </p>
+                    <p className="text-sm text-[var(--text-muted)]">KR Mangalam University AI Assistant — Built with RAG + Ollama</p>
                 </div>
             </footer>
         </div>

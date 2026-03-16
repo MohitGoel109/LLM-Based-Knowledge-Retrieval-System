@@ -93,7 +93,7 @@ function App() {
     }, [activeSessionId]);
 
     return (
-        <div className="h-screen w-full font-sans overflow-hidden antialiased bg-[#fafafa] text-gray-900">
+        <div className="h-screen w-full font-sans overflow-hidden antialiased bg-[var(--bg-base)] text-gray-900">
             <BackgroundEffect />
 
             <AnimatePresence mode="wait">

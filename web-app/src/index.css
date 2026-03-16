@@ -1,30 +1,69 @@
 @import "tailwindcss";
 
-/* ─── Single Dark+Orange Theme ────────────────────── */
-:root {
-  --bg-base: #000000;
-  --bg-elevated: #052e16;
-  --bg-surface: #064e3b;
-  --bg-hover: #065f46;
+/* ─── Dark Theme (Default) ────────────────────── */
+:root,
+[data-theme="dark"] {
+  --bg-base: #0a0a0f;
+  --bg-elevated: #12121a;
+  --bg-surface: #1a1a26;
+  --bg-hover: #222233;
+  --bg-card: #151520;
 
   --accent: #3b82f6;
   --accent-hover: #60a5fa;
   --accent-glow: rgba(59, 130, 246, 0.4);
   --accent-subtle: rgba(59, 130, 246, 0.08);
 
-  --text-primary: #ffffff;
-  --text-secondary: #a8a29e;
-  --text-muted: #6b6560;
+  --text-primary: #f0f0f5;
+  --text-secondary: #a0a0b0;
+  --text-muted: #5a5a70;
+  --text-heading: #ffffff;
 
   --border-subtle: rgba(255, 255, 255, 0.06);
   --border-default: rgba(255, 255, 255, 0.10);
 
-  --glass-bg: rgba(0, 0, 0, 0.45);
+  --glass-bg: rgba(10, 10, 20, 0.6);
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+
+  --landing-bg: #0a0a0f;
+  --landing-card-bg: rgba(21, 21, 32, 0.8);
+  --landing-card-border: rgba(255, 255, 255, 0.08);
+  --nav-bg: rgba(10, 10, 15, 0.8);
 }
 
-/* ─── Base ─────────────────────────────────────────── */
+/* ─── Light Theme ─────────────────────────────── */
+[data-theme="light"] {
+  --bg-base: #f8f9fc;
+  --bg-elevated: #ffffff;
+  --bg-surface: #f0f1f5;
+  --bg-hover: #e8e9f0;
+  --bg-card: #ffffff;
+
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-glow: rgba(59, 130, 246, 0.25);
+  --accent-subtle: rgba(59, 130, 246, 0.06);
+
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a6a;
+  --text-muted: #8a8aa0;
+  --text-heading: #0f0f1a;
+
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-default: rgba(0, 0, 0, 0.10);
+
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+
+  --landing-bg: #f8f9fc;
+  --landing-card-bg: rgba(255, 255, 255, 0.9);
+  --landing-card-border: rgba(0, 0, 0, 0.08);
+  --nav-bg: rgba(248, 249, 252, 0.85);
+}
+
+/* ─── Base ─────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
 }
@@ -33,7 +72,7 @@ html {
 *::before,
 *::after {
   scrollbar-width: thin;
-  scrollbar-color: rgba(168, 162, 158, 0.3) transparent;
+  scrollbar-color: rgba(128, 128, 160, 0.3) transparent;
 }
 
 body {
@@ -57,20 +96,20 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(168, 162, 158, 0.3);
+  background: rgba(128, 128, 160, 0.3);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(168, 162, 158, 0.5);
+  background: rgba(128, 128, 160, 0.5);
 }
 
-/* ─── Typography ──────────────────────────────────── */
+/* ─── Typography ─────────────────────────────── */
 .font-display {
   font-family: 'DM Serif Display', 'Georgia', serif;
 }
 
-/* ─── Warm Background Gradient ────────────────────── */
+/* ─── Background Gradient ────────────────────── */
 .bg-warm-gradient {
   background:
     radial-gradient(ellipse 60% 50% at 15% 10%, rgba(59, 130, 246, 0.06) 0%, transparent 60%),
@@ -78,7 +117,7 @@ body {
     var(--bg-base);
 }
 
-/* ─── Frosted Glass (macOS Style) ─────────────────── */
+/* ─── Frosted Glass ──────────────────────────── */
 .ultra-glass {
   background: var(--glass-bg);
   backdrop-filter: blur(24px) saturate(180%);
@@ -86,38 +125,90 @@ body {
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
 }
+
 .macos-glass {
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--glass-bg);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
 }
 
-/* ─── Chat Bubbles ────────────────────────────────── */
+/* ─── Glass Card ─────────────────────────────── */
+.glass-card {
+  background: var(--landing-card-bg);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid var(--landing-card-border);
+  box-shadow: var(--glass-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+/* ─── Chat Bubbles ───────────────────────────── */
 .user-bubble {
   background: var(--accent);
   color: white;
   box-shadow: 0 4px 16px rgba(59, 130, 246, 0.25);
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.user-bubble:hover {
+  transform: scale(1.005) translateY(-2px);
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.35), 0 0 24px rgba(59, 130, 246, 0.15);
 }
 
 .bot-bubble {
   background: var(--bg-elevated);
   border: 1px solid var(--border-default);
   border-left: 3px solid rgba(59, 130, 246, 0.4);
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
   color: var(--text-secondary);
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* ─── Input Glow on Focus ─────────────────────────── */
+.bot-bubble:hover {
+  transform: scale(1.005) translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 24px rgba(59, 130, 246, 0.12);
+}
+
+/* ─── Input Glow on Focus ────────────────────── */
 .input-glow {
   transition: box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s ease;
 }
 
 .input-glow:focus-within {
   border-color: rgba(59, 130, 246, 0.35) !important;
+  animation: typingPulse 2s ease-in-out infinite;
 }
 
-/* ─── Send Button Pop Keyframes ───────────────────── */
+/* ─── Accent Button ──────────────────────────── */
+.btn-accent {
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+  border-radius: 9999px;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-accent:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 0 24px var(--accent-glow);
+}
+
+/* ─── Selection ──────────────────────────────── */
+::selection {
+  background: var(--accent-glow);
+  color: white;
+}
+
+/* ─── Keyframe Animations ────────────────────── */
 @keyframes sendPop {
   0% {
     transform: scale(1);
@@ -144,7 +235,6 @@ body {
   animation: sendPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* ─── Smiley-to-Dots Thinking Animation ───────────── */
 @keyframes thinkPulse {
 
   0%,
@@ -157,8 +247,20 @@ body {
   }
 }
 
+@keyframes thinkGlow {
+
+  0%,
+  100% {
+    text-shadow: 0 0 4px rgba(59, 130, 246, 0.3);
+  }
+
+  50% {
+    text-shadow: 0 0 12px rgba(59, 130, 246, 0.7), 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+}
+
 .thinking-loop span {
-  animation: thinkPulse 1.6s ease-in-out infinite;
+  animation: thinkPulse 1.6s ease-in-out infinite, thinkGlow 1.6s ease-in-out infinite;
 }
 
 .thinking-loop span:nth-child(2) {
@@ -173,29 +275,6 @@ body {
   animation-delay: 0.45s;
 }
 
-/* ─── Accent Button ───────────────────────────────── */
-.btn-accent {
-  background: var(--accent);
-  color: white;
-  font-weight: 600;
-  border-radius: 9999px;
-  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
-  cursor: pointer;
-  border: none;
-}
-
-.btn-accent:hover {
-  background: var(--accent-hover);
-  box-shadow: 0 0 24px var(--accent-glow);
-}
-
-/* ─── Selection ───────────────────────────────────── */
-::selection {
-  background: var(--accent-glow);
-  color: white;
-}
-
-/* ─── Mic Pulse Animation (Voice Input) ──────────── */
 @keyframes micPulse {
   0% {
     box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
@@ -214,34 +293,6 @@ body {
   animation: micPulse 1.5s ease-in-out infinite;
 }
 
-/* ─── Bot Bubble Hover ───────────────────────────── */
-.bot-bubble {
-  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.bot-bubble:hover {
-  transform: scale(1.005) translateY(-2px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 24px rgba(59, 130, 246, 0.12), 0 0 48px rgba(59, 130, 246, 0.06);
-}
-
-/* ─── Thinking Glow ──────────────────────────────── */
-@keyframes thinkGlow {
-
-  0%,
-  100% {
-    text-shadow: 0 0 4px rgba(59, 130, 246, 0.3);
-  }
-
-  50% {
-    text-shadow: 0 0 12px rgba(59, 130, 246, 0.7), 0 0 20px rgba(59, 130, 246, 0.3);
-  }
-}
-
-.thinking-loop span {
-  animation: thinkPulse 1.6s ease-in-out infinite, thinkGlow 1.6s ease-in-out infinite;
-}
-
-/* ─── Input Typing Pulse ─────────────────────────── */
 @keyframes typingPulse {
 
   0%,
@@ -254,12 +305,6 @@ body {
   }
 }
 
-.input-glow:focus-within {
-  animation: typingPulse 2s ease-in-out infinite;
-  border-color: rgba(59, 130, 246, 0.35) !important;
-}
-
-/* ─── Scroll-to-bottom FAB ───────────────────────── */
 @keyframes scrollBounce {
 
   0%,
@@ -276,7 +321,6 @@ body {
   animation: scrollBounce 1.5s ease-in-out infinite;
 }
 
-/* ─── Message Reveal Animation ───────────────────── */
 @keyframes messageReveal {
   0% {
     opacity: 0;
@@ -295,7 +339,6 @@ body {
   animation: messageReveal 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
-/* ─── Bot Bubble Glow (one-time pulse) ───────────── */
 @keyframes botBubbleGlow {
   0% {
     box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25), 0 0 0 rgba(59, 130, 246, 0);
@@ -314,9 +357,6 @@ body {
   animation: botBubbleGlow 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
-/* ─── Aurora Band Animation Removed ────────────────── */
-
-/* ─── Grid Line Drift ────────────────────────────── */
 @keyframes gridLineDrift {
   0% {
     transform: translateX(-30%) translateY(-10%) rotate(var(--line-angle));
@@ -341,7 +381,6 @@ body {
   animation: gridLineDrift var(--line-duration) linear infinite;
 }
 
-/* ─── Welcome Logo Float ─────────────────────────── */
 @keyframes welcomeFloat {
 
   0%,
@@ -358,7 +397,6 @@ body {
   animation: welcomeFloat 3s ease-in-out infinite;
 }
 
-/* ─── Typing Indicator Fade ──────────────────────── */
 @keyframes typingFade {
 
   0%,
@@ -375,7 +413,6 @@ body {
   animation: typingFade 1.2s ease-in-out infinite;
 }
 
-/* ─── Shimmer / Gradient Sweep (loading states) ──── */
 @keyframes shimmerSweep {
   0% {
     background-position: -200% 0;
@@ -387,17 +424,11 @@ body {
 }
 
 .shimmer-effect {
-  background: linear-gradient(90deg,
-      transparent 0%,
-      rgba(59, 130, 246, 0.06) 25%,
-      rgba(59, 130, 246, 0.12) 50%,
-      rgba(59, 130, 246, 0.06) 75%,
-      transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.06) 25%, rgba(59, 130, 246, 0.12) 50%, rgba(59, 130, 246, 0.06) 75%, transparent 100%);
   background-size: 200% 100%;
   animation: shimmerSweep 2.5s ease-in-out infinite;
 }
 
-/* ─── Bot Message Shimmer (streaming state) ──────── */
 @keyframes botShimmer {
   0% {
     background-position: -300% 0;
@@ -413,19 +444,12 @@ body {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(90deg,
-      transparent 0%,
-      rgba(59, 130, 246, 0.04) 20%,
-      rgba(96, 165, 250, 0.08) 50%,
-      rgba(59, 130, 246, 0.04) 80%,
-      transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.04) 20%, rgba(96, 165, 250, 0.08) 50%, rgba(59, 130, 246, 0.04) 80%, transparent 100%);
   background-size: 300% 100%;
   animation: botShimmer 3s ease-in-out infinite;
   pointer-events: none;
 }
 
-/* ─── Particle Burst Animation Removed ─────────────── */
-/* ─── Ripple Effect ─────────────────────────────────  */
 @keyframes rippleExpand {
   0% {
     transform: scale(0.3);
@@ -451,7 +475,6 @@ body {
   z-index: 0;
 }
 
-/* ─── Enhanced Glow Pulse (input typing) ─────────── */
 @keyframes typingGlow {
 
   0%,
@@ -469,7 +492,6 @@ body {
   border-color: rgba(59, 130, 246, 0.2) !important;
 }
 
-/* ─── Grid Overlay Fade-in ──────────────────────────  */
 @keyframes gridFadeIn {
   0% {
     opacity: 0;
@@ -484,18 +506,6 @@ body {
   animation: gridFadeIn 2s ease-out forwards;
 }
 
-/* ─── Shooting Star & Orb Rotation Removed ─────────── */
-/* ─── Message Hover Glow ────────────────────────────  */
-.user-bubble {
-  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.user-bubble:hover {
-  transform: scale(1.005) translateY(-2px);
-  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.35), 0 0 24px rgba(59, 130, 246, 0.15);
-}
-
-/* ─── Source Badge Expand ───────────────────────────  */
 @keyframes badgeExpand {
   0% {
     opacity: 0;
@@ -516,13 +526,13 @@ body {
   animation: badgeExpand 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-/* ─── Prose ────────────────────────────────────────── */
+/* ─── Prose ───────────────────────────────────── */
 .prose table {
   width: 100%;
   table-layout: auto;
 }
 
-/* ─── Voice Captured Flash (text finalized from mic) ─ */
+/* ─── Voice Captured Flash ────────────────────── */
 @keyframes voiceCapturedFlash {
   0% {
     box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5), 0 0 20px rgba(59, 130, 246, 0.3);
@@ -540,4 +550,64 @@ body {
 .voice-captured {
   animation: voiceCapturedFlash 0.8s ease-out !important;
   border-color: rgba(59, 130, 246, 0.45) !important;
+}
+
+/* ─── Floating Glass Orbs (Landing) ──────────── */
+@keyframes floatOrb {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate(30px, -20px) scale(1.05);
+  }
+
+  50% {
+    transform: translate(-10px, 20px) scale(0.95);
+  }
+
+  75% {
+    transform: translate(-30px, -10px) scale(1.02);
+  }
+}
+
+@keyframes pulseGlow {
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* ─── Gradient Text ──────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa, #93c5fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Status Pulse ───────────────────────────── */
+@keyframes statusPulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+}
+
+.status-pulse {
+  animation: statusPulse 2s ease-in-out infinite;
 }

@@ -322,7 +322,7 @@ function ChatInterface({
                                     initial={{ opacity: 0, y: 15 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.15, duration: 0.5 }}
-                                    className="text-2xl md:text-3xl font-medium text-center text-gray-900 mb-10"
+                                    className="text-2xl md:text-3xl font-medium text-center text-white mb-10"
                                 >
                                     What would you like to know?
                                 </motion.h1>
@@ -396,7 +396,7 @@ function ChatInterface({
                 </main>
 
                 {/* Bottom Input Area */}
-                <div className="absolute bottom-0 inset-x-0 p-4 md:px-10 md:pb-6 pt-16 pointer-events-none z-30 bg-gradient-to-t from-[#fafafa] via-[#fafafa]/80 to-transparent">
+                <div className="absolute bottom-0 inset-x-0 p-4 md:px-10 md:pb-6 pt-16 pointer-events-none z-30 bg-gradient-to-t from-[var(--bg-base)] via-[var(--bg-base)]/80 to-transparent">
                     <div className="max-w-4xl mx-auto w-full pointer-events-auto flex flex-col gap-2">
                         {/* Interim Voice Transcript Preview */}
                         <AnimatePresence>
@@ -436,8 +436,8 @@ function ChatInterface({
                                 onClick={cycleVoiceLang}
                                 disabled={isListening}
                                 className={`flex items-center gap-1 px-2 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider shrink-0 mb-1 transition-all ${isListening
-                                        ? 'opacity-40 cursor-not-allowed text-[var(--text-muted)]'
-                                        : 'text-[var(--text-secondary)] hover:text-[#3b82f6] hover:bg-[var(--bg-surface)]'
+                                    ? 'opacity-40 cursor-not-allowed text-[var(--text-muted)]'
+                                    : 'text-[var(--text-secondary)] hover:text-[#3b82f6] hover:bg-[var(--bg-surface)]'
                                     }`}
                                 title={`Voice language: ${VOICE_LANG_LABELS[voiceLang]}. Click to change.`}
                             >
@@ -477,7 +477,7 @@ function ChatInterface({
                                         </>
                                     )}
                                 </AnimatePresence>
-                                <button
+                                <motion.button
                                     onClick={toggleListening}
                                     whileTap={{ scale: 0.85 }}
                                     className={`relative z-10 p-2.5 rounded-full transition-all ${isListening
@@ -490,7 +490,7 @@ function ChatInterface({
                                         ? <MicOff className="w-5 h-5" strokeWidth={2.5} />
                                         : <Mic className="w-5 h-5" strokeWidth={2.5} />
                                     }
-                                </button>
+                                </motion.button>
                             </div>
 
                             <motion.button
