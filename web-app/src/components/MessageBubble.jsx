@@ -18,39 +18,27 @@ function timeAgo(timestamp) {
     return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-/* Directional entrance variants — with slight rotation */
+/* Directional entrance variants — smoothed */
 const userBubbleVariants = {
-    hidden: { opacity: 0, x: 60, scale: 0.92, rotate: 2, filter: 'blur(8px)' },
+    hidden: { opacity: 0, scale: 0.96 },
     visible: {
         opacity: 1,
-        x: 0,
         scale: 1,
-        rotate: 0,
-        filter: 'blur(0px)',
         transition: {
-            duration: 0.55,
-            type: 'spring',
-            bounce: 0.25,
-            filter: { duration: 0.4 },
-            rotate: { duration: 0.5, ease: 'easeOut' },
+            duration: 0.2,
+            ease: 'easeOut'
         },
     },
 };
 
 const botBubbleVariants = {
-    hidden: { opacity: 0, x: -60, scale: 0.92, rotate: -2, filter: 'blur(8px)' },
+    hidden: { opacity: 0, scale: 0.96 },
     visible: {
         opacity: 1,
-        x: 0,
         scale: 1,
-        rotate: 0,
-        filter: 'blur(0px)',
         transition: {
-            duration: 0.55,
-            type: 'spring',
-            bounce: 0.25,
-            filter: { duration: 0.4 },
-            rotate: { duration: 0.5, ease: 'easeOut' },
+            duration: 0.2,
+            ease: 'easeOut'
         },
     },
 };
@@ -151,7 +139,7 @@ function MessageBubble({ message, index, isNew }) {
                     transition={{ duration: 0.25, ease: 'easeOut' }}
                     className="max-w-[90%] md:max-w-[70%] relative"
                 >
-                    <div className="px-7 py-5 rounded-3xl rounded-br-sm text-[16px] font-medium leading-relaxed user-bubble relative overflow-hidden">
+                    <div className="px-5 py-3.5 rounded-3xl rounded-br-sm text-[16px] font-medium leading-relaxed user-bubble relative overflow-hidden">
                         {message.content}
                         {showRipple && <div className="message-ripple" />}
                     </div>
@@ -175,10 +163,10 @@ function MessageBubble({ message, index, isNew }) {
                         <motion.div
                             whileHover={{
                                 y: -3,
-                                boxShadow: '0 8px 32px rgba(255, 77, 0, 0.18), 0 0 0 1px rgba(255, 77, 0, 0.12)',
+                                boxShadow: '0 8px 32px rgba(59, 130, 246, 0.18), 0 0 0 1px rgba(59, 130, 246, 0.12)',
                             }}
                             transition={{ duration: 0.25, ease: 'easeOut' }}
-                            className={`rounded-3xl rounded-tl-sm px-7 py-6 bot-bubble relative overflow-hidden ${message.isError ? 'border-red-500/50' : ''} ${showShimmer ? 'bot-bubble-shimmer' : ''}`}
+                            className={`rounded-3xl rounded-tl-sm px-5 py-4 bot-bubble relative overflow-hidden ${message.isError ? 'border-red-500/50' : ''} ${showShimmer ? 'bot-bubble-shimmer' : ''}`}
                         >
                             {/* Shimmer overlay for streaming appearance */}
                             {showShimmer && (
@@ -242,7 +230,7 @@ function MessageBubble({ message, index, isNew }) {
                                         whileHover={{ scale: 1.15 }}
                                         whileTap={{ scale: 0.9 }}
                                         onClick={handleCopy}
-                                        className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-white hover:bg-[var(--bg-surface)] transition-all"
+                                        className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-gray-900 hover:bg-[var(--bg-surface)] transition-all"
                                         title="Copy response"
                                     >
                                         {copied ? (
@@ -255,7 +243,7 @@ function MessageBubble({ message, index, isNew }) {
                                         whileHover={{ scale: 1.15 }}
                                         whileTap={{ scale: 0.9 }}
                                         onClick={() => handleFeedback('up')}
-                                        className={`p-1.5 rounded-lg transition-all ${feedback === 'up' ? 'text-green-400 bg-green-400/10' : 'text-[var(--text-muted)] hover:text-white hover:bg-[var(--bg-surface)]'}`}
+                                        className={`p-1.5 rounded-lg transition-all ${feedback === 'up' ? 'text-green-400 bg-green-400/10' : 'text-[var(--text-muted)] hover:text-gray-900 hover:bg-[var(--bg-surface)]'}`}
                                         title="Helpful"
                                     >
                                         <ThumbsUp className="w-3.5 h-3.5" />
@@ -264,7 +252,7 @@ function MessageBubble({ message, index, isNew }) {
                                         whileHover={{ scale: 1.15 }}
                                         whileTap={{ scale: 0.9 }}
                                         onClick={() => handleFeedback('down')}
-                                        className={`p-1.5 rounded-lg transition-all ${feedback === 'down' ? 'text-red-400 bg-red-400/10' : 'text-[var(--text-muted)] hover:text-white hover:bg-[var(--bg-surface)]'}`}
+                                        className={`p-1.5 rounded-lg transition-all ${feedback === 'down' ? 'text-red-400 bg-red-400/10' : 'text-[var(--text-muted)] hover:text-gray-900 hover:bg-[var(--bg-surface)]'}`}
                                         title="Not helpful"
                                     >
                                         <ThumbsDown className="w-3.5 h-3.5" />

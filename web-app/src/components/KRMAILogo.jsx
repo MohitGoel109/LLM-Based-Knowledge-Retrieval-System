@@ -7,8 +7,8 @@ const KRMAILogo = ({ size = 48, animate = false }) => (
         style={{
             width: size,
             height: size,
-            background: '#ff4d00',
-            boxShadow: '0 4px 16px rgba(255, 77, 0, 0.3)',
+            background: '#3b82f6',
+            boxShadow: '0 4px 16px rgba(59, 130, 246, 0.3)',
             border: '1px solid rgba(255, 255, 255, 0.15)',
         }}
         animate={animate ? { scale: [1, 1.05, 1] } : {}}
@@ -16,7 +16,7 @@ const KRMAILogo = ({ size = 48, animate = false }) => (
         whileHover={{ scale: 1.05 }}
     >
         <GraduationCap
-            className="text-white"
+            className="text-gray-900"
             style={{ width: size * 0.55, height: size * 0.55 }}
         />
     </motion.div>

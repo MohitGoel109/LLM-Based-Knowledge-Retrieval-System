@@ -93,7 +93,7 @@ function App() {
     }, [activeSessionId]);
 
     return (
-        <div className="h-screen w-full font-sans overflow-hidden antialiased bg-[var(--bg-base)]">
+        <div className="h-screen w-full font-sans overflow-hidden antialiased bg-[#fafafa] text-gray-900">
             <BackgroundEffect />
 
             <AnimatePresence mode="wait">
@@ -104,18 +104,18 @@ function App() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.4 }}
-                        className="h-full overflow-y-auto"
+                        className="h-full w-full overflow-y-auto relative z-10"
                     >
                         <LandingPage onEnterChat={enterChat} />
                     </motion.div>
                 ) : (
                     <motion.div
                         key="chat"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.4 }}
-                        className="h-full"
+                        className="w-full h-full relative z-10"
                     >
                         <ChatInterface
                             apiUrl={API_URL}

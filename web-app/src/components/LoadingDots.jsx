@@ -18,14 +18,14 @@ const LoadingDots = () => (
                     ease: 'easeInOut',
                 }}
                 style={{
-                    background: '#ff4d00',
-                    boxShadow: '0 0 8px rgba(255, 77, 0, 0.4)',
+                    background: '#3b82f6',
+                    boxShadow: '0 0 8px rgba(59, 130, 246, 0.4)',
                 }}
             />
         ))}
         <span
             className="ml-3 text-[14px] font-bold tracking-widest uppercase"
-            style={{ color: '#ff4d00' }}
+            style={{ color: '#3b82f6' }}
         >
             Processing
         </span>

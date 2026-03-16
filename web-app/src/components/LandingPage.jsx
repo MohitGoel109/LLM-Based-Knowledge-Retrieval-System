@@ -58,22 +58,22 @@ const TESTIMONIALS = [
 
 function LandingPage({ onEnterChat }) {
     return (
-        <div className="min-h-screen bg-warm-gradient text-white overflow-y-auto">
+        <div className="min-h-screen bg-warm-gradient text-gray-900 overflow-y-auto">
             {/* ── Navbar ── */}
-            <nav className="fixed top-0 w-full z-50 px-6 md:px-12 py-5 bg-[#0d0a08]/80 backdrop-blur-xl border-b border-[var(--border-subtle)]">
+            <nav className="fixed top-0 w-full z-50 px-6 md:px-12 py-5 bg-[#fafafa]/80 backdrop-blur-xl border-b border-[var(--border-subtle)]">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-[#ff4d00] flex items-center justify-center shadow-[0_4px_12px_rgba(255,77,0,0.3)]">
-                            <GraduationCap className="w-5 h-5 text-white" />
+                        <div className="w-10 h-10 rounded-xl bg-[#3b82f6] flex items-center justify-center shadow-[0_4px_12px_rgba(59, 130, 246,0.3)]">
+                            <GraduationCap className="w-5 h-5 text-gray-900" />
                         </div>
-                        <span className="font-display text-2xl text-white">KRMAI</span>
+                        <span className="font-display text-2xl text-gray-900">KRMAI</span>
                     </div>
 
                     <div className="hidden md:flex items-center gap-8">
-                        <a href="#features" className="text-sm font-medium text-[var(--text-secondary)] hover:text-white transition">
+                        <a href="#features" className="text-sm font-medium text-[var(--text-secondary)] hover:text-gray-900 transition">
                             Features
                         </a>
-                        <a href="#about" className="text-sm font-medium text-[var(--text-secondary)] hover:text-white transition">
+                        <a href="#about" className="text-sm font-medium text-[var(--text-secondary)] hover:text-gray-900 transition">
                             About
                         </a>
                     </div>
@@ -90,17 +90,29 @@ function LandingPage({ onEnterChat }) {
                 </div>
             </nav>
 
+            {/* ── Background Hand Animation ── */}
+            <div className="absolute top-20 right-[10%] lg:right-[20%] pointer-events-none opacity-[0.05] z-0 overflow-hidden">
+                <motion.div
+                    animate={{ rotate: [0, 15, -10, 15, -5, 10, 0, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, repeatDelay: 1 }}
+                    className="text-[300px] md:text-[500px]"
+                >
+                    👋
+                </motion.div>
+            </div>
+
             {/* ── Hero Section ── */}
-            <section className="relative pt-36 md:pt-48 pb-20 px-6 md:px-12">
+            <section className="relative pt-24 md:pt-32 pb-16 px-6 md:px-12 z-10">
                 <div className="max-w-7xl mx-auto">
                     <div className="max-w-3xl">
                         {/* Badge */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: "-50px" }}
                             className="inline-flex items-center gap-3 mb-8"
                         >
-                            <span className="px-3 py-1 rounded-full bg-[#ff4d00] text-xs font-semibold text-white">
+                            <span className="px-3 py-1 rounded-full bg-[#3b82f6] text-xs font-semibold text-gray-900">
                                 AI-Powered
                             </span>
                             <span className="text-sm text-[var(--text-secondary)] flex items-center gap-1.5">
@@ -112,19 +124,28 @@ function LandingPage({ onEnterChat }) {
                         {/* Hero Heading */}
                         <motion.h1
                             initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: "-50px" }}
                             transition={{ delay: 0.1, duration: 0.7 }}
                             className="font-display text-5xl md:text-7xl lg:text-[5.5rem] leading-[1.05] mb-7"
                         >
+                            <motion.div 
+                                className="inline-block origin-[70%_70%]"
+                                animate={{ rotate: [0, 14, -8, 14, -4, 10, 0, 0] }}
+                                transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1 }}
+                            >
+                                👋
+                            </motion.div>{' '}
                             Unlock Deeper Insights with{' '}
-                            <span className="text-[#ff4d00]">KR Mangalam</span>{' '}
+                            <span className="text-[#3b82f6]">KR Mangalam</span>{' '}
                             University AI
                         </motion.h1>
 
                         {/* Subtitle */}
                         <motion.p
                             initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: "-50px" }}
                             transition={{ delay: 0.25 }}
                             className="text-lg md:text-xl text-[var(--text-secondary)] max-w-2xl mb-10 leading-relaxed"
                         >
@@ -141,7 +162,7 @@ function LandingPage({ onEnterChat }) {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={onEnterChat}
-                            className="btn-accent px-8 py-4 text-base flex items-center gap-3 shadow-[0_0_40px_rgba(255,77,0,0.25)]"
+                            className="btn-accent px-8 py-4 text-base flex items-center gap-3 shadow-[0_0_40px_rgba(59, 130, 246,0.25)]"
                         >
                             Start Chatting
                             <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
@@ -155,7 +176,7 @@ function LandingPage({ onEnterChat }) {
                 <div
                     className="hidden lg:block absolute top-1/2 right-0 -translate-y-1/2 w-[500px] h-[500px] pointer-events-none"
                     style={{
-                        background: 'radial-gradient(circle, rgba(255, 77, 0, 0.12) 0%, transparent 70%)',
+                        background: 'radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%)',
                     }}
                 />
             </section>
@@ -171,7 +192,7 @@ function LandingPage({ onEnterChat }) {
                             viewport={{ once: true }}
                             className="text-center"
                         >
-                            <div className="text-3xl md:text-4xl font-display text-[#ff4d00] mb-1">
+                            <div className="text-3xl md:text-4xl font-display text-[#3b82f6] mb-1">
                                 {stat.value}{stat.suffix}
                             </div>
                             <div className="text-sm text-[var(--text-muted)] uppercase tracking-wider font-medium">
@@ -192,9 +213,9 @@ function LandingPage({ onEnterChat }) {
                         {DEPARTMENTS.map((dept) => (
                             <span
                                 key={dept}
-                                className="flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border-default)] bg-[var(--bg-elevated)]/40 text-sm text-[var(--text-secondary)] font-medium hover:border-[rgba(255,77,0,0.2)] transition"
+                                className="flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border-default)] bg-[var(--bg-elevated)]/40 text-sm text-[var(--text-secondary)] font-medium hover:border-[rgba(59, 130, 246,0.2)] transition"
                             >
-                                <BookOpen className="w-3.5 h-3.5 text-[#ff4d00]/60" />
+                                <BookOpen className="w-3.5 h-3.5 text-[#3b82f6]/60" />
                                 {dept}
                             </span>
                         ))}
@@ -203,7 +224,7 @@ function LandingPage({ onEnterChat }) {
             </section>
 
             {/* ── Features Section ── */}
-            <section id="features" className="py-20 px-6 md:px-12">
+            <section id="features" className="py-16 px-6 md:px-12">
                 <div className="max-w-7xl mx-auto">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
@@ -212,7 +233,7 @@ function LandingPage({ onEnterChat }) {
                         className="font-display text-4xl md:text-5xl text-center mb-4"
                     >
                         Everything You Need,{' '}
-                        <span className="text-[#ff4d00]">Instantly</span>
+                        <span className="text-[#3b82f6]">Instantly</span>
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0 }}
@@ -231,12 +252,12 @@ function LandingPage({ onEnterChat }) {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1 }}
-                                className="p-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-elevated)]/60 hover:border-[rgba(255,77,0,0.2)] transition group"
+                                className="p-8 rounded-2xl border border-[var(--border-default)] bg-gradient-to-br from-white/90 to-[#f8f9fa]/80 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(59, 130, 246,0.15)] hover:-translate-y-2 hover:border-[#3b82f6]/40 transition-all duration-300 group"
                             >
-                                <div className="w-12 h-12 rounded-xl bg-[rgba(255,77,0,0.1)] flex items-center justify-center mb-5 group-hover:bg-[rgba(255,77,0,0.2)] transition">
-                                    <feat.icon className="w-6 h-6 text-[#ff4d00]" />
+                                <div className="w-12 h-12 rounded-xl bg-[rgba(59, 130, 246,0.1)] flex items-center justify-center mb-5 group-hover:bg-[rgba(59, 130, 246,0.2)] transition">
+                                    <feat.icon className="w-6 h-6 text-[#3b82f6]" />
                                 </div>
-                                <h3 className="text-xl font-semibold mb-3 text-white">
+                                <h3 className="text-xl font-semibold mb-3 text-gray-900">
                                     {feat.title}
                                 </h3>
                                 <p className="text-[var(--text-secondary)] leading-relaxed text-[15px]">
@@ -249,7 +270,7 @@ function LandingPage({ onEnterChat }) {
             </section>
 
             {/* ── Testimonials Section ── */}
-            <section className="py-20 px-6 md:px-12 border-t border-[var(--border-subtle)]">
+            <section className="py-16 px-6 md:px-12 border-t border-[var(--border-subtle)]">
                 <div className="max-w-7xl mx-auto">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
@@ -257,7 +278,7 @@ function LandingPage({ onEnterChat }) {
                         viewport={{ once: true }}
                         className="font-display text-4xl md:text-5xl text-center mb-4"
                     >
-                        What Students <span className="text-[#ff4d00]">Say</span>
+                        What Students <span className="text-[#3b82f6]">Say</span>
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0 }}
@@ -276,14 +297,14 @@ function LandingPage({ onEnterChat }) {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1 }}
-                                className="p-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-elevated)]/60 relative"
+                                className="p-8 rounded-2xl border border-[var(--border-default)] bg-gradient-to-br from-white/90 to-[#f8f9fa]/80 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(59, 130, 246,0.15)] hover:-translate-y-2 hover:border-[#3b82f6]/40 transition-all duration-300 relative"
                             >
-                                <Quote className="w-8 h-8 text-[#ff4d00]/20 mb-4" />
+                                <Quote className="w-8 h-8 text-[#3b82f6]/20 mb-4" />
                                 <p className="text-[var(--text-secondary)] leading-relaxed text-[15px] mb-6">
                                     "{t.quote}"
                                 </p>
                                 <div>
-                                    <p className="text-white font-semibold text-sm">{t.name}</p>
+                                    <p className="text-gray-900 font-semibold text-sm">{t.name}</p>
                                     <p className="text-[var(--text-muted)] text-xs mt-0.5">{t.role}</p>
                                 </div>
                             </motion.div>
@@ -293,12 +314,12 @@ function LandingPage({ onEnterChat }) {
             </section>
 
             {/* ── About Section ── */}
-            <section id="about" className="py-20 px-6 md:px-12 border-t border-[var(--border-subtle)]">
+            <section id="about" className="py-16 px-6 md:px-12 border-t border-[var(--border-subtle)]">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
                     <div className="flex-1">
                         <h2 className="font-display text-4xl md:text-5xl mb-5">
                             Built for{' '}
-                            <span className="text-[#ff4d00]">Students</span>
+                            <span className="text-[#3b82f6]">Students</span>
                         </h2>
                         <p className="text-[var(--text-secondary)] leading-relaxed mb-6 text-[16px]">
                             KRMAI is designed specifically for KR Mangalam University students.
@@ -331,8 +352,8 @@ function LandingPage({ onEnterChat }) {
                                     transition={{ delay: i * 0.1 }}
                                     className="flex flex-col items-center gap-3 p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-elevated)]/40"
                                 >
-                                    <div className="w-12 h-12 rounded-xl bg-[rgba(255,77,0,0.1)] flex items-center justify-center">
-                                        <item.icon className="w-6 h-6 text-[#ff4d00]" />
+                                    <div className="w-12 h-12 rounded-xl bg-[rgba(59, 130, 246,0.1)] flex items-center justify-center">
+                                        <item.icon className="w-6 h-6 text-[#3b82f6]" />
                                     </div>
                                     <span className="text-sm font-medium text-[var(--text-secondary)]">
                                         {item.label}
@@ -345,10 +366,10 @@ function LandingPage({ onEnterChat }) {
             </section>
 
             {/* ── CTA Section ── */}
-            <section className="py-20 px-6 md:px-12">
+            <section className="py-16 px-6 md:px-12">
                 <div className="max-w-3xl mx-auto text-center">
                     <h2 className="font-display text-4xl md:text-5xl mb-5">
-                        Ready to Get <span className="text-[#ff4d00]">Started</span>?
+                        Ready to Get <span className="text-[#3b82f6]">Started</span>?
                     </h2>
                     <p className="text-[var(--text-secondary)] mb-8 text-lg">
                         Start chatting with KRMAI and get instant answers to all your university questions.
@@ -357,7 +378,7 @@ function LandingPage({ onEnterChat }) {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={onEnterChat}
-                        className="btn-accent px-10 py-4 text-lg flex items-center gap-3 mx-auto shadow-[0_0_40px_rgba(255,77,0,0.25)]"
+                        className="btn-accent px-10 py-4 text-lg flex items-center gap-3 mx-auto shadow-[0_0_40px_rgba(59, 130, 246,0.25)]"
                     >
                         Start Chatting Now
                         <ArrowRight className="w-5 h-5" />
@@ -369,7 +390,7 @@ function LandingPage({ onEnterChat }) {
             <footer className="py-8 px-6 md:px-12 border-t border-[var(--border-subtle)]">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
-                        <GraduationCap className="w-5 h-5 text-[#ff4d00]" />
+                        <GraduationCap className="w-5 h-5 text-[#3b82f6]" />
                         <span className="font-display text-lg">KRMAI</span>
                     </div>
                     <p className="text-sm text-[var(--text-muted)]">

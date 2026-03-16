@@ -1,9 +1,9 @@
 const mdComponents = {
     h1: ({ node, ...props }) => (
-        <h1 className="text-2xl font-bold mt-6 mb-3 tracking-tight text-[#ff4d00]" {...props} />
+        <h1 className="text-2xl font-bold mt-6 mb-3 tracking-tight text-[#3b82f6]" {...props} />
     ),
     h2: ({ node, ...props }) => (
-        <h2 className="text-xl font-bold mt-5 mb-3 tracking-tight text-white" {...props} />
+        <h2 className="text-xl font-bold mt-5 mb-3 tracking-tight text-gray-900" {...props} />
     ),
     h3: ({ node, ...props }) => (
         <h3 className="text-lg font-semibold mt-4 mb-2 text-[var(--text-secondary)]" {...props} />
@@ -26,19 +26,19 @@ const mdComponents = {
         </div>
     ),
     th: ({ node, ...props }) => (
-        <th className="p-4 font-bold text-xs uppercase tracking-widest bg-[var(--bg-surface)] text-[#ff4d00] border-b border-[var(--border-default)]" {...props} />
+        <th className="p-4 font-bold text-xs uppercase tracking-widest bg-[var(--bg-surface)] text-[#3b82f6] border-b border-[var(--border-default)]" {...props} />
     ),
     td: ({ node, ...props }) => (
         <td className="p-4 border-b border-[var(--border-subtle)]" {...props} />
     ),
     a: ({ node, ...props }) => (
-        <a className="text-[#ff4d00] hover:text-[#ff6a2a] font-semibold underline underline-offset-4 transition-colors" {...props} />
+        <a className="text-[#3b82f6] hover:text-[#60a5fa] font-semibold underline underline-offset-4 transition-colors" {...props} />
     ),
     strong: ({ node, ...props }) => (
-        <strong className="font-bold text-white" {...props} />
+        <strong className="font-bold text-gray-900" {...props} />
     ),
     pre: ({ node, children, ...props }) => (
-        <pre className="p-5 rounded-2xl overflow-x-auto text-[14px] font-mono mb-4 bg-[#0a0906] border border-[var(--border-subtle)] text-[#ff8040]" {...props}>
+        <pre className="p-5 rounded-2xl overflow-x-auto text-[14px] font-mono mb-4 bg-[#0a0906] border border-[var(--border-subtle)] text-[#93c5fd]" {...props}>
             {children}
         </pre>
     ),
@@ -48,7 +48,7 @@ const mdComponents = {
             return <code className={className} {...props}>{children}</code>;
         }
         return (
-            <code className="px-2 py-1 rounded-lg text-[14px] font-mono bg-[var(--bg-surface)] text-[#ff8040] border border-[var(--border-default)]" {...props}>{children}</code>
+            <code className="px-2 py-1 rounded-lg text-[14px] font-mono bg-[var(--bg-surface)] text-[#93c5fd] border border-[var(--border-default)]" {...props}>{children}</code>
         );
     },
 };
