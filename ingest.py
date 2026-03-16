@@ -32,7 +32,11 @@ def load_documents(data_dir):
                 docs = loader.load()
                 # Tag every doc with the original filename for citations
                 for doc in docs:
-                    doc.metadata["source"] = filename
+                    # Ensure metadata dict exists before assigning
+                    if not hasattr(doc, "metadata") or doc.metadata is None:
+                        doc.metadata = {"source": filename}
+                    else:
+                        doc.metadata["source"] = filename
                 documents.extend(docs)
                 print(f"  Loaded: {filename} ({len(docs)} page(s))")
             except Exception as e:

@@ -107,7 +107,6 @@ body {
 }
 
 .input-glow:focus-within {
-  box-shadow: 0 0 0 2px rgba(255, 77, 0, 0.15), 0 0 30px rgba(255, 77, 0, 0.12), 0 0 60px rgba(255, 77, 0, 0.06);
   border-color: rgba(255, 77, 0, 0.35) !important;
 }
 
@@ -189,8 +188,463 @@ body {
   color: white;
 }
 
+/* ─── Mic Pulse Animation (Voice Input) ──────────── */
+@keyframes micPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.mic-pulse {
+  animation: micPulse 1.5s ease-in-out infinite;
+}
+
+/* ─── Bot Bubble Hover ───────────────────────────── */
+.bot-bubble {
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.bot-bubble:hover {
+  transform: scale(1.005) translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 24px rgba(255, 77, 0, 0.12), 0 0 48px rgba(255, 77, 0, 0.06);
+}
+
+/* ─── Thinking Glow ──────────────────────────────── */
+@keyframes thinkGlow {
+
+  0%,
+  100% {
+    text-shadow: 0 0 4px rgba(255, 77, 0, 0.3);
+  }
+
+  50% {
+    text-shadow: 0 0 12px rgba(255, 77, 0, 0.7), 0 0 20px rgba(255, 77, 0, 0.3);
+  }
+}
+
+.thinking-loop span {
+  animation: thinkPulse 1.6s ease-in-out infinite, thinkGlow 1.6s ease-in-out infinite;
+}
+
+/* ─── Input Typing Pulse ─────────────────────────── */
+@keyframes typingPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 2px rgba(255, 77, 0, 0.15), 0 0 30px rgba(255, 77, 0, 0.12);
+  }
+
+  50% {
+    box-shadow: 0 0 0 3px rgba(255, 77, 0, 0.25), 0 0 40px rgba(255, 77, 0, 0.18), 0 0 70px rgba(255, 77, 0, 0.08);
+  }
+}
+
+.input-glow:focus-within {
+  animation: typingPulse 2s ease-in-out infinite;
+  border-color: rgba(255, 77, 0, 0.35) !important;
+}
+
+/* ─── Scroll-to-bottom FAB ───────────────────────── */
+@keyframes scrollBounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+.scroll-fab svg {
+  animation: scrollBounce 1.5s ease-in-out infinite;
+}
+
+/* ─── Message Reveal Animation ───────────────────── */
+@keyframes messageReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+    filter: blur(2px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.message-reveal {
+  animation: messageReveal 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* ─── Bot Bubble Glow (one-time pulse) ───────────── */
+@keyframes botBubbleGlow {
+  0% {
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25), 0 0 0 rgba(255, 77, 0, 0);
+  }
+
+  30% {
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 77, 0, 0.2), 0 0 60px rgba(255, 77, 0, 0.08);
+  }
+
+  100% {
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25), 0 0 0 rgba(255, 77, 0, 0);
+  }
+}
+
+.bot-bubble-glow {
+  animation: botBubbleGlow 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* ─── Aurora Band Animation ──────────────────────── */
+@keyframes auroraBand {
+  0% {
+    background-position: 0% 50%;
+    opacity: 0.03;
+  }
+
+  25% {
+    opacity: 0.06;
+  }
+
+  50% {
+    background-position: 100% 50%;
+    opacity: 0.04;
+  }
+
+  75% {
+    opacity: 0.05;
+  }
+
+  100% {
+    background-position: 0% 50%;
+    opacity: 0.03;
+  }
+}
+
+.aurora-band {
+  background: linear-gradient(90deg,
+      rgba(255, 77, 0, 0.6),
+      rgba(255, 120, 50, 0.5),
+      rgba(255, 160, 100, 0.4),
+      rgba(255, 100, 80, 0.5),
+      rgba(255, 77, 0, 0.6));
+  background-size: 300% 100%;
+  animation: auroraBand 12s ease-in-out infinite;
+}
+
+/* ─── Grid Line Drift ────────────────────────────── */
+@keyframes gridLineDrift {
+  0% {
+    transform: translateX(-30%) translateY(-10%) rotate(var(--line-angle));
+    opacity: 0;
+  }
+
+  10% {
+    opacity: var(--line-opacity);
+  }
+
+  90% {
+    opacity: var(--line-opacity);
+  }
+
+  100% {
+    transform: translateX(30%) translateY(10%) rotate(var(--line-angle));
+    opacity: 0;
+  }
+}
+
+.grid-line {
+  animation: gridLineDrift var(--line-duration) linear infinite;
+}
+
+/* ─── Welcome Logo Float ─────────────────────────── */
+@keyframes welcomeFloat {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.welcome-float {
+  animation: welcomeFloat 3s ease-in-out infinite;
+}
+
+/* ─── Typing Indicator Fade ──────────────────────── */
+@keyframes typingFade {
+
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.typing-indicator {
+  animation: typingFade 1.2s ease-in-out infinite;
+}
+
+/* ─── Shimmer / Gradient Sweep (loading states) ──── */
+@keyframes shimmerSweep {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-effect {
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 77, 0, 0.06) 25%,
+      rgba(255, 77, 0, 0.12) 50%,
+      rgba(255, 77, 0, 0.06) 75%,
+      transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmerSweep 2.5s ease-in-out infinite;
+}
+
+/* ─── Bot Message Shimmer (streaming state) ──────── */
+@keyframes botShimmer {
+  0% {
+    background-position: -300% 0;
+  }
+
+  100% {
+    background-position: 300% 0;
+  }
+}
+
+.bot-bubble-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 77, 0, 0.04) 20%,
+      rgba(255, 120, 50, 0.08) 50%,
+      rgba(255, 77, 0, 0.04) 80%,
+      transparent 100%);
+  background-size: 300% 100%;
+  animation: botShimmer 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ─── Particle Burst ────────────────────────────────  */
+@keyframes particleBurst {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(var(--burst-x), var(--burst-y)) scale(0);
+    opacity: 0;
+  }
+}
+
+.particle-burst-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ff4d00;
+  box-shadow: 0 0 6px rgba(255, 77, 0, 0.6);
+  animation: particleBurst 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  pointer-events: none;
+}
+
+/* ─── Ripple Effect ─────────────────────────────────  */
+@keyframes rippleExpand {
+  0% {
+    transform: scale(0.3);
+    opacity: 0.4;
+  }
+
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+.message-ripple {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle, rgba(255, 77, 0, 0.15) 0%, transparent 70%);
+  animation: rippleExpand 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Enhanced Glow Pulse (input typing) ─────────── */
+@keyframes typingGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px rgba(255, 77, 0, 0.12), 0 0 20px rgba(255, 77, 0, 0.08);
+  }
+
+  50% {
+    box-shadow: 0 0 0 2px rgba(255, 77, 0, 0.2), 0 0 30px rgba(255, 77, 0, 0.15), 0 0 60px rgba(255, 77, 0, 0.05);
+  }
+}
+
+.input-has-text {
+  animation: typingGlow 2.5s ease-in-out infinite;
+  border-color: rgba(255, 77, 0, 0.2) !important;
+}
+
+/* ─── Grid Overlay Fade-in ──────────────────────────  */
+@keyframes gridFadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0.03;
+  }
+}
+
+.grid-overlay {
+  animation: gridFadeIn 2s ease-out forwards;
+}
+
+/* ─── Shooting Star ─────────────────────────────────  */
+@keyframes shootingStar {
+  0% {
+    transform: translate(0, 0) rotate(var(--star-angle, -35deg));
+    opacity: 0;
+    width: 0;
+  }
+
+  10% {
+    opacity: 1;
+    width: var(--star-length, 80px);
+  }
+
+  90% {
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: translate(var(--star-travel-x, 600px), var(--star-travel-y, 400px)) rotate(var(--star-angle, -35deg));
+    opacity: 0;
+    width: var(--star-length, 80px);
+  }
+}
+
+.shooting-star {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 77, 0, 0.7), rgba(255, 160, 100, 0.3), transparent);
+  border-radius: 999px;
+  animation: shootingStar var(--star-duration, 2s) linear forwards;
+  pointer-events: none;
+  box-shadow: 0 0 4px rgba(255, 77, 0, 0.4), 0 0 8px rgba(255, 77, 0, 0.2);
+}
+
+/* ─── Gradient Orb Rotation ─────────────────────────  */
+@keyframes orbDrift {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+
+  25% {
+    transform: translate(30px, -20px) rotate(90deg) scale(1.05);
+  }
+
+  50% {
+    transform: translate(-10px, 15px) rotate(180deg) scale(0.95);
+  }
+
+  75% {
+    transform: translate(-25px, -10px) rotate(270deg) scale(1.03);
+  }
+
+  100% {
+    transform: translate(0, 0) rotate(360deg) scale(1);
+  }
+}
+
+/* ─── Message Hover Glow ────────────────────────────  */
+.user-bubble {
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.user-bubble:hover {
+  transform: scale(1.005) translateY(-2px);
+  box-shadow: 0 8px 32px rgba(255, 77, 0, 0.35), 0 0 24px rgba(255, 77, 0, 0.15);
+}
+
+/* ─── Source Badge Expand ───────────────────────────  */
+@keyframes badgeExpand {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) translateY(6px);
+  }
+
+  60% {
+    transform: scale(1.05) translateY(-1px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.source-badge-enter {
+  animation: badgeExpand 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
 /* ─── Prose ────────────────────────────────────────── */
 .prose table {
   width: 100%;
   table-layout: auto;
+}
+
+/* ─── Voice Captured Flash (text finalized from mic) ─ */
+@keyframes voiceCapturedFlash {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 77, 0, 0.5), 0 0 20px rgba(255, 77, 0, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 0 4px rgba(255, 77, 0, 0.35), 0 0 40px rgba(255, 77, 0, 0.25);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 77, 0, 0), 0 0 0 rgba(255, 77, 0, 0);
+  }
+}
+
+.voice-captured {
+  animation: voiceCapturedFlash 0.8s ease-out !important;
+  border-color: rgba(255, 77, 0, 0.45) !important;
 }
