@@ -161,30 +161,120 @@ function ChatInterface({
         setMessages(updated);
         setLoading(true);
 
-        try {
+        // Helper: strip <think>...</think> blocks Qwen3 may produce
+        const stripThink = (s) => s.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+
+        // Helper: fallback to regular /chat endpoint
+        const fallbackChat = async () => {
             const res = await fetch(`${apiUrl}/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: msg, history: updated.slice(-6) }),
+                body: JSON.stringify({ message: msg, history: updated.slice(-4) }),
             });
             if (!res.ok) throw new Error(`Server error: ${res.status}`);
             const data = await res.json();
+            const cleanAnswer = stripThink(data.answer || '');
             setMessages((prev) => [
                 ...prev,
                 {
                     role: 'assistant',
-                    content: data.answer,
+                    content: cleanAnswer || "I received an empty response. Please try again.",
                     sources: data.sources || [],
                     timestamp: Date.now(),
                 },
             ]);
+        };
+
+        try {
+            let streamWorked = false;
+            try {
+                const res = await fetch(`${apiUrl}/chat/stream`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg, history: updated.slice(-4) }),
+                });
+
+                if (!res.ok || !res.body) throw new Error('Stream unavailable');
+
+                // DON'T add bot message yet — keep ThinkingLoader visible
+                // We'll add it when the first visible token arrives
+
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder();
+                let accumulated = '';
+                let buffer = '';
+                let botMessageAdded = false;
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
+
+                    for (const line of lines) {
+                        if (!line.startsWith('data: ')) continue;
+                        try {
+                            const parsed = JSON.parse(line.slice(6));
+                            if (parsed.type === 'token') {
+                                accumulated += parsed.content;
+                                const cleaned = stripThink(accumulated);
+
+                                // Only show the bubble once we have visible content
+                                if (cleaned && !botMessageAdded) {
+                                    botMessageAdded = true;
+                                    setLoading(false); // Hide thinking indicator
+                                    setMessages((prev) => [...prev, {
+                                        role: 'assistant',
+                                        content: cleaned,
+                                        sources: [],
+                                        timestamp: Date.now(),
+                                    }]);
+                                } else if (cleaned && botMessageAdded) {
+                                    setMessages((prev) => {
+                                        const copy = [...prev];
+                                        const last = copy.length - 1;
+                                        if (last >= 0 && copy[last].role === 'assistant') {
+                                            copy[last] = { ...copy[last], content: cleaned };
+                                        }
+                                        return copy;
+                                    });
+                                }
+                            } else if (parsed.type === 'done') {
+                                if (botMessageAdded) {
+                                    setMessages((prev) => {
+                                        const copy = [...prev];
+                                        const last = copy.length - 1;
+                                        if (last >= 0 && copy[last].role === 'assistant') {
+                                            copy[last] = { ...copy[last], sources: parsed.sources || [] };
+                                        }
+                                        return copy;
+                                    });
+                                }
+                            }
+                        } catch { /* skip malformed SSE lines */ }
+                    }
+                }
+
+                // If stream produced no visible content, fall back
+                if (!botMessageAdded) {
+                    throw new Error('Empty stream');
+                }
+
+                streamWorked = true;
+            } catch {
+                if (!streamWorked) {
+                    setLoading(true);
+                    await fallbackChat();
+                }
+            }
         } catch {
             setMessages((prev) => [
                 ...prev,
                 {
                     role: 'assistant',
-                    content:
-                        "Couldn't reach the server right now. Please try again.",
+                    content: "Couldn't reach the server right now. Please try again.",
                     isError: true,
                     timestamp: Date.now(),
                 },
@@ -206,7 +296,7 @@ function ChatInterface({
     const toggleListening = useCallback(() => {
         if (isListening) {
             if (recognitionRef.current) {
-                recognitionRef.current.stop();
+                try { recognitionRef.current.stop(); } catch {}
                 recognitionRef.current = null;
             }
             setIsListening(false);
@@ -218,6 +308,12 @@ function ChatInterface({
         if (!SpeechRecognition) {
             alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.');
             return;
+        }
+
+        // Stop any existing recognition session first
+        if (recognitionRef.current) {
+            try { recognitionRef.current.stop(); } catch {}
+            recognitionRef.current = null;
         }
 
         const recognition = new SpeechRecognition();
@@ -236,7 +332,6 @@ function ChatInterface({
             let interim = '';
 
             // KEY FIX: Only process results from event.resultIndex onwards
-            // This prevents replaying all previously finalized results
             for (let i = event.resultIndex; i < event.results.length; i++) {
                 const transcript = event.results[i][0].transcript;
                 if (event.results[i].isFinal) {
@@ -247,7 +342,6 @@ function ChatInterface({
             }
 
             if (newFinal) {
-                // Append new final text to accumulated
                 accumulatedFinal += newFinal;
                 const base = baseTextRef.current;
                 const separator = base && !base.endsWith(' ') ? ' ' : '';
@@ -261,18 +355,34 @@ function ChatInterface({
 
         recognition.onerror = (event) => {
             console.error('Speech recognition error:', event.error);
+            if (event.error === 'not-allowed') {
+                alert('Microphone access was denied. Please allow microphone access in your browser settings and try again.');
+            } else if (event.error === 'network') {
+                alert('Speech recognition requires an internet connection (Google Speech API). Please check your connection.');
+            } else if (event.error !== 'aborted') {
+                alert(`Voice input error: ${event.error}. Please try again.`);
+            }
             setIsListening(false);
             setInterimText('');
+            recognitionRef.current = null;
         };
 
         recognition.onend = () => {
             setIsListening(false);
             setInterimText('');
+            recognitionRef.current = null;
         };
 
         recognitionRef.current = recognition;
-        recognition.start();
-        setIsListening(true);
+        try {
+            recognition.start();
+            setIsListening(true);
+        } catch (e) {
+            console.error('Failed to start speech recognition:', e);
+            alert('Could not start voice input. Please check microphone permissions in your browser.');
+            recognitionRef.current = null;
+            setIsListening(false);
+        }
     }, [isListening, voiceLang, setVoiceLang]);
 
     // Cleanup speech recognition on unmount
@@ -315,7 +425,7 @@ function ChatInterface({
                 />
 
                 {/* Messages */}
-                <main ref={mainRef} className="flex-1 overflow-y-auto px-4 md:px-8 pt-6 pb-40" style={{ scrollBehavior: 'smooth' }}>
+                <main ref={mainRef} className="flex-1 overflow-y-auto px-4 md:px-8 pt-20 pb-40" style={{ scrollBehavior: 'smooth' }}>
                     <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
                         {messages.length === 0 ? (
                             /* Welcome Empty State */

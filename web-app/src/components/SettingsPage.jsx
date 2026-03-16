@@ -54,7 +54,7 @@ function SettingsPage({ onBack, voiceLang, setVoiceLang }) {
                     </motion.button>
                     <div>
                         <h1 className="text-2xl font-display text-[var(--text-heading)]">Settings</h1>
-                        <p className="text-sm text-[var(--text-muted)] mt-0.5">Customize your KRMAI experience</p>
+                        <p className="text-sm text-[var(--text-muted)] mt-0.5">Customize your KRMU assistant experience</p>
                     </div>
                 </div>
 

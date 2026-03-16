@@ -36,7 +36,7 @@ const FEATURES = [
     {
         icon: Globe,
         title: 'Multilingual Support',
-        desc: 'Ask in English, Hindi, or Hinglish. KRMAI understands your language and responds clearly.',
+        desc: 'Ask in English, Hindi, or Hinglish. The AI understands your language and responds clearly.',
         gradient: 'from-pink-500/20 to-purple-500/20',
     },
     {
@@ -64,7 +64,7 @@ const STATS = [
 
 const TESTIMONIALS = [
     {
-        quote: "KRMAI helped me understand the complete fee structure and scholarship eligibility within seconds. It saved me hours of searching through brochures.",
+        quote: "KRMAI helped me understand the complete fee structure and scholarship eligibility at KRMU within seconds. It saved me hours of searching through brochures.",
         name: "Priya Sharma",
         role: "BTech CSE, 2nd Year",
         avatar: "PS",
@@ -76,7 +76,7 @@ const TESTIMONIALS = [
         avatar: "RV",
     },
     {
-        quote: "As a hosteler, I always had questions about rules and timings. KRMAI gives me instant, accurate answers anytime I need them.",
+        quote: "As a hosteler at KRMU, I always had questions about rules and timings. KRMAI gives me instant, accurate answers anytime I need them.",
         name: "Ananya Singh",
         role: "BTech Data Science, 1st Year",
         avatar: "AS",
@@ -142,36 +142,110 @@ function AnimatedStat({ value, suffix }) {
 function LandingPage({ onEnterChat, onNavigate }) {
     return (
         <div className="min-h-screen bg-[var(--landing-bg)] text-[var(--text-primary)] overflow-y-auto">
-            {/* ── Decorative Background Orbs ── */}
+            {/* ── Animated Background — Glass Orbs + Mesh + Particles ── */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+                {/* Large glass orb — top-right, bright and moving */}
                 <motion.div
-                    animate={{ x: [0, 40, -20, 40, 0], y: [0, -30, 20, -10, 0], opacity: [0.15, 0.3, 0.15] }}
-                    transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-                    className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full"
+                    animate={{
+                        x: [0, 60, -30, 50, 0],
+                        y: [0, -50, 30, -20, 0],
+                        scale: [1, 1.15, 0.9, 1.1, 1],
+                    }}
+                    transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute top-[-8%] right-[-3%] w-[700px] h-[700px] rounded-full"
                     style={{
-                        background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
-                        backdropFilter: 'blur(1px)',
+                        background: 'radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.2) 0%, rgba(96, 165, 250, 0.08) 40%, transparent 70%)',
                     }}
                 />
+
+                {/* Large glass orb — bottom-left */}
                 <motion.div
-                    animate={{ x: [0, -30, 20, -30, 0], y: [0, 20, -30, 10, 0], opacity: [0.1, 0.25, 0.1] }}
-                    transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
-                    className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full"
+                    animate={{
+                        x: [0, -40, 30, -35, 0],
+                        y: [0, 30, -40, 20, 0],
+                        scale: [1, 0.9, 1.1, 0.95, 1],
+                    }}
+                    transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute bottom-[-8%] left-[-5%] w-[600px] h-[600px] rounded-full"
                     style={{
-                        background: 'radial-gradient(circle, rgba(96, 165, 250, 0.12) 0%, transparent 70%)',
-                        backdropFilter: 'blur(1px)',
+                        background: 'radial-gradient(circle at 60% 60%, rgba(96, 165, 250, 0.18) 0%, rgba(59, 130, 246, 0.06) 40%, transparent 70%)',
                     }}
                 />
+
+                {/* Mesh gradient blob — center, pulsing */}
                 <motion.div
-                    animate={{ opacity: [0.05, 0.12, 0.05] }}
-                    transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-                    className="absolute top-[40%] left-[50%] -translate-x-1/2 w-[800px] h-[400px] rounded-full"
-                    style={{ background: 'radial-gradient(ellipse, rgba(59, 130, 246, 0.08) 0%, transparent 60%)' }}
+                    animate={{
+                        opacity: [0.06, 0.15, 0.06],
+                        scale: [1, 1.2, 1],
+                    }}
+                    transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute top-[35%] left-[45%] -translate-x-1/2 w-[900px] h-[500px] rounded-full"
+                    style={{ background: 'radial-gradient(ellipse, rgba(59, 130, 246, 0.12) 0%, rgba(147, 197, 253, 0.04) 40%, transparent 65%)' }}
                 />
+
+                {/* Small floating orb — mid-right */}
+                <motion.div
+                    animate={{
+                        x: [0, 20, -15, 25, 0],
+                        y: [0, -35, 15, -20, 0],
+                        opacity: [0.15, 0.35, 0.15],
+                    }}
+                    transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute top-[20%] right-[20%] w-[250px] h-[250px] rounded-full"
+                    style={{
+                        background: 'radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%)',
+                    }}
+                />
+
+                {/* Small floating orb — bottom-right */}
+                <motion.div
+                    animate={{
+                        x: [0, -25, 15, -20, 0],
+                        y: [0, 15, -25, 10, 0],
+                        opacity: [0.1, 0.25, 0.1],
+                    }}
+                    transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute bottom-[15%] right-[10%] w-[300px] h-[300px] rounded-full"
+                    style={{
+                        background: 'radial-gradient(circle, rgba(96, 165, 250, 0.15) 0%, transparent 65%)',
+                    }}
+                />
+
+                {/* Floating micro particles */}
+                {[
+                    { x: '10%', y: '15%', size: 6, delay: 0, dur: 7 },
+                    { x: '80%', y: '25%', size: 4, delay: 1, dur: 9 },
+                    { x: '30%', y: '70%', size: 5, delay: 2, dur: 8 },
+                    { x: '65%', y: '60%', size: 3, delay: 0.5, dur: 10 },
+                    { x: '45%', y: '30%', size: 4, delay: 3, dur: 6 },
+                    { x: '90%', y: '80%', size: 5, delay: 1.5, dur: 11 },
+                    { x: '20%', y: '45%', size: 3, delay: 2.5, dur: 8.5 },
+                    { x: '70%', y: '10%', size: 4, delay: 0.8, dur: 9.5 },
+                ].map((p, i) => (
+                    <motion.div
+                        key={i}
+                        className="absolute rounded-full"
+                        style={{
+                            left: p.x, top: p.y,
+                            width: p.size, height: p.size,
+                            background: 'radial-gradient(circle, rgba(96, 165, 250, 0.9), rgba(59, 130, 246, 0.6))',
+                            boxShadow: `0 0 ${p.size * 4}px rgba(59, 130, 246, 0.5), 0 0 ${p.size * 8}px rgba(59, 130, 246, 0.2)`,
+                        }}
+                        animate={{
+                            y: [0, -30, 10, -20, 0],
+                            x: [0, 15, -10, 12, 0],
+                            opacity: [0.4, 0.8, 0.3, 0.7, 0.4],
+                            scale: [1, 1.4, 0.8, 1.3, 1],
+                        }}
+                        transition={{ duration: p.dur, delay: p.delay, repeat: Infinity, ease: 'easeInOut' }}
+                    />
+                ))}
+
+                {/* Grid pattern */}
                 <div
                     className="absolute inset-0 grid-overlay"
                     style={{
-                        backgroundImage: `linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px)`,
+                        backgroundImage: `linear-gradient(rgba(59, 130, 246, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px)`,
                         backgroundSize: '80px 80px',
                         maskImage: 'radial-gradient(ellipse 70% 60% at 50% 30%, black 20%, transparent 70%)',
                         WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 30%, black 20%, transparent 70%)',
@@ -557,7 +631,7 @@ function LandingPage({ onEnterChat, onNavigate }) {
                             Built for <span className="gradient-text">Students</span>
                         </h2>
                         <p className="text-[var(--text-secondary)] leading-relaxed mb-6 text-[16px]">
-                            KRMAI is designed specifically for KR Mangalam University students.
+                            KRMAI is an AI assistant designed specifically for KR Mangalam University (KRMU) students.
                             It understands university policies, fee structures, placement procedures,
                             and campus information — giving you accurate, contextual answers instantly.
                         </p>
@@ -598,7 +672,7 @@ function LandingPage({ onEnterChat, onNavigate }) {
                         <h2 className="font-display text-4xl md:text-5xl mb-5 text-[var(--text-heading)]">
                             Ready to Get <span className="gradient-text">Started</span>?
                         </h2>
-                        <p className="text-[var(--text-secondary)] mb-8 text-lg">Start chatting with KRMAI and get instant answers to all your university questions.</p>
+                        <p className="text-[var(--text-secondary)] mb-8 text-lg">Start chatting with KRMAI and get instant answers to all your KRMU questions.</p>
                         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={onEnterChat} className="btn-accent px-10 py-4 text-lg flex items-center gap-3 mx-auto shadow-[0_0_40px_var(--accent-glow)]">
                             Start Chatting Now <ArrowRight className="w-5 h-5" />
                         </motion.button>

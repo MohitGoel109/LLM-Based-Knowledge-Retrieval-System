@@ -317,31 +317,22 @@ def _expand_slang(text: str) -> str:
     return result
 
 
-# Prompt that keeps answers grounded in the retrieved context
+# ── Optimized prompt: concise to reduce token count ───────────
 RAG_PROMPT = PromptTemplate(
     template=(
         "/no_think\n"
-        "You are KRMAI, an AI assistant built for KR Mangalam University students.\n"
-        "Maintain a strictly professional and polished tone by default. Avoid slang, "
-        "excessive excitement, or overly casual language unless the user initiates that style first.\n\n"
-        "CRITICAL LANGUAGE RULES (YOU MUST FOLLOW THESE WITHOUT EXCEPTION):\n"
-        "- You MUST ALWAYS respond in English only. NEVER use Hindi, Hinglish, or any other language in your responses.\n"
-        "- Even if the user asks in Hindi or Hinglish, you must understand their question but ALWAYS reply in English.\n"
-        "- Do NOT include any Hindi/Hinglish words, phrases, or transliterations in your response.\n"
-        "- Do NOT mix languages. Your entire response must be in clear, professional English.\n"
-        "- This rule has NO exceptions. Even greetings, filler words, and expressions must be in English only.\n"
-        "- If you catch yourself about to write a Hindi or Hinglish word, replace it with the English equivalent.\n"
-        "- You can UNDERSTAND queries in Hindi (Devanagari script), Hinglish (Hindi written in English alphabet), and English, but you must ONLY OUTPUT English.\n\n"
-        "Students may use informal language, slang, abbreviations, or shorthand.\n"
-        "Interpret their intent naturally (e.g. 'uk' means 'you know', "
-        "'idk' means 'I don't know', 'wanna' means 'want to').\n"
-        "Use ONLY the context below to answer. Be clear, concise, and helpful.\n"
-        "If the context does not contain the answer, say "
-        "'I don't have enough information to answer that.'\n\n"
+        "You are KRMAI, an AI assistant for KR Mangalam University students.\n"
+        "Be professional and concise. Respond ONLY in English.\n"
+        "Even if the user writes in Hindi/Hinglish, always reply in English.\n\n"
+        "Rules:\n"
+        "- Use ONLY the context below to answer\n"
+        "- Be clear, concise, and well-structured\n"
+        "- If context lacks the answer, say 'I don't have enough information to answer that.'\n"
+        "- Understand slang/abbreviations naturally\n\n"
         "{chat_history}"
         "Context:\n{context}\n\n"
         "Question: {question}\n\n"
-        "Answer (in English only):"
+        "Answer:"
     ),
     input_variables=["context", "question", "chat_history"],
 )
@@ -361,7 +352,7 @@ class RAGEngine:
         self.llm = None
         self.qa_chain = None
         self.chat_history = []  # Stores last N messages for conversational memory
-        self.max_history = 6    # Keep last 6 messages (3 Q&A pairs)
+        self.max_history = 4    # Keep last 4 messages (2 Q&A pairs) — reduced for speed
         self.status = {"db": False, "ollama": False, "ready": False}
         self._initialize()
 
@@ -377,21 +368,28 @@ class RAGEngine:
                     persist_directory=CHROMA_PATH,
                     embedding_function=self.embeddings,
                 )
-                self.retriever = self.vector_store.as_retriever(search_kwargs={"k": 3})
+                # k=2 instead of k=3 — fewer docs = less context = faster inference
+                self.retriever = self.vector_store.as_retriever(search_kwargs={"k": 2})
                 self.status["db"] = True
             except Exception as e:
                 print(f"[RAG] Error loading vector store: {e}")
         else:
             print("[RAG] ChromaDB not found — run ingest.py first.")
 
-        # 3. Ollama LLM
+        # 3. Ollama LLM — optimized parameters for speed
         if self._ollama_is_running():
             try:
                 self.llm = OllamaLLM(
                     model=LLM_MODEL,
                     base_url=OLLAMA_BASE_URL,
                     timeout=OLLAMA_TIMEOUT,
-                    num_predict=512,  # limit output tokens for faster responses
+                    # ── Speed optimizations ──
+                    num_predict=384,     # cap output tokens (was 512)
+                    temperature=0.3,     # lower = faster sampling, less randomness
+                    top_k=20,            # consider only top 20 tokens (default 40)
+                    top_p=0.7,           # nucleus sampling cutoff (default 0.9)
+                    num_ctx=2048,        # smaller context window (default 4096/8192)
+                    repeat_penalty=1.1,  # slight penalty to avoid repetitive output
                 )
                 self.status["ollama"] = True
                 print(f"[RAG] Ollama connected: {LLM_MODEL}")
@@ -432,17 +430,19 @@ class RAGEngine:
             self.chat_history = history[-self.max_history:]
         chat_history_str = ""
         if self.chat_history:
-            chat_history_str = "Previous conversation:\n"
+            chat_history_str = "Recent conversation:\n"
             for msg in self.chat_history:
                 role = "Student" if msg["role"] == "user" else "Assistant"
-                chat_history_str += f"{role}: {msg['content']}\n"
+                # Truncate long messages in history to save context tokens
+                content = msg['content'][:200] if len(msg['content']) > 200 else msg['content']
+                chat_history_str += f"{role}: {content}\n"
             chat_history_str += "\n"
 
-        # Retrieve source documents separately for citations
+        # Retrieve source documents for citations
         assert self.retriever is not None  # guaranteed when qa_chain is set
         source_docs = self.retriever.invoke(cleaned_question)
 
-        # Build prompt inputs manually (can't use the chain directly with history)
+        # Build prompt inputs and invoke LLM directly (not via chain — avoids double retrieval)
         context = _format_docs(source_docs)
         prompt_text = RAG_PROMPT.format(
             context=context,
@@ -460,6 +460,51 @@ class RAGEngine:
             "answer": answer,
             "source_documents": source_docs,
         }
+
+    def query_stream(self, question: str, history: list = None):
+        """Streaming version — yields chunks as they arrive from Ollama."""
+        if not self.qa_chain:
+            yield "System not initialized."
+            return
+
+        cleaned_question = _expand_slang(question)
+
+        if history:
+            self.chat_history = history[-self.max_history:]
+        chat_history_str = ""
+        if self.chat_history:
+            chat_history_str = "Recent conversation:\n"
+            for msg in self.chat_history:
+                role = "Student" if msg["role"] == "user" else "Assistant"
+                content = msg['content'][:200] if len(msg['content']) > 200 else msg['content']
+                chat_history_str += f"{role}: {content}\n"
+            chat_history_str += "\n"
+
+        source_docs = self.retriever.invoke(cleaned_question)
+        context = _format_docs(source_docs)
+        prompt_text = RAG_PROMPT.format(
+            context=context,
+            question=cleaned_question,
+            chat_history=chat_history_str,
+        )
+
+        # Stream from Ollama
+        full_answer = ""
+        for chunk in self.llm.stream(prompt_text):
+            full_answer += chunk
+            yield chunk
+
+        # Update history after streaming completes
+        self.chat_history.append({"role": "user", "content": question})
+        self.chat_history.append({"role": "assistant", "content": full_answer})
+        self.chat_history = self.chat_history[-self.max_history:]
+
+        # Attach source docs to a special attribute for the caller
+        self._last_source_docs = source_docs
+
+    @property
+    def last_source_docs(self):
+        return getattr(self, '_last_source_docs', [])
 
     # ── Helpers ────────────────────────────────────────────────
     @staticmethod

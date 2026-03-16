@@ -1,9 +1,11 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 from contextlib import asynccontextmanager
 import os
+import json
 
 # Set HuggingFace to offline mode before importing rag_engine
 os.environ.setdefault("HF_HUB_OFFLINE", "1")
@@ -77,6 +79,46 @@ def chat(request: ChatRequest):
     answer = result.get("answer", "")
     source_docs = result.get("source_documents", [])
     
+    sources_out = _extract_sources(source_docs)
+            
+    return ChatResponse(answer=answer, sources=sources_out)
+
+
+@app.post("/chat/stream")
+def chat_stream(request: ChatRequest):
+    """Streaming endpoint — sends tokens as Server-Sent Events for real-time display."""
+    if not rag_engine.status["ready"]:
+        raise HTTPException(status_code=503, detail="RAG Engine is not ready.")
+
+    history = None
+    if request.history:
+        history = [{"role": h.role, "content": h.content} for h in request.history]
+
+    def event_generator():
+        for chunk in rag_engine.query_stream(request.message, history=history):
+            # Send each text chunk as an SSE data event
+            data = json.dumps({"type": "token", "content": chunk})
+            yield f"data: {data}\n\n"
+
+        # After streaming completes, send sources as a final event
+        source_docs = rag_engine.last_source_docs
+        sources_out = [{"source": s.source, "page": s.page} for s in _extract_sources(source_docs)]
+        data = json.dumps({"type": "done", "sources": sources_out})
+        yield f"data: {data}\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
+
+def _extract_sources(source_docs):
+    """Extract unique sources from retrieved documents."""
     sources_out = []
     seen = set()
     for doc in source_docs:
@@ -86,8 +128,8 @@ def chat(request: ChatRequest):
         if key not in seen:
             seen.add(key)
             sources_out.append(SourceDoc(source=src, page=page))
-            
-    return ChatResponse(answer=answer, sources=sources_out)
+    return sources_out
+
 
 if __name__ == "__main__":
     import uvicorn

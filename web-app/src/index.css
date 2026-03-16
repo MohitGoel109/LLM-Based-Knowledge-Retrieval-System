@@ -173,7 +173,7 @@ body {
   border: 1px solid var(--border-default);
   border-left: 3px solid rgba(59, 130, 246, 0.4);
   box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
-  color: var(--text-secondary);
+  color: var(--text-primary);
   transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 

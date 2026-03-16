@@ -6,7 +6,7 @@ import {
 
 const PROJECTS = [
     {
-        title: 'KRMAI Smart Campus',
+        title: 'KRMU Smart Campus',
         desc: 'An AI-powered campus navigation system that helps students find classrooms, labs, and facilities using natural language queries.',
         tech: ['React', 'FastAPI', 'ChromaDB', 'Qwen3'],
         status: 'Active',

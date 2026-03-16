@@ -83,7 +83,6 @@ function MessageBubble({ message, index, isNew }) {
     const [feedback, setFeedback] = useState(null);
     const [copied, setCopied] = useState(false);
     const [showRipple, setShowRipple] = useState(false);
-    const [showShimmer, setShowShimmer] = useState(false);
 
     const handleFeedback = (type) => {
         setFeedback(type);
@@ -113,14 +112,7 @@ function MessageBubble({ message, index, isNew }) {
         }
     }, [isNew]);
 
-    // Shimmer effect on new bot messages (simulates streaming appearance)
-    useEffect(() => {
-        if (isNew && !isUser) {
-            setShowShimmer(true);
-            const timer = setTimeout(() => setShowShimmer(false), 2500);
-            return () => clearTimeout(timer);
-        }
-    }, [isNew, isUser]);
+
 
     return (
         <motion.div
@@ -166,12 +158,9 @@ function MessageBubble({ message, index, isNew }) {
                                 boxShadow: '0 8px 32px rgba(59, 130, 246, 0.18), 0 0 0 1px rgba(59, 130, 246, 0.12)',
                             }}
                             transition={{ duration: 0.25, ease: 'easeOut' }}
-                            className={`rounded-3xl rounded-tl-sm px-5 py-4 bot-bubble relative overflow-hidden ${message.isError ? 'border-red-500/50' : ''} ${showShimmer ? 'bot-bubble-shimmer' : ''}`}
+                            className={`rounded-3xl rounded-tl-sm px-5 py-4 bot-bubble relative overflow-hidden ${message.isError ? 'border-red-500/50' : ''}`}
                         >
-                            {/* Shimmer overlay for streaming appearance */}
-                            {showShimmer && (
-                                <div className="absolute inset-0 rounded-3xl shimmer-effect pointer-events-none" />
-                            )}
+
                             <div className={`relative z-[1] ${message.isError ? 'text-red-400 font-medium' : ''}`}>
                                 <ReactMarkdown
                                     components={mdComponents}
