@@ -11,7 +11,7 @@ from langchain_core.output_parsers import StrOutputParser
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CHROMA_PATH = os.path.join(BASE_DIR, "chroma_db")
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-LLM_MODEL = "qwen3:8b"
+LLM_MODEL = "qwen2.5:3b"
 OLLAMA_BASE_URL = "http://localhost:11434"
 OLLAMA_TIMEOUT = 300  # seconds — CPU inference can be slow
 
@@ -320,15 +320,16 @@ def _expand_slang(text: str) -> str:
 # ── Optimized prompt: concise to reduce token count ───────────
 RAG_PROMPT = PromptTemplate(
     template=(
-        "/no_think\n"
         "You are KRMAI, an AI assistant for KR Mangalam University students.\n"
-        "Be professional and concise. Respond ONLY in English.\n"
-        "Even if the user writes in Hindi/Hinglish, always reply in English.\n\n"
+        "Respond ONLY in English, even if the user writes in Hindi/Hinglish.\n\n"
         "Rules:\n"
-        "- Use ONLY the context below to answer\n"
-        "- Be clear, concise, and well-structured\n"
-        "- If context lacks the answer, say 'I don't have enough information to answer that.'\n"
-        "- Understand slang/abbreviations naturally\n\n"
+        "- Respond DIRECTLY. Do NOT output <think> blocks or any internal reasoning.\n"
+        "- Use ONLY the context below to answer. Do NOT make up information.\n"
+        "- If the question has multiple parts, answer ALL parts thoroughly.\n"
+        "- Use bullet points, numbered lists, or tables to structure your answer.\n"
+        "- Include specific names, numbers, and details from the context.\n"
+        "- If context lacks the answer for any part, say so for that specific part.\n"
+        "- NEVER stop mid-sentence. Always complete your response.\n\n"
         "{chat_history}"
         "Context:\n{context}\n\n"
         "Question: {question}\n\n"
@@ -368,8 +369,8 @@ class RAGEngine:
                     persist_directory=CHROMA_PATH,
                     embedding_function=self.embeddings,
                 )
-                # k=2 instead of k=3 — fewer docs = less context = faster inference
-                self.retriever = self.vector_store.as_retriever(search_kwargs={"k": 2})
+                # k=4 — enough docs to cover multi-topic queries (bus routes + placements etc.)
+                self.retriever = self.vector_store.as_retriever(search_kwargs={"k": 4})
                 self.status["db"] = True
             except Exception as e:
                 print(f"[RAG] Error loading vector store: {e}")
@@ -383,13 +384,12 @@ class RAGEngine:
                     model=LLM_MODEL,
                     base_url=OLLAMA_BASE_URL,
                     timeout=OLLAMA_TIMEOUT,
-                    # ── Speed optimizations ──
-                    num_predict=384,     # cap output tokens (was 512)
-                    temperature=0.3,     # lower = faster sampling, less randomness
-                    top_k=20,            # consider only top 20 tokens (default 40)
-                    top_p=0.7,           # nucleus sampling cutoff (default 0.9)
-                    num_ctx=2048,        # smaller context window (default 4096/8192)
-                    repeat_penalty=1.1,  # slight penalty to avoid repetitive output
+                    # ── Balanced: complete answers + reasonable speed ──
+                    num_predict=2048,    # Enough tokens for multi-topic answers
+                    temperature=0.3,     # Lower = faster sampling, less randomness
+                    top_k=20,            # Consider top 20 tokens
+                    top_p=0.8,           # Nucleus sampling cutoff
+                    num_ctx=4096,        # Enough context for 4 retrieved chunks + prompt
                 )
                 self.status["ollama"] = True
                 print(f"[RAG] Ollama connected: {LLM_MODEL}")

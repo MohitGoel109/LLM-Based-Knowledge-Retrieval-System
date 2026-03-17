@@ -9,8 +9,8 @@ from langchain_chroma import Chroma
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 CHROMA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "chroma_db")
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-CHUNK_SIZE = 1000
-CHUNK_OVERLAP = 200
+CHUNK_SIZE = 1500
+CHUNK_OVERLAP = 300
 
 
 def load_documents(data_dir):
@@ -54,6 +54,7 @@ def chunk_documents(documents):
         chunk_overlap=CHUNK_OVERLAP,
         length_function=len,
         is_separator_regex=False,
+        separators=["\n\n\n", "\n\n", "\n---", "\n===", "\n~~~", "\n", " ", ""],
     )
     return text_splitter.split_documents(documents)
 

@@ -305,7 +305,7 @@ When you run ./start.sh:
 
 1. CHECK OLLAMA    — Verifies ollama CLI is installed
 2. START OLLAMA    — If not running, starts ollama serve in background
-3. PULL MODEL      — If qwen3:8b not downloaded, pulls it (~4.7GB first time)
+3. PULL MODEL      — If qwen2.5:3b not downloaded, pulls it (~2GB first time)
 4. CHECK PIP DEPS  — If fastapi not installed, runs pip install -r requirements.txt
 5. AUTO INGEST     — If chroma_db/ doesn't exist, runs python ingest.py
 6. LAUNCH BACKEND  — Starts FastAPI on port 8000 (with --reload for dev)
@@ -473,7 +473,7 @@ Q: What is Ollama?
 A: Ollama is an open-source tool that lets you run LLMs locally on your own
    machine. It handles model downloading, GPU/CPU inference, and provides a REST
    API at localhost:11434. Think of it as "Docker for LLMs" — you just do
-   "ollama pull qwen3:8b" and it's ready to use.
+   "ollama pull qwen2.5:3b" and it's ready to use.
 
 Q: How do you handle dark/light theme?
 A: CSS variables defined in index.css (--bg-base, --text-primary, etc.) change

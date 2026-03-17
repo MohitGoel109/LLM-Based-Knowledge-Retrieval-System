@@ -161,8 +161,8 @@ function ChatInterface({
         setMessages(updated);
         setLoading(true);
 
-        // Helper: strip <think>...</think> blocks Qwen3 may produce
-        const stripThink = (s) => s.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+        // Helper: strip <think> blocks (even if unclosed) that Qwen3 may produce
+        const stripThink = (s) => s.replace(/<think>[\s\S]*?(<\/think>|$)/gi, '').trim();
 
         // Helper: fallback to regular /chat endpoint
         const fallbackChat = async () => {
