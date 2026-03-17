@@ -26,7 +26,7 @@ async def lifespan(app: FastAPI):
     yield
     print("[API] Shutting down.")
 
-app = FastAPI(title="Zeno API", lifespan=lifespan)
+app = FastAPI(title="KRMAI API", lifespan=lifespan)
 
 # Setup CORS to allow React frontend to call the API
 app.add_middleware(

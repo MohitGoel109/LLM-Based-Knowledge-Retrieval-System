@@ -1,19 +1,3 @@
-"""
-generate_charts.py
-==================
-Generates professional comparison charts that justify why Qwen 3 8B was
-chosen over other free / open-source models for the LLM-Based Knowledge
-Retrieval System.
-
-Output (all saved to the evaluation/ directory):
-    1. benchmark_comparison.png   - grouped bar chart (5 metrics x 7 models)
-    2. radar_comparison.png       - radar / spider chart (top 3 models)
-    3. parameter_efficiency.png   - scatter plot (params vs composite score)
-    4. feature_heatmap.png        - heatmap table (qualitative features)
-    5. overall_ranking.png        - horizontal bar chart (weighted ranking)
-
-Requirements: matplotlib, numpy  (both already in requirements.txt)
-"""
 
 from pathlib import Path
 import numpy as np
