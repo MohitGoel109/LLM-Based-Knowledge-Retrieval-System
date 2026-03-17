@@ -64,22 +64,40 @@ const STATS = [
 
 const TESTIMONIALS = [
     {
-        quote: "KRMAI helped me understand the complete fee structure and scholarship eligibility at KRMU within seconds. It saved me hours of searching through brochures.",
-        name: "Priya Sharma",
-        role: "BTech CSE, 2nd Year",
-        avatar: "PS",
+        quote: "Placed at Ferrari with a package of ₹56.6 LPA — the highest package at KRMU. BCA graduate from the School of Computer Applications.",
+        name: "Rishav Bakshi",
+        role: "BCA — Ferrari, ₹56.6 LPA",
+        avatar: "RB",
     },
     {
-        quote: "The placement guidance feature is incredible. I got all the details about the recruitment process and top recruiters in one conversation.",
-        name: "Rahul Verma",
-        role: "BTech AI & ML, 3rd Year",
-        avatar: "RV",
+        quote: "Selected by Autodesk with a ₹34 LPA package. B.Tech CSE graduate from the School of Engineering and Technology.",
+        name: "Vineet Verma",
+        role: "B.Tech CSE — Autodesk, ₹34 LPA",
+        avatar: "VV",
     },
     {
-        quote: "As a hosteler at KRMU, I always had questions about rules and timings. KRMAI gives me instant, accurate answers anytime I need them.",
-        name: "Ananya Singh",
-        role: "BTech Data Science, 1st Year",
-        avatar: "AS",
+        quote: "Placed at UNTAS as a Technical Sourcer with ₹36 LPA package. B.Tech CSE from the School of Engineering and Technology.",
+        name: "Daksh Mehta",
+        role: "B.Tech CSE — UNTAS, ₹36 LPA",
+        avatar: "DM",
+    },
+    {
+        quote: "Selected by Cargo Flash as a Network Engineer with ₹24 LPA package. B.Tech CSE from the School of Engineering and Technology.",
+        name: "Abhinav Anand",
+        role: "B.Tech CSE — Cargo Flash, ₹24 LPA",
+        avatar: "AA",
+    },
+    {
+        quote: "Placed at Hughes Systique as an Engineer Trainee with ₹10.76 LPA. B.Tech CSE from the School of Engineering and Technology.",
+        name: "Kritika Garg",
+        role: "B.Tech CSE — Hughes Systique, ₹10.76 LPA",
+        avatar: "KG",
+    },
+    {
+        quote: "Selected by Pure Research as a Research Analyst with ₹18 LPA package. B.Com (Hons.) from the School of Management and Commerce.",
+        name: "Avinash Kumar Pandey",
+        role: "B.Com (Hons.) — Pure Research, ₹18 LPA",
+        avatar: "AP",
     },
 ];
 
@@ -589,18 +607,18 @@ function LandingPage({ onEnterChat, onNavigate }) {
                 </div>
             </section>
 
-            {/* ── Testimonials ── */}
+            {/* ── Placement Highlights ── */}
             <section className="py-20 px-6 md:px-12 border-t border-[var(--border-subtle)] relative z-10">
                 <div className="max-w-7xl mx-auto">
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
                         <span className="px-3 py-1.5 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-xs font-semibold text-[var(--accent)] inline-flex items-center gap-1.5 mb-4">
-                            <Users className="w-3.5 h-3.5" /> Testimonials
+                            <Users className="w-3.5 h-3.5" /> Placement Highlights
                         </span>
-                        <h2 className="font-display text-4xl md:text-5xl text-[var(--text-heading)] mb-4">What Students <span className="gradient-text">Say</span></h2>
-                        <p className="text-[var(--text-secondary)] max-w-xl mx-auto">Real feedback from KR Mangalam University students</p>
+                        <h2 className="font-display text-4xl md:text-5xl text-[var(--text-heading)] mb-4">Top <span className="gradient-text">Placements</span></h2>
+                        <p className="text-[var(--text-secondary)] max-w-xl mx-auto">Real placement achievements from KR Mangalam University students</p>
                     </motion.div>
 
-                    <div className="grid md:grid-cols-3 gap-6">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {TESTIMONIALS.map((t, i) => (
                             <motion.div key={i} initial={{ opacity: 0, y: 25 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="glass-card p-8 rounded-2xl relative">
                                 <Quote className="w-8 h-8 text-[var(--accent)]/20 mb-4" />
