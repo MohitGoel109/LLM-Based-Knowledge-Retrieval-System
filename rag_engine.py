@@ -317,6 +317,23 @@ def _expand_slang(text: str) -> str:
     return result
 
 
+def _strip_think(text: str) -> str:
+    """Remove <think>...</think> blocks from qwen3 model output.
+    
+    Qwen3 models wrap internal reasoning in <think> tags when using the
+    raw /api/generate endpoint (which LangChain's OllamaLLM uses).
+    The actual answer appears AFTER the closing </think> tag.
+    """
+    if '<think>' not in text:
+        return text
+    # Remove complete <think>...</think> blocks
+    cleaned = re.sub(r'<think>[\s\S]*?</think>', '', text, flags=re.IGNORECASE).strip()
+    # Handle unclosed <think> tag (model still thinking when tokens ran out)
+    if '<think>' in cleaned:
+        cleaned = re.sub(r'<think>[\s\S]*$', '', cleaned, flags=re.IGNORECASE).strip()
+    return cleaned
+
+
 # ── Optimized prompt: concise to reduce token count ───────────
 RAG_PROMPT = PromptTemplate(
     template=(
@@ -384,12 +401,12 @@ class RAGEngine:
                     model=LLM_MODEL,
                     base_url=OLLAMA_BASE_URL,
                     timeout=OLLAMA_TIMEOUT,
-                    # ── Balanced: complete answers + reasonable speed ──
-                    num_predict=2048,    # Enough tokens for multi-topic answers
+                    # ── Tuned for qwen3:4b on CPU: fast + complete ──
+                    num_predict=1024,    # Enough tokens for thorough answers
                     temperature=0.3,     # Lower = faster sampling, less randomness
                     top_k=20,            # Consider top 20 tokens
                     top_p=0.8,           # Nucleus sampling cutoff
-                    num_ctx=4096,        # Enough context for 4 retrieved chunks + prompt
+                    num_ctx=2048,        # Lean context window for speed
                 )
                 self.status["ollama"] = True
                 print(f"[RAG] Ollama connected: {LLM_MODEL}")
@@ -449,7 +466,7 @@ class RAGEngine:
             question=cleaned_question,
             chat_history=chat_history_str,
         )
-        answer = self.llm.invoke(prompt_text)
+        answer = _strip_think(self.llm.invoke(prompt_text))
 
         # Update internal history
         self.chat_history.append({"role": "user", "content": question})
@@ -488,11 +505,30 @@ class RAGEngine:
             chat_history=chat_history_str,
         )
 
-        # Stream from Ollama
+        # Stream from Ollama — buffer to strip <think> blocks
         full_answer = ""
+        thinking_done = False
         for chunk in self.llm.stream(prompt_text):
             full_answer += chunk
-            yield chunk
+            # Buffer until we see </think> or confirm no think tags
+            if not thinking_done:
+                if '<think>' not in full_answer:
+                    # No think tags at all — stream directly
+                    thinking_done = True
+                    yield full_answer  # flush buffer
+                elif '</think>' in full_answer:
+                    # Think block complete — extract and yield the answer part
+                    thinking_done = True
+                    after_think = full_answer.split('</think>', 1)[1]
+                    if after_think.strip():
+                        yield after_think
+                    full_answer = after_think  # reset to only the answer part
+                # else: still inside <think> block, keep buffering
+            else:
+                yield chunk
+        
+        # Final cleanup
+        full_answer = _strip_think(full_answer)
 
         # Update history after streaming completes
         self.chat_history.append({"role": "user", "content": question})

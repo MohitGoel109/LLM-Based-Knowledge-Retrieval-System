@@ -32,7 +32,7 @@ instant, accurate answers with source citations.
 HOW IT WORKS (One Sentence):
 University documents (PDFs, DOCX, TXT) are chunked, embedded into vectors,
 stored in ChromaDB, and when a student asks a question, the most relevant
-chunks are retrieved and fed to Qwen3:8B (an LLM running locally via Ollama)
+chunks are retrieved and fed to qwen2.5:3b (an LLM running locally via Ollama)
 which generates a grounded answer.
 
 This technique is called RAG — Retrieval-Augmented Generation.
@@ -84,7 +84,7 @@ This technique is called RAG — Retrieval-Augmented Generation.
          ▼                      ▼                      ▼
   ┌──────────────┐    ┌──────────────────┐    ┌──────────────┐
   │  React UI    │    │  FastAPI Server  │    │  Ollama      │
-  │  (Vite)      │───▶│  api.py          │───▶│  (Qwen3:8B)  │
+  │  (Vite)      │───▶│  api.py          │───▶│  (qwen2.5:3b)  │
   │  Port 5173   │◀───│  Port 8000       │◀───│  Port 11434  │
   └──────────────┘    └──────────────────┘    └──────────────┘
     Frontend            Backend API             Local LLM
@@ -107,8 +107,8 @@ BACKEND:
   - langchain-text-splitters— Text chunking utilities
 • ChromaDB                  — Vector database (stores document embeddings locally)
 • sentence-transformers     — Embedding model (all-MiniLM-L6-v2)
-• Ollama                    — Local LLM runtime (runs Qwen3:8B on CPU/GPU)
-• Qwen3:8B                  — Large Language Model by Alibaba (~4.7GB)
+• Ollama                    — Local LLM runtime (runs qwen2.5:3b on CPU/GPU)
+• qwen2.5:3b                  — Large Language Model by Alibaba (~4.7GB)
 
 FRONTEND:
 ─────────
@@ -195,9 +195,9 @@ STEP 3: PROMPT CONSTRUCTION
       d) The student's question
     - Starts with "/no_think" to skip Qwen3's internal reasoning mode
 
-STEP 4: LLM INFERENCE (Ollama / Qwen3:8B)
+STEP 4: LLM INFERENCE (Ollama / qwen2.5:3b)
     - Prompt is sent to Ollama running on localhost:11434
-    - Qwen3:8B generates the answer token by token
+    - qwen2.5:3b generates the answer token by token
     - Parameters optimized for speed:
       * temperature=0.3     (less randomness = faster sampling)
       * top_k=20            (only consider top 20 tokens at each step)
@@ -421,8 +421,8 @@ A: RAG stands for Retrieval-Augmented Generation. Pure LLMs hallucinate — they
    context, the LLM's answer is grounded in real data. It's like giving an
    open-book exam vs. relying on memory.
 
-Q: Why Qwen3:8B? Why not GPT-4 or ChatGPT?
-A: Qwen3:8B runs entirely locally via Ollama — no API costs, no internet needed,
+Q: Why qwen2.5:3b? Why not GPT-4 or ChatGPT?
+A: qwen2.5:3b runs entirely locally via Ollama — no API costs, no internet needed,
    no data leaves the machine. It has excellent multilingual support (Hindi,
    Hinglish). 8B parameters is a sweet spot between quality and speed on consumer
    hardware. Using GPT-4 would require paid API keys and internet dependency.
@@ -499,7 +499,7 @@ A: LangChain is a Python framework that provides building blocks for LLM
    chains. It abstracts away the complexity of connecting these components.
 
 Q: What are the system requirements?
-A: Ollama needs at least 8GB RAM for Qwen3:8B (16GB recommended). Python 3.x,
+A: Ollama needs at least 8GB RAM for qwen2.5:3b (16GB recommended). Python 3.x,
    Node.js for the frontend. Works on Linux, macOS, Windows. GPU optional but
    significantly speeds up inference (NVIDIA recommended).
 

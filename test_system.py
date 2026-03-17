@@ -5,7 +5,7 @@ Tests: RAG engine, API endpoints, query quality, edge cases, and performance.
 
 Usage:
     1. Start Ollama:     ollama serve
-    2. Pull model:       ollama pull qwen3:4b
+    2. Pull model:       ollama pull qwen2.5:3b
     3. Re-ingest data:   python ingest.py
     4. Start API:        python api.py  (in a separate terminal)
     5. Run tests:        python test_system.py
