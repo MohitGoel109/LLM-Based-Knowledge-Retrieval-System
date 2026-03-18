@@ -212,6 +212,7 @@ STEP 5: STREAMING
     - Makes perceived response time feel near-instant
 
 STEP 6: SOURCE CITATIONS
+
     - After generating the answer, source document metadata is attached
     - Frontend shows "SOURCES" badge with filename/URL
 
