@@ -77,11 +77,11 @@ def test_model_available():
     try:
         r = requests.get(f"{OLLAMA_URL}/api/tags", timeout=5)
         models = [m["name"] for m in r.json().get("models", [])]
-        # Check for qwen3 variants
-        qwen_models = [m for m in models if "qwen3" in m.lower()]
+        # Check for qwen2.5:3b (the model configured in rag_engine.py)
+        qwen_models = [m for m in models if "qwen2.5" in m.lower()]
         if qwen_models:
-            return True, f"Qwen3 models found: {qwen_models}", ""
-        return False, f"No Qwen3 model found. Available: {models}", ""
+            return True, f"Qwen2.5 models found: {qwen_models}", ""
+        return False, f"No Qwen2.5 model found. Available: {models}", ""
     except Exception as e:
         return False, f"Could not check models: {e}", ""
 
@@ -394,7 +394,7 @@ def main():
     print("\n  --- Infrastructure Tests ---")
     infra_ok = True
     r1 = run_test("Ollama Running", "Infrastructure", test_ollama_running)
-    r2 = run_test("Qwen3 Model Available", "Infrastructure", test_model_available)
+    r2 = run_test("Qwen2.5 Model Available", "Infrastructure", test_model_available)
     r3 = run_test("ChromaDB Exists", "Infrastructure", test_chromadb_exists)
     r4 = run_test("API Health Check", "Infrastructure", test_api_health)
 
