@@ -24,18 +24,17 @@ TABLE OF CONTENTS
 1. PROJECT OVERVIEW
 ================================================================================
 
-KRMAI is an AI-powered university assistant chatbot for KR Mangalam University
-(KRMU). Students can ask questions about fees, admissions, hostel rules,
-placements, scholarships, etc. in English, Hindi, or Hinglish, and get
-instant, accurate answers with source citations.
-
-HOW IT WORKS (One Sentence):
-University documents (PDFs, DOCX, TXT) are chunked, embedded into vectors,
 stored in ChromaDB, and when a student asks a question, the most relevant
-chunks are retrieved and fed to qwen2.5:3b (an LLM running locally via Ollama)
-which generates a grounded answer.
 
-This technique is called RAG — Retrieval-Augmented Generation.
+KRMAI is a fully local, AI-powered chatbot for KR Mangalam University (KRMU) that instantly answers student queries about fees, admissions, hostels, placements, scholarships, and more. It leverages Retrieval-Augmented Generation (RAG) to ground every answer in official university documents, supporting English, Hindi, and Hinglish queries.
+
+How it works:
+1. All official documents (TXT, PDF, DOCX) are ingested, chunked, and embedded into vectors using a local embedding model.
+2. These vectors are stored in ChromaDB for fast similarity search.
+3. When a student asks a question, the system expands slang/abbreviations, retrieves the most relevant document chunks, and sends them (with chat history) to a local LLM (Ollama running qwen2.5:3b).
+4. The LLM generates a grounded, conversational answer with source citations, streamed in real time to the frontend.
+
+KRMAI is privacy-first (no cloud APIs), student-friendly (handles informal language), and trustworthy (every answer cites its source).
 
 
 ================================================================================
@@ -94,17 +93,18 @@ This technique is called RAG — Retrieval-Augmented Generation.
 3. TECH STACK
 ================================================================================
 
+
 BACKEND:
-────────
+─────────
 • Python 3.x                — Primary backend language
 • FastAPI                   — REST API framework (serves /chat and /chat/stream)
 • Uvicorn                   — ASGI server for running FastAPI
 • LangChain                 — Orchestration framework for RAG pipeline
-  - langchain-community     — Document loaders (PDF, DOCX, TXT)
-  - langchain-huggingface   — HuggingFace embedding integration
-  - langchain-chroma        — ChromaDB vector store wrapper
-  - langchain-ollama        — Ollama LLM integration
-  - langchain-text-splitters— Text chunking utilities
+    - langchain-community     — Document loaders (PDF, DOCX, TXT)
+    - langchain-huggingface   — HuggingFace embedding integration
+    - langchain-chroma        — ChromaDB vector store wrapper
+    - langchain-ollama        — Ollama LLM integration
+    - langchain-text-splitters— Text chunking utilities
 • ChromaDB                  — Vector database (stores document embeddings locally)
 • sentence-transformers     — Embedding model (all-MiniLM-L6-v2)
 • Ollama                    — Local LLM runtime (runs qwen2.5:3b on CPU/GPU)

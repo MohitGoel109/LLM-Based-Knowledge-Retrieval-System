@@ -1,27 +1,7 @@
-Project Overview
-This repository is a local-first RAG chatbot system for KR Mangalam University information.
 
-What This Project Does
-
-- It ingests official university documents (TXT/PDF/DOCX) and turns them into searchable vector embeddings.
-- It lets students ask natural-language questions (fees, attendance, scholarships, placements, hostel, policies).
-- It retrieves the most relevant document chunks from ChromaDB and gives grounded answers using a local Ollama LLM.
-- It returns source references with answers so students can verify information instead of relying on unverified claims.
-- It supports conversational follow-up questions with short chat history memory.
-
-Why This Project Was Made
-
-- Students often struggle to find specific rules/details hidden across long PDFs and policy documents.
-- Important queries like attendance eligibility, fee breakdown, scholarship criteria, or placement requirements usually take too long to locate manually.
-- Asking peers can lead to incomplete or outdated information.
-- This project was built to provide fast, reliable, document-backed answers in one chat interface.
-- It is designed to be privacy-friendly and practical for campus use by running fully local (no cloud LLM API required).
-
-- Product name used in code/docs:KRMAI
-- Core purpose: answer student queries grounded in local documents
-- Primary stack: FastAPI + LangChain + ChromaDB + Ollama + React/Vite + Tailwind v4
-- LLM model configured: llama3.2:3b via Ollama
-- Embedding model configured: sentence-transformers/all-MiniLM-L6-v2
+Summary
+-------
+KRMAI is a local-first, AI-powered chatbot for KR Mangalam University. It provides instant, document-backed answers to student questions about university policies, fees, admissions, placements, hostels, and more. The system ingests official documents (TXT, PDF, DOCX), converts them into vector embeddings, and uses a local LLM (Ollama) to generate conversational answers grounded in retrieved document chunks. Every answer includes source citations for trust and transparency. The app is fully private (no cloud APIs), supports informal language, and is optimized for fast, reliable campus use.
 
 What Exists In The Directory (Complete Functional Map)
 

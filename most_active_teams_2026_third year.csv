@@ -1,0 +1,246 @@
+TEAM  STATUS,,,,,,,,,,,,,,,
+SNo.,Team Name,Team ID,Year,Problem Statement,Category,GitHub Repo,Repo Size (KB),Languages,Total Commits,Active Days,Consistency (%),Contributors,Velocity (commits/day),Longest Streak (days),Activity Score
+1,status200,26E3216,third,AI-powered Multi Agent System for RFP (Request for Proposal) Response Automation,Industry-Based,https://github.com/calebjubal/multi-agent-rfp-response-automation,2353,"TypeScript, Python, CSS",279,15,22.7,5,18.6,3,72.2
+2,CodeCrafters,26E3073,third,Face Recognition Based Attendance Management System,,https://github.com/raghavjha10/CodeCrafters,589,"PHP, CSS, Hack",61,37,48.1,4,1.65,7,47.6
+3,SPRING LOADED,26E3179,third,Distributed Rate Limiter System for High-Traffic APIs,DeepTech & System-Based,https://github.com/SidharthBScCS/Rate-Limiter-System-Java,170311,"Java, JavaScript, CSS",133,27,36,2,4.93,6,47.6
+4,thetechies_1,26E3175,third,AI-Driven Smart Hiring and Skill Validation Platform for Entry-Level Tech Talen,,https://github.com/roseeali28/AI-Driven-Smart-Hiring-Skill-Validation-Platform,418,"JavaScript, HTML, Python",117,21,28.8,5,5.57,10,46.8
+5,Promptica,26E3244,third,Secure LLM Inference Platform for Prompt Injection and Jailbreak Attack Detection,,https://github.com/Vic-41148/secure-llm-inference-platform,2768,"JavaScript, Shell, Batchfile",116,26,37.7,3,4.46,9,46.1
+6,Outkast,26E3212,third,"Design and implement an optimized bus routing system to improve travel efficiency, reduce fuel consu",,https://github.com/NamanKatewa/Minor-Project,66493,"TypeScript, Python, Lua",89,20,29.4,6,4.45,7,43.4
+7,Cyber cipher,26E3148,third,SIEM Security information and Event Management,University / Community Based Projects,https://github.com/ishanverma104/Ciber-cipher,254,"Shell, Python, JavaScript",47,20,27.8,3,2.35,14,30.2
+8,Deadline Dominators,26E3159,third,LLM-Based Knowledge Retrieval System for Internal Documents,,https://github.com/MohitGoel109/LLM-Based-Knowledge-Retrieval-System,21046,"HTML, JavaScript, Python",75,11,14.5,3,6.82,7,29.3
+9,PraxisX,26E3067,third,Edu Nexus : Semantic Knowledge Mapping using GraphRAG,,https://github.com/Sarveshero3/Edu-Nexus,19513,"Python, Jupyter Notebook, Batchfile",34,14,18.9,5,2.43,4,27.5
+10,BitWise,26E3204,third,Personalized Outfit Planning & Style Recommendation System,,https://github.com/projectvestra/vestra,1168,"JavaScript, TypeScript",49,18,24,2,2.72,5,27.1
+11,NavGati,26E3052,third,Smart Grid Load Prediction Using Deep Learning,,https://github.com/YAK-AGENCY-PVT-LTD/Smart-Grid-Load-Prediction-Using-Deep-Learning-By-Team-NavGati,19624,"Jupyter Notebook, Python",50,11,12.8,4,4.55,4,26.5
+12,Techno_Crafts,26E3142,third,Unified University Management & Student Support Platform,,https://github.com/vaibhavvaid14/EduSphere,11427,"JavaScript, HTML, CSS",35,12,15.6,4,2.92,7,24.3
+13,Mernifiers,26E3371,third,Unemployment Due to Limited Access to Skill-Based Work Opportunities,,https://github.com/ikhushichauhan/Mini_Project_II_MattersUrSkill,9024,,21,6,10.7,6,3.5,2,21.8
+14,Team APG,26E3115,third,Real Time And Error-Prone Attendence Management,,https://github.com/preetarora3004/AttendX,192,"TypeScript, CSS, JavaScript",38,10,13.2,3,3.8,2,21.6
+15,404s,26E3096,third,Data sharing using block chain,DeepTech & System-Based,https://github.com/MrinalMeha/demo-rep,46848,,0,0,0,10,0,0,20
+16,Reboot Rebels,26E3238,third,PhantomShield: A Deception-Based Post-Authentication Security Architecture,,https://github.com/akansh024/PhantomShield,124,"Python, JavaScript, HTML",25,7,10.3,4,3.57,2,19.2
+17,HYD_369,26E3072,third,An Independent Digital Real Estate Transaction Management System,,https://github.com/kiyopon77/blf,215,"Python, TypeScript, Dockerfile",25,6,8.1,4,4.17,2,18.7
+18,Spark_AI_Team,26E3241,third,An Intelligent Hybrid AI Framework for Early Detection and Prediction of Academic Dropout Risk in Hi,IoT-Enabled Projects,https://github.com/rakesh4407/SparkAI-Student-Performance-Prediction,390,"HTML, Python, CSS",27,3,4.4,3,9,1,17.1
+19,RUN DAA CODE,26E3166,third,AI‑Powered Fitness Form Coach for Safe Home & Gym Workouts,,https://github.com/Harshj00/HarshTrains,293,"JavaScript, CSS, HTML",35,10,13.3,1,3.5,3,17
+20,Quantum Coders,26E3098,third,LLM Inference Gateway and Prompt Router: A Functional Replication of Modern LLM Serving Systems,,https://github.com/Anurag637/Quantum-Coders-26E3098,10582,Python,23,10,13.7,2,2.3,3,16.6
+21,Brainbytes,26E3109,third,Explainable AI Framework for Early Detection of Mental Stress and Burnout Using Multimodal Behaviora,,https://github.com/poonam-021/explainable-ai-stress-burnout,3156,Jupyter Notebook,17,8,11.3,3,2.12,4,16.1
+22,TechDivas,26E3253,third,AI-Based Student Performance Prediction System,University / Community Based Projects,https://github.com/shailjarathore/Student-Performance-Prediction-System,61,"HTML, Python",15,7,10.4,3,2.14,3,15
+23,Mindful Machines,26E3066,third,FreshFarm@Campus,,https://github.com/Kshma-Agrawal/freshfarm-campus,1422,"JavaScript, CSS, HTML",35,5,6.5,1,7,3,14.8
+24,Null Vector,26E3119,third,Design and Implementation of a Windows-Based Voice-Controlled Scripting Interpreter for Secure System Automation,,https://github.com/90sumit99/windows-voice-automation-assistant,977,"C++, Python",24,6,8.8,2,4,2,14.5
+25,Cubicles,26E3058,third,AI-Powered Speech Therapy Assistant for Detecting and Improving Speech Fluency Disorders,,https://github.com/heyayushhh/Projexa-AI,3217,Python,25,5,6.8,2,5,2,14.3
+26,AI Avengers,26E3141,third,Automated Resume Screening and Candidate Ranking System for Small Businesses,DeepTech & System-Based,https://github.com/Jayantparashar10/Resumease,211,"TypeScript, Python, JavaScript",17,5,6.9,3,3.4,2,14.3
+27,Null Pointers,26E3170,third,ReelBite: Discover Food Through Short Videos,DeepTech & System-Based,https://github.com/ykhushbu941/ReelBite,2735,JavaScript,13,6,8.1,3,2.17,3,13.9
+28,League of Coders,26E3074,third,Real-Time Air Quality Monitoring System with ML Prediction,,https://github.com/Anant-Goel2006/Real-Time-Air-Quality-Monitoring-System-with-ML-Prediction-Minor-Project-,14780,"Jupyter Notebook, JavaScript, Python",29,3,3.9,1,9.67,2,13.8
+29,Visionary Coders,26E3075,third,Smart Traffic Management System Using IoT & Computer Vision,,https://github.com/TuShar528/-Smart-Traffic-Management-System-Using-IoT-Computer-Vision,2476,"TypeScript, Python, CSS",8,4,5.4,4,2,1,13.5
+30,Team ABC,26E3126,third,A Hybrid Feature Fusion Framework for Robust Text Recognition in Degraded Document Images,,https://github.com/harddikgupta/ProjexaAI_TeamABC,17,Jupyter Notebook,11,9,12,2,1.22,3,13.5
+31,Clover,26E3095,third,Custom Virtual Machine (VM) for a Simple Instruction Set,,https://github.com/Kashvi1811/Mini_Project_2026,115,"HTML, C++, Assembly",19,7,9.1,1,2.71,6,11.9
+32,Tech Titans,26E3164,third,Feed Forward,,https://github.com/Ayush-Ahlawat/Minor-Project-6th-semester,57,"HTML, CSS, JavaScript",23,5,7,1,4.6,2,11.8
+33,Power Pointers,26E3180,third,Transit Connect,University / Community Based Projects,https://github.com/HridayanshuYogi/Transit-connect,923,"JavaScript, TypeScript",7,5,6.8,3,1.4,1,11.8
+34,Team Varun,26E3070,third,AI Based Autmated Quizz and Certificate Generator,,https://github.com/varunkasnia/Certifiacate-App,1371,"Python, Dockerfile",20,6,7.8,1,3.33,3,11.5
+35,The Missing Semicolon,26E3209,third,VaultGuard: A Secure Digital Inheritance & Emergency Document Access System.,Start-Up,https://github.com/dubey233445/safe-haven-storage,237,"TypeScript, PLpgSQL, CSS",12,5,6.7,2,2.4,4,11.1
+36,Tech Titans,26E3195,third,Hoestella,,https://github.com/fayyazkhan0825-coder/Hoestella,9,Dart,7,3,3.9,3,2.33,1,10.7
+37,Lectra,26E3221,third,Automated Lecture Intelligence System for Enhanced Academic Learning,,https://github.com/BeastBoom/Lectra-A_Lecture_Intelligence_System,189,"TypeScript, Python, CSS",13,3,4.2,2,4.33,2,10.6
+38,Thor,26E3089,third,An AI-Based Workload Pattern Analysis and Guidance System”,University / Community Based Projects,https://github.com/badhan9540/6-sem-project,12,,6,3,3.9,3,2,1,10.4
+39,Cheetah,26E3106,third,DeepTech System for Intelligent Energy Coordination in Distributed Microgrids,DeepTech & System-Based,https://github.com/theabhinav0231/Intelligent-Microgrid,12849,Python,11,4,5.5,2,2.75,2,10.3
+40,Shadow,26E3157,third,Unified College Interaction System,,https://github.com/harshitj183/unified-college-interaction-system-web,6106,,12,3,4.2,2,4,2,10.3
+41,Team Coders,26E3056,third,GreenAudit – Campus Sustainability & Carbon Tracker,Industry-Based,https://github.com/Khushi831-ydv/Team-Coders-Sem6-MiniProject,19,"TypeScript, HTML",8,5,6.6,2,1.6,2,10.1
+42,VisionGuard AI,26E3200,third,VISIONGUARD: Real-Time Pedestrian & Vehicle Detection and Alert System Using YOLOv9,University / Community Based Projects,https://github.com/Vinay-Partap/VisionGuard,10116,Python,10,7,9.5,1,1.43,3,9.9
+43,Code_Flow,26E3267,third,Digital Complaint & Grievance Analytics System,University / Community Based Projects,https://github.com/harshhh044/code_flow,160,"JavaScript, CSS, HTML",13,6,10.3,1,2.17,5,9.9
+44,Allied,26E3173,third,Automated Question Paper Generation Using AI and Bloom’s Taxonomy,,https://github.com/Akashkandari7/Sem6_Miniproject,85,"HTML, Python, Mako",7,5,7.4,2,1.4,3,9.8
+45,NexGen Forge,26E3053,third,Neurix: A Universal Platform to Connect AI with Any Service Using MCP Servers,Industry-Based,https://github.com/ADARSH0309/Neurix,856,"TypeScript, HTML, JavaScript",16,4,4.8,1,4,2,9.7
+46,Alpha coders,26E3091,third,Ai prevent public safety and alert system,Industry-Based,https://github.com/Adityasingh552/Citadel,63,"TypeScript, Python, CSS",10,2,2.6,2,5,1,9.7
+47,NetDefenders,26E3156,third,Internship Management Portal – Internnova,,https://github.com/vartika43/Internship-Management-Portal---Internnova,4068,"JavaScript, HTML, CSS",8,4,5.4,2,2,3,9.5
+48,Team 26E3321,26E3321,third,Real-time Election Data Monitoring System for Open-Source Integrity,,https://github.com/Nishant607/Real-time-Election-Data-Monitoring-System,73,"Python, HTML, CSS",8,7,13.7,1,1.14,4,9.4
+49,dev x,26E3068,third,Food product explorer with ai api integration,Start-Up,https://github.com/lucky-smash/food-Product-explorer,21546,"JavaScript, CSS, HTML",13,5,7.2,1,2.6,2,9.3
+50,Code Crafters,26E3189,third,"TRINETRA: AI-Powered Intelligent Traffic Monitoring , Violation detection and Emergency Response System",DeepTech & System-Based,https://github.com/ANM0L-22/TRINETRA,24230,Python,8,3,3.9,2,2.67,1,9
+51,VYBE Wizards,26E3057,third,"AI-Powered Women Safety Application Using Voice Distress Detection, NLP Emergency Chat, and Generative AI",Industry-Based,https://github.com/HarshMishra16/Minor-Project_VYBE-Wizards_3rd-year,12171,"Jupyter Notebook, Dart, HTML",10,5,6.8,1,2,1,8.6
+52,ICOGNITOBLASTERS,26E3084,third,Smart Notes Summarizer using AI for Academic Learning,,https://github.com/rk17-max/Notes-summarizer,36,"HTML, JavaScript",10,5,6.7,1,2,1,8.6
+53,Code and Chaos,26E3152,third,AI-Based Environmental Risk Intelligence System for Air Pollution and Deforestation Impact Analysis,,https://github.com/AnushkaRana-12/EnviroAI,11,"Jupyter Notebook, Python",13,3,4.1,1,4.33,1,8.6
+54,NetGuard,26E3243,third,Blockchain-Based Decentralized Identity for Secure IoT Device Onboarding,,https://github.com/Shahbaz-ali22/blockchain-iot-device-onboarding,12,,12,2,3,1,6,2,8.6
+55,Team Sapphire,26E3149,third,"An AI-Powered SaaS Platform for Automated Content Creation, Image Processing, and Resume Analysis Using the PERN Stack",University / Community Based Projects,https://github.com/Krishna-KumarGupta/scholar-assist-ai,1754,"JavaScript, HTML",7,6,8.2,1,1.17,1,8.5
+56,Bug Busters,26E3169,third,AI‑Powered Academic Assistant using Hybrid Retrieval‑Augmented Generation (RAG),,https://github.com/adi318krmu/FINAL_YEAR_PROJECT,6,Python,6,3,4.2,2,2,1,8.4
+57,Quantum Leap,26E3063,third,Earthquake Response Prediction of Structures Using Deep Learning,,https://github.com/Abhishek6122008/Projexa-Earthquake-Project,253,Jupyter Notebook,5,3,3.9,2,1.67,1,8
+58,Morvixan,26E3069,third,Real-time Nitrogen Oxides Emissions Monitoring System for Underground Subway Tunnels,,https://github.com/2301730207Sudhanshu/underground-subway-nox-monitoring-system,5297,"Jupyter Notebook, Python",9,4,5.6,1,2.25,2,7.7
+59,Mild Minds,26E3188,third,Community-Oriented Evaluation Framework of Mobile Learning Apps,,https://github.com/yadavaman99/Mobile-Learning-Apps-Evaluator,5,Python,4,3,3.9,2,1.33,2,7.7
+60,RAAVS,26E3192,third,Hybrid Feature-Based Vehicle Detection and Classification for Intelligent Traffic Analysis,DeepTech & System-Based,https://github.com/anmolnagal/TRAFFIC-PROJECT,4,"Python, PowerShell, Batchfile",3,3,4.1,2,1,1,7.4
+61,SyntaxSquad,26E3118,third,AI-Based Student Dropout Risk Prediction and Early Intervention System,Industry-Based,https://github.com/Nishant28-sh/student-dropout-risk-prediction,8086,"Jupyter Notebook, Python, HTML",4,2,2.6,2,2,2,7.3
+62,code trinity,26E3128,third,Agentic Internal University GPT (Multi-agent GenAl for academic & administrative queries),,https://github.com/Dianger16/3rd-year-project,396,"TypeScript, Python, PLpgSQL",4,2,2.7,2,2,1,7.3
+63,BLazeStack,26E3055,third,IoT-Based Smart Classroom Environment Monitoring System,,https://github.com/shikhar11x/IoT-Based-Smart-Classroom-Environment-Monitoring-System-6th-SEM,1201,,3,2,2.7,2,1.5,1,6.9
+64,MindMatrix,26E3140,third,Bytestock: Smart Inventory Management for Small Businesses,,https://github.com/harshit5845/ByteStock,3,,3,2,2.6,2,1.5,1,6.9
+65,Pantheon,26E3160,third,Customer Support Automation Using Generative AI,DeepTech & System-Based,https://github.com/AeroScissors/Customer-Support-Automation-Using-Generative-AI,63,"JavaScript, Python, HTML",6,1,1.4,1,6,1,6.9
+66,Team Noobs,26E3163,third,FAKE REVIEW DECTECTION,,https://github.com/ADITYAGUPTA112/FAKE_REVIEWS-,5332,"Jupyter Notebook, HTML, CSS",6,4,5.4,1,1.5,4,6.9
+67,TON-618,26E3194,third,Implementation of a Distributed File System Using Client-Server Architecture,,https://github.com/ton-618-projects/cdfs,6,"C, Makefile",6,1,1.4,1,6,1,6.9
+68,Future forge,26E3214,third,Integrated Student Support & Academic Service Platform,University / Community Based Projects,https://github.com/mehakk1727/student-support-academic-services,2749,,7,3,4.4,1,2.33,3,6.7
+69,Unknown-Developers-X,26E3117,third,AI-Based Engineering Decision Review System for Preventing Long-Term Technical Debt,,https://github.com/Ashish5180/AI-Based-Engineering-Decision-Review-System,94,"TypeScript, Go, CSS",5,4,5.3,1,1.25,1,6.6
+70,LifeTrek,26E3054,third,Progreso: A Focus-Based Productivity Web Application for Students,,https://github.com/RN005/Progreso,59,"JavaScript, CSS, HTML",4,4,7,1,1,2,6.4
+71,Bhaichara,26E3107,third,"No-Code SaaS Platform for Building, Managing, and Automating Forms Without Development Effort",DeepTech & System-Based,https://github.com/Kapil-2005/Start-up-project-,82,"JavaScript, CSS, HTML",6,3,4.1,1,2,1,6.4
+72,TwinTech,26E3121,third,Performance Analysis of Database Queey Execution Using JDBC with and without indexing,,https://github.com/Namrata710/Smart-Query-Analyzer,7,"Java, HTML",5,1,1.5,1,5,1,6.2
+73,Racket Gang,26E3229,third,E-Attend: Centralized Digital Event & Attendance Management System for KRMU,University / Community Based Projects,https://github.com/7uyash/krmu-event-hub,489,"TypeScript, JavaScript, CSS",2,1,1.5,2,2,1,6.2
+74,CodeX,26E3088,third,Industry Visit Discovery and Recommendation Platform Based on Academic Discipline”,,https://github.com/creativeriser/CodeX,147,"TypeScript, CSS, JavaScript",5,3,4,1,1.67,3,6
+75,PyChamp,26E3122,third,AI-Based Personal Finance Risk Analyzer for Smart Expense Management,,https://github.com/Kartik311209/AI-Based-Personal-Finance-Risk-Analyzer-for-Smart-Expense-Management,14,Python,5,3,4.2,1,1.67,1,6
+76,CodeMatrix,26E3185,third,Entry Gate Management App for Residential Society,,https://github.com/lakshay3749/projectMatrix,25,JavaScript,5,2,2.7,1,2.5,1,5.7
+77,Innovix Team,26E3196,third,Secure Web-based Voting System Using Face Authentication,DeepTech & System-Based,https://github.com/Codeasits/Online-voting-system,1,,4,3,4.2,1,1.33,1,5.7
+78,DeepThink,26E3261,third,AI-Based-Smart-Eco-Air-Pollution-Control-System,IoT-Enabled Projects,https://github.com/shubham055555/AI-Based-Smart-Eco-Air-Pollution-Control-System,4534,,4,3,4.7,1,1.33,1,5.7
+79,Kairos,26E3102,third,AURA-Autonomous Unified Risk Auditor,DeepTech & System-Based,https://github.com/dewanshshekhar/AURA-Autonomous-Unified-Risk-Auditor,736,"Python, Motoko, TypeScript",4,1,1.3,1,4,1,5.5
+80,Tech Turtles,26E3094,third,Vision-Based Intelligent Traffic Monitoring and Congestion Prediction System,,https://github.com/Aditi-saraswat22/Vision-Based-Intelligent-Traffic-Monitoring-and-Congestion-Prediction-System,157451,Python,4,2,2.9,1,2,1,5.3
+81,Digital Architects,26E3083,third,AI-Based Student Performance Prediction & Early Warning System,,https://github.com/Dagar214/-Digital-Architects,4,,3,2,2.7,1,1.5,1,4.9
+82,Tornhub,26E3155,third,AI-Driven Traffic Congestion Prediction and Adaptive Signal Control System,,https://github.com/BhaumikTanwar/smart-traffic-management-system,13,"HTML, Python",3,2,2.6,1,1.5,1,4.9
+83,CodeCrafters,26E3158,third,Smart Classroom Feedback and Quality Monitoring System Using AI,,https://github.com/om-kumar100/Smart-Classroom-Feedback-and-Quality-System,3,"Python, HTML, CSS",3,1,1.4,1,3,1,4.9
+84,Core Five,26E3168,third,An Air Quality Monitoring and Forecasting System for Lima City Using Low-Cost Sensors and Artificial,,https://github.com/NishchayChaudhary/minor-project-2025,6,"Jupyter Notebook, Python",3,2,3.1,1,1.5,1,4.9
+85,Neural Knights,26E3182,third,AI-Based Anomaly Detection System for System Logs,,https://github.com/abdulwaheedal/AI_Anamoly_Detection_using_logs,425,Jupyter Notebook,3,2,3.8,1,1.5,2,4.9
+86,RiftStack,26E3087,third,Cognitive Pattern Intelligence for Student Behavioral Insights,,https://github.com/HarshSen-hub/STUD_,42,"CSS, JavaScript, HTML",2,2,2.6,1,1,1,4.4
+87,Innovation Ke Shaukeeen,26E3116,third,Intelligent Search Engine for KRMU Campus Resources,,https://github.com/Aniket-M07/Innovation-K-Shaukeen-,104,"HTML, Python, CSS",2,2,3,1,1,1,4.4
+88,CodeStorm,26E3129,third,Detection of DoS Attacks using Honeypot System,DeepTech & System-Based,https://github.com/Dahiyakhushi/dos,2,,2,2,2.7,1,1,1,4.4
+89,Aeonark,26E3211,third,Intelligent RFP Clause Matching and Relevance Scoring System (AeonRFP MVP),Start-Up,https://github.com/aeonark/AeonRFP,157,"TypeScript, CSS, JavaScript",2,2,2.7,1,1,1,4.4
+90,NullX,26E3242,third,Designing a Standardized Educational Quality Benchmark for Learning Apps,,https://github.com/Seemakanwar2005/MINOR---PROJECT---NULLX,7756,,2,2,3,1,1,1,4.4
+91,TEAM INVINCIBLE,26E3254,third,SUBTITLE TRANSLATOR APPLICATION,Industry-Based,https://github.com/avinash165288/Subtitle-Translator,7576,"Python, JavaScript, HTML",2,2,3.1,1,1,1,4.4
+92,Dark,26E3078,third,Bug Tracker System,University / Community Based Projects,https://github.com/priyanshu00099/Bug-Tracker-System,12349,"JavaScript, CSS, HTML",2,1,1.4,1,2,1,4.2
+93,Pixxy,26E3108,third,Finance Guardian,Start-Up,https://github.com/sus-95/Finance-Guardian-,5,Python,2,1,1.8,1,2,1,4.2
+94,Code_Crafters,26E3135,third,AI-Based Resume Analyzer & Job Matching System,,https://github.com/Shreyashjha1/Code_crafters,8,"Jupyter Notebook, HTML, Python",2,1,1.4,1,2,1,4.2
+95,DEVX,26E3190,third,StudySphere – An AI-Based Study Companion for Smart Learning & Productivity Enhancement,,https://github.com/triptikhandelwal1/StudySphere,2,,2,1,1.4,1,2,1,4.2
+96,AlgoZen,26E3215,third,To design an AI-driven traffic governance system that predicts cloud system overload in advance and intelligently controls incoming traffic to maintain performance and reliability.,Research,https://github.com/shivxnii/projexa.ai,10,Python,2,1,1.5,1,2,1,4.2
+97,iconic Esports,26E3219,third,Smart Placement Management System for Universities,University / Community Based Projects,https://github.com/sunnyfarmana/Smart-Placement-Management-System-for-Universities,2,,2,1,2,1,2,1,4.2
+98,Inno_Ved,26E3255,third,Emotion Recognition System,Research,https://github.com/yashjha15/Inno_Ved-facial-emotion-recognition,2,,2,1,1.5,1,2,1,4.2
+99,coding maniac,26E3174,third,"A System-Level AI Framework for Energy Forecasting, Anomaly Detection, and Wastage Reduction.",DeepTech & System-Based,https://github.com/Jatinbisht2207/ai-based-optimization-platform,982,Python,4,3,3.9,0,1.33,2,3.7
+100,Pixxy,26E3050,third,Microservices-Based Learning Management System (LMS) for Universities,,https://github.com/jainnirdesh/Microservices-Based-Learning-Management-System-LMS-for-Universities,1,,1,1,1.2,1,1,1,3.5
+101,Mind Flayer Coders,26E3051,third,Mental Health Support & Early Risk Detection Platform for Students,,https://github.com/deevanshi12/Minor_Project,0,,1,1,1.3,1,1,1,3.5
+102,Tech Titans,26E3060,third,Low-Resource LLM-Based Academic Question Generator for Personalized Learning,,https://github.com/KrishCoder23/Minor-Project-Sem-VI,0,,1,1,1.3,1,1,1,3.5
+103,Demonic Debuggers,26E3065,third,ML-Based Fairness Monitoring in Public Welfare Systems,University / Community Based Projects,https://github.com/aayuuu9/Public-Welfare-System,0,,1,1,1.6,1,1,1,3.5
+104,NeuroNova,26E3077,third,AI-Powered Secure Personal Productivity Agent with Intelligent Authentication,DeepTech & System-Based,https://github.com/akshitagoel11/aura,114,"TypeScript, CSS, JavaScript",1,1,1.3,1,1,1,3.5
+105,Kyros,26E3079,third,Real-time Adaptive Traffic Signal Control System for Multimodal Transportation in Urban Canyons,DeepTech & System-Based,https://github.com/dabasdeepika/Real-time-Adaptive-Traffic-Signal-Control-System-for-Multimodal-Transportation-in-Urban-Canyons,3,,1,1,2.1,1,1,1,3.5
+106,KRMU CODERS,26E3085,third,BuildDB: Hands-On Mini Database Engine,,https://github.com/Bhumit-Tanwar/Mini-Database-Engine,0,,1,1,1.3,1,1,1,3.5
+107,Jugaad Level_Pro,26E3101,third,VoiceAid- AI Voice Companion for Elderly Care and Emergencies,,https://github.com/PirateKing-MONKEYDLUFFY/MINOR-PROJECT,0,,1,1,1.4,1,1,1,3.5
+108,Codex predators,26E3104,third,Script-Aware Synthetic Scene Text Generation Using Generative AI for Multilingual OCR,,https://github.com/Adityan20-cod/Script-Aware-Synthetic-Scene-Text-Generation-using-Generative-AI-for-Multilingual-OCR,0,,1,1,1.3,1,1,1,3.5
+109,BEING MUSKETEERS,26E3105,third,Performance Analysis of Auto-Scaling Policies in Cloud Computing Environments,,https://github.com/NYCTOHXWK/BEING_MUSKETEERS,0,,1,1,1.5,1,1,1,3.5
+110,Team CMYK,26E3123,third,Dyslexia-Specific Pedagogical Framework for Inclusive Learning in Multilingual Indian Contexts,Research,https://github.com/tanushreecodes/Team-CMYK,0,,1,1,1.6,1,1,1,3.5
+111,Asteroid,26E3131,third,"CO–PO Attainment and Performance Analytics System In Outcome-Based Education (OBE), Course Outcomes (COs) and Program Outcomes (POs) play a crucial role in evaluating the academic performance of students and the effectiveness of teaching methodologies. However, in the current system, faculty members face significant challenges in mapping COs to POs, tracking student performance, and analyzing attainment data in a structured and scalable manner.",Start-Up,https://github.com/axdy02/Kurl-timetable,0,,1,1,1.4,1,1,1,3.5
+112,CoreVelocity Forerunners,26E3133,third,"Design of a Secure, Privacy-Preserving Federated Learning Framework for Decentralized Data Analytics",DeepTech & System-Based,https://github.com/sai-nayan/Federated-Learning-Framework-for-Decentralized-Data-Analytics,0,,1,1,1.4,1,1,1,3.5
+113,Pegasus,26E3136,third,"The ""AI vs. Human"" Text Classifier",,https://github.com/parvarora0101/The-AI-vs-Human-Text-Clasifier,0,,1,1,2.1,1,1,1,3.5
+114,CareOps Pirates,26E3139,third,PharmaGO — AI-Powered Healthcare Operations Automation Platform,University / Community Based Projects,https://github.com/CareOP/PharmaGO,5,,1,1,1.4,1,1,1,3.5
+115,Zero one,26E3145,third,Digital Literacy Platform for Local Rural Schools,,https://github.com/shrvn12/third_yr_mini_project,0,,1,1,1.4,1,1,1,3.5
+116,Byteon,26E3147,third,Design and Implementation of a Traffic Prediction Engine Using Time-Series Algorithms,,https://github.com/AaravKumar7/Traffic-Prediction-Engine,0,,1,1,1.5,1,1,1,3.5
+117,Team_Unit,26E3150,third,Data-Driven Assessment of Indoor Thermal Comfort Using Statistical and Machine Learning Models,,https://github.com/Divya1163/Minor-Project-Sem-6,0,,1,1,1.4,1,1,1,3.5
+118,Growing Minds,26E3154,third,AI-Powered Smart Interview & Resume Screening System,DeepTech & System-Based,https://github.com/reachsanyogita15/Growing-Minds,5,,1,1,1.4,1,1,1,3.5
+119,Coffee and Code,26E3165,third,Smart Interview Preparation Platform,,https://github.com/Kaurgxg/Smart-Interview-Preparation-Platform,141,"TypeScript, CSS, JavaScript",1,1,1.3,1,1,1,3.5
+120,Tensor Titans,26E3171,third,AI-Based Handwritten Answer Sheet Evaluation System,DeepTech & System-Based,https://github.com/nikukaushik001/Minor-Project-Pre-Final,7574,Python,1,1,1.3,1,1,1,3.5
+121,Astryx,26E3178,third,Hybrid Secure Data Aggregation for Smart Grids using Homomorphic Encryption and Differential Privacy,,https://github.com/Varsha-Gaur/Mini-Project---Astryx,0,,1,1,1.4,1,1,1,3.5
+122,_primitive,26E3183,third,Dynamic Differential Learning & Monitoring Portal: An Adaptive System for Personalised Academic Intervention and Peer Mentorship,University / Community Based Projects,https://github.com/aarushi-sharma-09/Differential-Learning-Student-Monitoring-System,2,,1,1,1.4,1,1,1,3.5
+123,Logic Loop,26E3197,third,Emotion recongnition System,University / Community Based Projects,https://github.com/SahilBhardwaj12/Emotion-Recognition-System,0,,1,1,1.3,1,1,1,3.5
+124,TechBuddies,26E3198,third,Data-Driven Academic Resource Sharing and Analytics Platform for College Students,University / Community Based Projects,https://github.com/kryn0x/Data-Driven-Academic-Resource-Sharing-and-Analytics-Platform-for-College-Students,3,,1,1,1.4,1,1,1,3.5
+125,Team WebCore,26E3203,third,University Placement Management System,University / Community Based Projects,https://github.com/diksha12345612/University-Placement-Management-System,1,,1,1,1.3,1,1,1,3.5
+126,Astro,26E3205,third,Vision-Based Smart Classroom Environment Monitoring System,,https://github.com/Arghadipkuri003/Vision-based-smart-classroom26,0,,1,1,1.4,1,1,1,3.5
+127,DuoJexa,26E3218,third,Library Management System,University / Community Based Projects,https://github.com/Sophia2Soni/StudentManagementSystem,0,,1,1,1.8,1,1,1,3.5
+128,Anvesana India,26E3220,third,Exam-Focused Generative AI Study Assistant Using Retrieval-Augmented Generation with Citation and Hallucination Control,DeepTech & System-Based,https://github.com/ShreyanshVaibhaw/SAFES-Source-Aware-Framework-for-Exam-Support-,104,"Python, Shell, Dockerfile",1,1,1.6,1,1,1,3.5
+129,NeuroNet,26E3226,third,AI-Based UPI Fraud Detection System,Industry-Based,https://github.com/Saksham-24/AI-Based-UPI-Fraud-Detection-System,0,,1,1,1.4,1,1,1,3.5
+130,Tech Titans,26E3231,third,Scalability & performance bottlenecks in Blockchain architectures under high concurrent applicationo,Research,https://github.com/abhirajx18-tech/scalability-and-performance,4,,1,1,1.6,1,1,1,3.5
+131,Code Crew,26E3235,third,Automated Campus Sustainability & Waste Audit,,https://github.com/teeyatewatia7447/Minor-project-sem-4-,0,,1,1,1.4,1,1,1,3.5
+132,Hayagrīva,26E3246,third,Design of a Privacy-Preserving and Secure Framework for Data security of sensitive data.,University / Community Based Projects,https://github.com/Priyanshu544-alt/Hayagriva-,0,,1,1,1.5,1,1,1,3.5
+133,CodeCrafters,26E3262,third,parking management system,University / Community Based Projects,https://github.com/vivek1153/parking-management-system,1,,1,1,2,1,1,1,3.5
+134,NotifyLabs,26E3270,third,EduNotify – A Year-Wise Academic Notification Web Application,University / Community Based Projects,https://github.com/vrinnda007/Mini-project-2--26E3270-NotifyLabs---Edu-notify-,1,,1,1,1.7,1,1,1,3.5
+135,Team 26E3373,26E3373,third,AI-Based Classroom Inspection &   Faculty Presence Reporting System,DeepTech & System-Based,,0,,1,1,3.6,1,1,1,3.5
+136,MidKnight Coders,26E3103,third,"""PlacePrep"" - It’s an AI-powered platform that helps students and tech aspirants prepare for interviews by offering company-tier-based preparation (Tier 1–3), personalized question sets, resume building, and GitHub project integration—all in one place.",University / Community Based Projects,https://github.com/Abhinav0791/Placeprep-Student-Learning-Platofrom-,297,"TypeScript, JavaScript",6,0,0,1,0,0,2.9
+137,girgitlog,26E3201,third,A Centralized System to Manage Lost and Found Belongings,University / Community Based Projects,https://github.com/sneha-ojha/inventory-lost-found,24,"EJS, JavaScript",3,0,0,1,0,0,2.4
+138,Bro coder,26E3111,third,"Integrated Med-Tech Platform for Online Doctor Appointment, E-Prescription, Medicine Management, and Virtual Consultation",,https://github.com/Ankitsingh023/knapsack,21,,0,0,0,1,0,0,2
+139,Team Shytalk,26E3146,third,Our Pharma: A Hyperlocal Medicine Delivery System with Intelligent Substitute Mapping.,Start-Up,https://github.com/Dutkarsh7/Project,15,HTML,0,0,0,1,0,0,2
+140,Rohit group,26E3230,third,IoT-Enabled Classroom and Laboratory Utilization Analytics for University Decision Support,,https://github.com/Rohitkumar017/Issues-of-privileges-,0,,0,0,0,1,0,0,2
+141,Sharandeep Kaur,26E3234,third,IoT-Based Smart Water Level & Quality Monitoring,,https://github.com/2401201079/sharandeep-kaur,6,R,0,0,0,1,0,0,2
+142,Team Horizon,26E3250,third,Credit Risk Prediction Model,DeepTech & System-Based,https://github.com/RuchikaaJ/RuchikaaJ,1,,0,0,0,1,0,0,2
+143,Astarrtech,26E3264,third,Simple Scripting Interpreter ,,https://github.com/AryanxSareen/R-project,28,R,0,0,0,1,0,0,2
+144,Techmorph,26E3049,third,Sales Performance and Customer Behavior Analysis for Business Growth,Industry-Based,https://github.com/amansaif/IGNYTE_Electricals,0,,0,0,0,0,0,0,0
+145,Babri Blasters,26E3059,third,Intelligent Traffic Congestion Prediction and Control System,,https://github.com/niteshyagami/Intelligent-Traffic-Congestion-Prediction-and-Control-System,0,,0,0,0,0,0,0,0
+146,The BoyS,26E3061,third,AyurCare – Smart Panchakarma Solution for Community Health and Wellness,,https://github.com/GunjanJ2027/AyurCare-Smart-Panchakarma-Solution-for-Community-Health-and-Wellness,0,,0,0,0,0,0,0,0
+147,Ajjjj,26E3062,third,No problem statement,,,0,,0,0,0,0,0,0,0
+148,Call Break,26E3064,third,Generative AI Study Assistant with Hallucination Control (RAG + Source-Cited Answers),DeepTech & System-Based,https://github.com/Cloud-Vaishvik/GenAiProject,0,,0,0,0,0,0,0,0
+149,LeMON coders,26E3071,third,IoT AI Copilot for No Code Recovery Systems,,https://github.com/debugging-vaibhav/IoT-AI-Copilot-for-No-Code-Recovery-Systems,0,,0,0,0,0,0,0,0
+150,DesignARs,26E3076,third,AR for Rural Education: Bridging the gap through UX and Research,Research,https://github.com/chirahbhal312/DesignARs,0,,0,0,0,0,0,0,0
+151,SpaceX,26E3080,third,AI-Powered Predictive Maintenance System for Industrial Equipment Using Sensor Data Analytics,Industry-Based,https://github.com/mitheel007/SpaceX,0,,0,0,0,0,0,0,0
+152,DeepSignal,26E3081,third,AI-Powered Image Analysis and Trip Assistance App,DeepTech & System-Based,https://github.com/Vanshika24005/AI-Powered-Image-Analysis-and-Trip-Assistance-App,0,,0,0,0,0,0,0,0
+153,Task Force,26E3082,third,A Real‑Time Monitoring and Predictive Framework for Hospital Bed and Oxygen Supply Management.,,https://github.com/kunj0390/New-project-for-sem-6,0,,0,0,0,0,0,0,0
+154,Team Elite,26E3086,third,Smart Recruitment System,,https://github.com/Raunak0412/Minor-project-,0,,0,0,0,0,0,0,0
+155,squad,26E3090,third,IoT-Based Smart Agriculture Monitoring System,Research,,0,,0,0,0,0,0,0,0
+156,TechNova,26E3092,third,Smart Campus Resource Optimization System Using Data Analytics and Automation,,https://github.com/saksham998-png/Smart-Campus-Resource-Optimization-System-Using-Data-Analytics-and-Automation,0,,0,0,0,0,0,0,0
+157,QuadX,26E3093,third,Smart Waste Management System using IoT,,https://github.com/Krishagg26/26E3093---QuadX,0,,0,0,0,0,0,0,0
+158,Grand Rebels,26E3097,third,Ai powred code edtior,DeepTech & System-Based,https://github.com/iam-shreya/Ai_powered_code_editor,0,,0,0,0,0,0,0,0
+159,Sentinal Prime,26E3099,third,Optimization of Solar Power Inverter Control for Reduced Energy Losses in Grid-Connected Systems,,,0,,0,0,0,0,0,0,0
+160,Kopilot,26E3100,third,Coding Quiz Contest,,,0,,0,0,0,0,0,0,0
+161,Trishul,26E3110,third,Smart Agriculture Advisory Platform for Predictive Crop Management,DeepTech & System-Based,https://github.com/Keshav-Kathuria/Sem-6-mini-project,0,,0,0,0,0,0,0,0
+162,GhostBit,26E3112,third,Cloud Resource Monitoring and Cost Optimization System for Enterprises,Industry-Based,https://github.com/hiteshrao15/Minor-project,0,,0,0,0,0,0,0,0
+163,BackRow_Hackers,26E3113,third,IoT-Based Smart Healthcare Monitoring System,,,0,,0,0,0,0,0,0,0
+164,Skybyte,26E3114,third,Smart Energy Monitoring and Management System,,,0,,0,0,0,0,0,0,0
+165,Still Bytes,26E3120,third,Aahaar-CMS,University / Community Based Projects,https://github.com/Still-Bytes/aahaar-cms,0,,0,0,0,0,0,0,0
+166,Parallax,26E3124,third,StudySync - AI-Powered Intelligent Study Tracker,,https://github.com/tanuj5946/study-sync,0,,0,0,0,0,0,0,0
+167,Parallax,26E3125,third,Real-Time Traffic Congestion Prediction System,,,0,,0,0,0,0,0,0,0
+168,Team Rolex,26E3130,third,Real-time Coastal Water Quality Monitoring System for Enhanced Shellfish Safety,,,0,,0,0,0,0,0,0,0
+169,KDMA team,26E3132,third,SECURE FILE STORAGE SYSTEM,DeepTech & System-Based,https://github.com/devesh0800/SECURE-FILE-STORAGE-SYSTEM,0,,0,0,0,0,0,0,0
+170,JABS,26E3134,third,Smart Crop Protection System,,https://github.com/bhuveetasarohi/Smart-Crop-Protection-System,0,,0,0,0,0,0,0,0
+171,Pairadox,26E3137,third,Transformer-Based Multimodal Surveillance System for Suspicious Activity Detection,,https://github.com/aaagairi/Projexa-Pairadox,0,,0,0,0,0,0,0,0
+172,Team Ecorailytics,26E3138,third,Automated Workflow and Performance Monitoring System for Academic Institutions,,https://github.com/YASHcell129/Mini-Project,0,,0,0,0,0,0,0,0
+173,TechFlux,26E3143,third,MuteVerse,University / Community Based Projects,https://github.com/AMit090912/MuteVerse,0,,0,0,0,0,0,0,0
+174,PASCA,26E3144,third,Automated Vulnerability Scanning and Risk Assessment Tool for Enterprise IT Systems,,https://github.com/Aditya2322/Automated-Vulnerability-Scanning-and-Risk-Assessment-Tool,0,,0,0,0,0,0,0,0
+175,AI job predictor,26E3151,third,Fake Job Predictor,,https://github.com/sameermalhotr/Fake_Job_Predictor,0,,0,0,0,0,0,0,0
+176,Code Dominions,26E3153,third,AI-Powered Student Skill Gap Analysis & Learning Recommendation Platform,,https://github.com/lightningninja-01/CampusOS---Integrated-Campus-Management-And-Academic-Operations-System,0,,0,0,0,0,0,0,0
+177,Git Push and Pray,26E3161,third,Design and Implementation of a Mini Secure Authentication Server,,https://github.com/deepanshunegi06/auth-server-fastapi,0,,0,0,0,0,0,0,0
+178,Code crafters,26E3162,third,AI-Powered Telemedicine Platform for Rural Healthcare,,https://github.com/satyam230101/projexa-project-,0,,0,0,0,0,0,0,0
+179,ZeroDay,26E3167,third,A Blockchain Solution for Authenticity Verification of Educational Certificates,,https://github.com/aryansh2031/Mini-Project,0,,0,0,0,0,0,0,0
+180,ThinkCraft,26E3172,third,CampusAI – Intelligent Student Issue Analysis & Resolution System,,https://github.com/nishant600-star/CampusAI-Intelligent-Student-Issue-Analysis-Resolution-System,0,,0,0,0,0,0,0,0
+181,PeakyBlinders,26E3176,third,Software-Defined Networking (SDN)-Based Traffic Engineering System,,,0,,0,0,0,0,0,0,0
+182,Scodes,26E3177,third,Online Student complaint and Feedback Management System,,https://github.com/shivaniyadavx/Scodes-project,0,,0,0,0,0,0,0,0
+183,InnoBytes,26E3181,third,SmartSaathi – An AI-Based Voice Companion for Elderly Healthcare and Emergency Assistance,Industry-Based,https://github.com/bhumitanwar123/Plusevaniii,0,,0,0,0,0,0,0,0
+184,BVS5,26E3184,third,Real-time Predictive Maintenance System for Industrial 3D Printers,,,0,,0,0,0,0,0,0,0
+185,404_Syndicate,26E3186,third,Predictive Maintenance for Autonomous Electric Buses using Real-time Sensor Data and Machine Learning,Research,,0,,0,0,0,0,0,0,0
+186,Extraordinarius,26E3187,third,Classifying Types of Street Waste using Deep Learning.,,https://github.com/Gautam-Jod/Waste-Management-AI,0,,0,0,0,0,0,0,0
+187,CampusLift,26E3191,third,Explainable AI Framework for Decision Support Systems,Start-Up,,0,,0,0,0,0,0,0,0
+188,PredictX,26E3193,third,IoT-Based Smart Waste Bin Monitoring and Alert System,,,0,,0,0,0,0,0,0,0
+189,5ac,26E3199,third,IoT-Enabled Smart Agriculture Field Monitoring System,,https://github.com/Anshuman723/Collage-project,0,,0,0,0,0,0,0,0
+190,Codify,26E3202,third,UniSupport: All-in-One Academic and Student Support Portal,,https://github.com/Anjalikumari3136/PreFinal_Year_Project,0,,0,0,0,0,0,0,0
+191,TitanForce,26E3206,third,Automated Invoice Processing & Verification System Using OCR & AI,,,0,,0,0,0,0,0,0,0
+192,Innovex,26E3207,third,AI-Driven Dynamic Load Balancing in Cloud Computing,,https://github.com/Dhruvisonline/projexa_inovex,0,,0,0,0,0,0,0,0
+193,BinaryBrains,26E3208,third,Early Disease Detection System Using Machine Learning,,https://github.com/rhydam01/BinaryBrains,0,,0,0,0,0,0,0,0
+194,LogicBypass,26E3210,third,Automated Delivery Segmentation & Weakness Detection from Cricket Video Using YOLO.,,https://github.com/Vikas-478/Projexa,0,,0,0,0,0,0,0,0
+195,ADARH KUMAR JHA,26E3213,third,Real-Time Chat Application Using Modern Web Technologies,University / Community Based Projects,https://github.com/jhaadarshhr5216-oss/World-atlas,0,,0,0,0,0,0,0,0
+196,LocalHosts,26E3217,third,Protego: AI-Powered Threat Detection System,,https://github.com/TejSaxena-0811/LocalHosts,0,,0,0,0,0,0,0,0
+197,ADSH,26E3222,third,Smart Energy Consumption Optimization System,,,0,,0,0,0,0,0,0,0
+198,Cyberops,26E3223,third,Autonomous Drone with AI-Based Vision System,,,0,,0,0,0,0,0,0,0
+199,Epoch Solutions,26E3224,third,Predictive Voltage Regulation for Grid-Scale Energy Storage Systems,,,0,,0,0,0,0,0,0,0
+200,Coders,26E3225,third,Behavioral Pattern Analysis for Early Mental Well-Being Assessment,,,0,,0,0,0,0,0,0,0
+201,Smart connect,26E3227,third,Real-Time Indoor Thermal Comfort Monitoring and Analysis Using IoT Sensors,Research,https://github.com/durgeshkr302/Real-Time-Indoor-Thermal-Comfort-Monitoring-and-Analysis-Using-IoT-Sensors,0,,0,0,0,0,0,0,0
+202,Alpha Coders,26E3228,third,Smart University Academic & Analytics Management System using SAP ABAP,University / Community Based Projects,https://github.com/wi234/Minor-Project-,0,,0,0,0,0,0,0,0
+203,Shiriysah,26E3232,third,Intelligent Personalized Learning Analytics Dashboard for Adaptive Online Courses,,,0,,0,0,0,0,0,0,0
+204,Secure Sphere,26E3233,third,AI-Powered Student Support and Academic Query System,University / Community Based Projects,https://github.com/Imnotshivam811/shivam,0,,0,0,0,0,0,0,0
+205,Tech Titans,26E3236,third,Smart Canteen Management System,,https://github.com/Dipanshuohlyan84/Smart-canteen-management-,0,,0,0,0,0,0,0,0
+206,Project ggn,26E3237,third,Precision Irrigation System for Greenhouse Crops using Real-time Weather Forecasting and Machine Learning,,,0,,0,0,0,0,0,0,0
+207,TechNova,26E3239,third,"Colleges struggle to track internships, issues faced by students, and progress reports.",,https://github.com/yashvi26sahu/Internship-Tracker,0,,0,0,0,0,0,0,0
+208,Galaxy girls,26E3245,third,Real-time Predictive Maintenance for CNC Machining Centers using Edge AI and IoT Sensors,,,0,,0,0,0,0,0,0,0
+209,BrainX,26E3247,third,Proctored Course with 4 Modules,,https://github.com/Aaru1824/Mini-Project-Projexa-Ai-,0,,0,0,0,0,0,0,0
+210,Digital Drift,26E3248,third,ZipTask – A Hyperlocal Errand Marketplace,Industry-Based,https://github.com/Muskanxydv/ZipTask,0,,0,0,0,0,0,0,0
+211,Wildfire,26E3249,third,Develop an AI-driven platform to identify skill gaps in students and recommend personalized learning,University / Community Based Projects,,0,,0,0,0,0,0,0,0
+212,TechHives,26E3251,third,Student Mental Health Early Warning System,Research,https://github.com/Kanaks2006/Student-Mental-Health-Early-Warning-System,0,,0,0,0,0,0,0,0
+213,Matrixx,26E3252,third,Tech-Enabled Waste Segregation Management System to Reduce Urban Landfill Burden,,,0,,0,0,0,0,0,0,0
+214,ProjectTeam,26E3256,third,DATA INSIGHT HUB,IoT-Enabled Projects,,0,,0,0,0,0,0,0,0
+215,KP Team,26E3257,third,Measuring Pedagogical Alignment in Learning Apps Using Evidence-Based Learning Theories,Research,https://github.com/himanshitanwar972/pedagogy-alignment,0,,0,0,0,0,0,0,0
+216,Anjaneyyy,26E3258,third,Energy-Aware RSSI–Fingerprinting Based Indoor Localization Using Sparse Anchors,,,0,,0,0,0,0,0,0,0
+217,DTreeium,26E3259,third,Air Quality Prediction System Using Machine Learning,,,0,,0,0,0,0,0,0,0
+218,Hacker,26E3260,third,Real-Time OCR System for Video-Based Text Recognition in Traffic and Surveillance,,,0,,0,0,0,0,0,0,0
+219,Code Crafters,26E3263,third,Intelligent Energy Theft Detection Using AIoT,,,0,,0,0,0,0,0,0,0
+220,MOD,26E3265,third,Parking Management system,DeepTech & System-Based,https://github.com/kundansingh2005/rishavkumar,0,,0,0,0,0,0,0,0
+221,404 Error Not Found,26E3266,third,Design and Development of a Multimodal (Voice + Text) Intelligent Academic Chatbot for the School of,,,0,,0,0,0,0,0,0,0
+222,BugThugs,26E3268,third,Lightweight IoT Data Integrity Assurance Using Cryptographic Hashing,,,0,,0,0,0,0,0,0,0
+223,codeENDhop,26E3269,third,Smart Secure Two-Wheeler Parking Management System for University Campus,,,0,,0,0,0,0,0,0,0
+224,Clinical Intelligence Group,26E3272,third,AI-Based Early Risk Detection Using Clinical Data,,https://github.com/assistansirit2255/AI-Based-Early-Risk-Detection-Using-Clinical-Data,0,,0,0,0,0,0,0,0
+225,Projexa labs,26E3273,third,Design and Development of a Campus Placement Management System,University / Community Based Projects,https://github.com/Sonu-jha69/Sonu-jha69,0,,0,0,0,0,0,0,0
+226,Project 2,26E3274,third,Problem 2: Design and Development of an Integrated Digital Website & Academic Management Platform fo,,https://github.com/ayushvermadm1-cmd/Project-2,0,,0,0,0,0,0,0,0
+227,Team 26E3312,26E3312,third,IoT-Enabled Air Quality Monitoring System,,,0,,0,0,0,0,0,0,0
+228,Team 26E3313,26E3313,third,Prevent machine failure using sensor analytics.,,,0,,0,0,0,0,0,0,0
+229,Team 26E3314,26E3314,third,Real-time Anomaly Detection and Classification in Medical Imaging Data using Deep Learning and Feature Engineering,Research,https://github.com/Sidharth-ydv/Project,0,,0,0,0,0,0,0,0
+230,Team 26E3315,26E3315,third,Trust-Aware IoT Monitoring System Using Lightweight AI,,,0,,0,0,0,0,0,0,0
+231,Team 26E3316,26E3316,third,Dynamic Route Optimization for Autonomous Waste Collection Vehicles,,https://github.com/mukultanwar07/College-Project,0,,0,0,0,0,0,0,0
+232,Team 26E3317,26E3317,third,Smart Workplace Energy Monitoring and Control System,,,0,,0,0,0,0,0,0,0
+233,Team 26E3318,26E3318,third,Design and develop a role-based NAAC Accreditation Automation System that enables university schools,,,0,,0,0,0,0,0,0,0
+234,Team 26E3319,26E3319,third,Smart IV Infusion Pump for Neonatal Care: Real-time Monitoring and Prediction of Medication Adherence,,,0,,0,0,0,0,0,0,0
+235,Team 26E3320,26E3320,third,Vision-Based Smart Warehouse Inventory Monitoring System,,,0,,0,0,0,0,0,0,0
+236,Team 26E3322,26E3322,third,Employee Task & Work Visibility Management Platform,,,0,,0,0,0,0,0,0,0
+237,Team 26E3323,26E3323,third,Implementation of a Distributed File System Using Client-Server Architecture,,,0,,0,0,0,0,0,0,0
+238,Team 26E3324,26E3324,third,Automated Examination Duty Allocation and Management System,,,0,,0,0,0,0,0,0,0
+239,Team 26E3325,26E3325,third,Automated Invoice Processing & Reconciliation System Using AI,,,0,,0,0,0,0,0,0,0
+240,Team 26E3326,26E3326,third,Design and Deployment of an Internal University GPT for Academic & Administrative Query Handling,,,0,,0,0,0,0,0,0,0
+241,Team 26E3327,26E3327,third,Development of an Educational App Certification Model Based on Learning Sciences,,,0,,0,0,0,0,0,0,0
+242,Team 26E3328,26E3328,third,Decentralized Digital Identity Verification System,,,0,,0,0,0,0,0,0,0
+243,Team 26E3329,26E3329,third,Real-time Flood Risk Assessment and Early Warning System for Coastal Cities using IoT Sensors and Machine Learning,,,0,,0,0,0,0,0,0,0
+244,Team 26E3330,26E3330,third,IoT-Based Intelligent Traffic Monitoring and Congestion Prediction System,,,0,,0,0,0,0,0,0,0
