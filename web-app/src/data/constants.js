@@ -5,14 +5,14 @@ import {
 } from 'lucide-react';
 
 export const CATEGORIES = [
-    { name: "Fee Structure", icon: CreditCard, color: "from-[#ff4d00] to-[#ff6a2a]" },
-    { name: "Hostel Facilities", icon: Building2, color: "from-[#cc3d00] to-[#ff4d00]" },
-    { name: "Placements", icon: Briefcase, color: "from-[#ff4d00] to-[#e64500]" },
-    { name: "Scholarships", icon: GraduationCap, color: "from-[#e64500] to-[#ff6a2a]" },
-    { name: "Anti-Ragging", icon: Shield, color: "from-[#cc3d00] to-[#ff4d00]" },
-    { name: "SOET Programs", icon: Cpu, color: "from-[#ff4d00] to-[#ff8040]" },
-    { name: "Admissions", icon: BookOpen, color: "from-[#e64500] to-[#ff4d00]" },
-    { name: "Campus Life", icon: Map, color: "from-[#ff4d00] to-[#cc3d00]" },
+    { name: "Fee Structure", icon: CreditCard, color: "from-[#3b82f6] to-[#60a5fa]" },
+    { name: "Hostel Facilities", icon: Building2, color: "from-[#2563eb] to-[#3b82f6]" },
+    { name: "Placements", icon: Briefcase, color: "from-[#3b82f6] to-[#1d4ed8]" },
+    { name: "Scholarships", icon: GraduationCap, color: "from-[#1d4ed8] to-[#60a5fa]" },
+    { name: "Anti-Ragging", icon: Shield, color: "from-[#2563eb] to-[#3b82f6]" },
+    { name: "SOET Programs", icon: Cpu, color: "from-[#3b82f6] to-[#93c5fd]" },
+    { name: "Admissions", icon: BookOpen, color: "from-[#1d4ed8] to-[#3b82f6]" },
+    { name: "Campus Life", icon: Map, color: "from-[#3b82f6] to-[#2563eb]" },
 ];
 
 export const SUGGESTIONS = [

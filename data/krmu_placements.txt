@@ -1,45 +1,102 @@
-Placement and Career Development — KR Mangalam University
+KR Mangalam University (KRMU) — Placement Overview
+====================================================
 
-1. Key Placement Statistics
-   - Highest Package Offered: 56.6 LPA (Lakhs Per Annum)
-   - Number of Campus Recruiters: 800+
-   - Placement Assistance: 100% placement assistance provided to all eligible students
-   - Research Publications by Faculty: 4,000+
-   - Research Grants Secured: Rs. 16 Crore+
+PLACEMENT STATISTICS
+--------------------
+- Total Campus Recruiters: 800+
+- Highest Package: ₹56.6 LPA (Lakhs Per Annum)
+- Placement Assistance: 100% for all eligible students
+- The university provides comprehensive placement support through its Career Development Center (CDC)
 
-2. Placement Process
-   The university follows a four-stage campus recruitment process:
-   Step 1: Pre-Placement Talk (PPT) — Companies present their profile, job roles, and expectations
-   Step 2: Written Test — Aptitude, technical, and domain-specific assessments
-   Step 3: Group Discussion — Evaluation of communication, teamwork, and leadership skills
-   Step 4: Personal Interview — Technical and HR interviews
+TOP PLACEMENT HIGHLIGHTS — STUDENTS AND PACKAGES
+-------------------------------------------------
 
-3. Career Development Centre (CDC)
-   The CDC provides comprehensive career support services:
-   - Resume building guidance
-   - Mock interviews
-   - Group discussion training
-   - Soft skills and communication workshops
-   - Sector-specific training programs
+| Student Name           | Programme         | Package (LPA) | Company              | Role                |
+|------------------------|-------------------|---------------|----------------------|---------------------|
+| Rishav Bakshi          | BCA               | ₹56.6 LPA     | Ferrari              | —                   |
+| Vineet Verma           | B.Tech. CSE       | ₹34 LPA       | Autodesk             | —                   |
+| Shourya Tyagi          | B.Tech. CSE       | ₹34 LPA       | Autodesk             | —                   |
+| Daksh Mehta            | B.Tech. CSE       | ₹36 LPA       | UNTAS                | Technical Sourcer   |
+| Mr. Abhinav Anand      | B.Tech. CSE       | ₹24 LPA       | Cargo Flash          | Network Engineer    |
+| Mr. Avinash Kumar Pandey| B.Com (Hons.)    | ₹18 LPA       | Pure Research        | Research Analyst    |
+| Nitesh                 | MCA               | ₹12 LPA       | Akal                 | —                   |
+| Ms. Kritika Garg       | B.Tech. CSE       | ₹10.76 LPA    | Hughes Systique      | Engineer Trainee    |
+| Ayush Sai              | B.Tech. CSE       | ₹10.06 LPA    | Hughes Systique      | —                   |
+| Naman Pune             | B.Tech. CSE       | ₹10.06 LPA    | Hughes Systique      | —                   |
+| Mr. Ashwajeet          | B.Pharm           | ₹10 LPA       | Salve                | —                   |
+| Ms. Nandita            | B.Pharm           | ₹10 LPA       | Salve                | —                   |
+| Lokesh Jain            | MCA               | ₹10 LPA       | Star                 | —                   |
+| Mr. Dhruv Bhel         | B.Tech. CSE AI&ML | ₹9.5 LPA      | HCL                  | —                   |
+| Lavanya Aggarwal       | BBA               | ₹8.4 LPA      | Dhunguru             | —                   |
+| Siddhant Pahwa         | BBA               | ₹8.4 LPA      | Dhunguru             | —                   |
+| Mr. Shubham Jaswal     | B.Tech. CSE       | ₹8 LPA        | InspireOne           | —                   |
+| Divyanshu Darolia      | B.Tech. CSE       | ₹7 LPA        | TCS                  | —                   |
+| Rahul Kumar Nair       | MBA               | ₹6.6 LPA      | JK Cement            | Management Trainee  |
+| Nishkarsh Singh        | B.Tech. CSE       | ₹6 LPA        | —                    | Java Backend Dev    |
+| Anchal Garg            | MBA               | —              | F&F Floor & Furnishings | —              |
 
-   Objective: To provide the appropriate career platform for budding talent to flourish.
+TOP RECRUITING COMPANIES
+-------------------------
+The following companies regularly recruit from KRMU campus:
 
-4. Placement Timeline
-   - Placement drives commence in September every year
-   - Orientation sessions are conducted before the recruitment season begins
-   - The CDC facilitates year-round interactions with industry partners
+Technology & Engineering:
+- HCL, TCS, Autodesk, Hughes Systique, Cargo Flash, InspireOne, Star, Akal
+- Infosys, Wipro, Tech Mahindra, Capgemini, Cognizant
 
-5. Industry Engagement
-   The university has signed MOUs with renowned companies and institutions across diverse sectors:
-   - Training: Practical skill application in real-world problem-solving
-   - Projects: Project-based learning addressing industry-specific challenges
-   - Corporate Life: In-house training providing hands-on experience under mentor supervision
+Automotive:
+- Ferrari
 
-6. Job Portal
-   Students and alumni can access job opportunities at: krm.mylineupx.com/jobs
+Media:
+- The Hindu, CyberMedia, Ergo Space
 
-7. Contact Information
-   Career Development Centre:
-   - Phone: +91-9827085056
-   - Email: director.cdc@krmangalam.edu.in
-   - Company Registration for recruiters available through the university website
+FMCG & Construction:
+- JK Cement, UNTAS, F&F Floor & Furnishings
+
+Healthcare & Pharma:
+- Salve Pharmaceuticals, Pure Research
+
+Others:
+- Dhunguru, and 700+ other companies across diverse sectors
+
+PLACEMENT PROCESS
+-----------------
+The placement process at KRMU follows a structured four-step path:
+
+1. Pre-Placement Talk — Companies give an overview of their organization, job roles, and expectations.
+2. Written Test — Aptitude, technical, and domain-specific assessments.
+3. Interview — Personal interviews (technical and HR rounds).
+4. Group Discussion — Evaluation of communication, leadership, and teamwork skills.
+
+PLACEMENT POLICY
+----------------
+- Career Development Center (CDC) manages all placement activities at KRMU.
+- Recruitment through CDC is available only for registered KRMU students.
+- Students must register with the CDC in their final year.
+- The placement process commences in September every year.
+- Orientation and Policy talk is organized at the beginning of every academic session.
+- Students who register for a company visit MUST attend on the scheduled day; failure to attend may result in blacklisting for the next two recruitment cycles.
+- The CDC provides:
+  * Personal interaction with the placement team
+  * Standard resume format guidance
+  * Group discussion practice
+  * Mock interview sessions
+  * Employer visit coordination
+
+CAREER DEVELOPMENT CENTER (CDC) CONTACT
+-----------------------------------------
+- Phone: +91-9827085056
+- Email: cdc@krmangalam.edu.in
+- Company Registration Form: https://tinyurl.com/krmu-2025
+
+INDUSTRY PARTNERSHIPS & MoUs
+-----------------------------
+The University has signed Memorandums of Understanding (MoUs) with renowned companies and institutions in diverse sectors to increase industry exposure. This helps learners apply their practical skills to resolve real-life problems in all aspects.
+
+The CDC hosts several counselling and training programmes to embed academic excellence in graduates. These programmes equip students with the essential skills required to land lucrative careers.
+
+SCHOOLS WITH STRONG PLACEMENT RECORDS
+--------------------------------------
+- School of Engineering and Technology (SOET) — B.Tech CSE, B.Tech AI&ML
+- School of Management and Commerce — BBA, MBA, B.Com (Hons.)
+- School of Pharmacy — B.Pharm
+- School of Computer Applications — BCA, MCA

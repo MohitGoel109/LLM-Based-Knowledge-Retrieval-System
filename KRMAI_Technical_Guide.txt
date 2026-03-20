@@ -1,0 +1,545 @@
+================================================================================
+  KRMAI — LLM-Based Knowledge Retrieval System
+  Complete Technical Guide for Presentation
+  KR Mangalam University (KRMU)
+================================================================================
+
+TABLE OF CONTENTS
+─────────────────
+1. PROJECT OVERVIEW
+2. ARCHITECTURE DIAGRAM (How Everything Connects)
+3. TECH STACK (Exact Tools & Why)
+4. DATA PIPELINE (How Documents Become Searchable)
+5. RAG ENGINE (How Questions Get Answered)
+6. BACKEND API (How Frontend Talks to Backend)
+7. FRONTEND (React UI & Components)
+8. STARTUP FLOW (What start.sh Does)
+9. KEY ALGORITHMS & CONCEPTS
+10. FILE-BY-FILE BREAKDOWN
+11. EXPECTED Q&A (Questions They Will Ask)
+12. POTENTIAL IMPROVEMENTS / FUTURE SCOPE
+
+
+================================================================================
+1. PROJECT OVERVIEW
+================================================================================
+
+stored in ChromaDB, and when a student asks a question, the most relevant
+
+KRMAI is a fully local, AI-powered chatbot for KR Mangalam University (KRMU) that instantly answers student queries about fees, admissions, hostels, placements, scholarships, and more. It leverages Retrieval-Augmented Generation (RAG) to ground every answer in official university documents, supporting English, Hindi, and Hinglish queries.
+
+How it works:
+1. All official documents (TXT, PDF, DOCX) are ingested, chunked, and embedded into vectors using a local embedding model.
+2. These vectors are stored in ChromaDB for fast similarity search.
+3. When a student asks a question, the system expands slang/abbreviations, retrieves the most relevant document chunks, and sends them (with chat history) to a local LLM (Ollama running qwen2.5:3b).
+4. The LLM generates a grounded, conversational answer with source citations, streamed in real time to the frontend.
+
+KRMAI is privacy-first (no cloud APIs), student-friendly (handles informal language), and trustworthy (every answer cites its source).
+
+
+================================================================================
+2. ARCHITECTURE DIAGRAM
+================================================================================
+
+                    ┌────────────────────────┐
+                    │     University Docs     │
+                    │  (PDFs, DOCX, TXT in   │
+                    │      data/ folder)      │
+                    └───────────┬────────────┘
+                                │  ingest.py
+                                ▼
+                    ┌────────────────────────┐
+                    │   Document Loader      │
+                    │  (PyPDF, Docx2txt,     │
+                    │   TextLoader)          │
+                    └───────────┬────────────┘
+                                │
+                                ▼
+                    ┌────────────────────────┐
+                    │   Text Chunking        │
+                    │  RecursiveCharacter     │
+                    │  TextSplitter          │
+                    │  (1000 chars, 200      │
+                    │   overlap)             │
+                    └───────────┬────────────┘
+                                │
+                                ▼
+                    ┌────────────────────────┐
+                    │   Embedding Model      │
+                    │  sentence-transformers │
+                    │  /all-MiniLM-L6-v2     │
+                    │  (384-dim vectors)     │
+                    └───────────┬────────────┘
+                                │
+                                ▼
+                    ┌────────────────────────┐
+                    │     ChromaDB           │
+                    │  (Vector Database)     │
+                    │  Stored in chroma_db/  │
+                    └───────────┬────────────┘
+                                │
+         ┌──────────────────────┼──────────────────────┐
+         │                      │                      │
+         ▼                      ▼                      ▼
+  ┌──────────────┐    ┌──────────────────┐    ┌──────────────┐
+  │  React UI    │    │  FastAPI Server  │    │  Ollama      │
+  │  (Vite)      │───▶│  api.py          │───▶│  (qwen2.5:3b)  │
+  │  Port 5173   │◀───│  Port 8000       │◀───│  Port 11434  │
+  └──────────────┘    └──────────────────┘    └──────────────┘
+    Frontend            Backend API             Local LLM
+
+
+================================================================================
+3. TECH STACK
+================================================================================
+
+
+BACKEND:
+─────────
+• Python 3.x                — Primary backend language
+• FastAPI                   — REST API framework (serves /chat and /chat/stream)
+• Uvicorn                   — ASGI server for running FastAPI
+• LangChain                 — Orchestration framework for RAG pipeline
+    - langchain-community     — Document loaders (PDF, DOCX, TXT)
+    - langchain-huggingface   — HuggingFace embedding integration
+    - langchain-chroma        — ChromaDB vector store wrapper
+    - langchain-ollama        — Ollama LLM integration
+    - langchain-text-splitters— Text chunking utilities
+• ChromaDB                  — Vector database (stores document embeddings locally)
+• sentence-transformers     — Embedding model (all-MiniLM-L6-v2)
+• Ollama                    — Local LLM runtime (runs qwen2.5:3b on CPU/GPU)
+• qwen2.5:3b                  — Large Language Model by Alibaba (~4.7GB)
+
+FRONTEND:
+─────────
+• React 19.2                — UI library
+• Vite 7.3                  — Build tool and dev server
+• Tailwind CSS 4.2          — Utility-first CSS framework
+• Framer Motion             — Animations library (transitions, hover effects)
+• Lucide React              — Icon library (200+ icons used)
+• React Markdown + remark-gfm — Renders bot responses as formatted markdown
+• Web Speech API            — Browser-native voice input (Chrome/Edge)
+
+INFRASTRUCTURE:
+───────────────
+• Ollama Server             — Runs on localhost:11434
+• FastAPI Server            — Runs on localhost:8000
+• Vite Dev Server           — Runs on localhost:5173
+• All data stored locally (no cloud dependency)
+
+
+================================================================================
+4. DATA PIPELINE (ingest.py)
+================================================================================
+
+This runs ONCE (or when you update documents). It converts raw documents into
+searchable vector embeddings.
+
+STEP 1: Load Documents
+    - Reads all files from data/ folder
+    - Supports: .pdf (PyPDFLoader), .docx (Docx2txtLoader), .txt (TextLoader)
+    - Tags each document page with its source filename for citations
+
+STEP 2: Chunk Documents
+    - Uses RecursiveCharacterTextSplitter
+    - Chunk size: 1000 characters
+    - Overlap: 200 characters (so no context is lost at chunk boundaries)
+    - Why chunking? LLMs have limited context windows. Smaller chunks = more
+      precise retrieval.
+
+STEP 3: Generate Embeddings
+    - Uses all-MiniLM-L6-v2 (a small, fast 384-dimensional embedding model)
+    - Converts each text chunk into a 384-dimensional numerical vector
+    - Running locally (no API calls to OpenAI or anyone)
+    - First run downloads the model (~80MB) from HuggingFace
+
+STEP 4: Store in ChromaDB
+    - Wipes old database (clean rebuild every time)
+    - Stores chunk text + embedding vector + metadata (source, page number)
+    - Persists to disk at chroma_db/
+    - ChromaDB uses HNSW (Hierarchical Navigable Small World) index for
+      fast approximate nearest-neighbor search
+
+KNOWLEDGE BASE FILES (12 documents):
+    krmu_fee_structure.txt      krmu_hostel.txt
+    krmu_placements.txt         krmu_scholarships.txt
+    krmu_admissions.txt         krmu_anti_ragging.txt
+    krmu_campus_facilities.txt  krmu_clubs_societies.txt
+    krmu_code_of_conduct.txt    krmu_academic_calendar.txt
+    krmu_soet_overview.txt      krmu_student_welfare.txt
+
+
+================================================================================
+5. RAG ENGINE (rag_engine.py) — THE CORE
+================================================================================
+
+This is the brain of the system. When a student asks a question:
+
+STEP 1: SLANG EXPANSION
+    - Student types: "bhai krmu ki fees kitni hai btw"
+    - Engine expands: "KR Mangalam University fees how much is by the way"
+    - Has 200+ slang mappings: Hindi/Hinglish, Gen Z, internet abbreviations
+    - This helps the retriever find better matches
+
+STEP 2: RETRIEVAL (ChromaDB Similarity Search)
+    - The cleaned question is embedded using the same MiniLM-L6-v2 model
+    - ChromaDB finds the 2 most similar document chunks (cosine similarity)
+    - These chunks become the "context" for the LLM
+    - Why k=2? Fewer chunks = less tokens = faster response
+
+STEP 3: PROMPT CONSTRUCTION
+    - Builds a prompt with:
+      a) System instructions (be professional, English only, use context)
+      b) Chat history (last 4 messages, truncated to 200 chars each)
+      c) Retrieved context (the 2 document chunks)
+      d) The student's question
+    - Starts with "/no_think" to skip Qwen3's internal reasoning mode
+
+STEP 4: LLM INFERENCE (Ollama / qwen2.5:3b)
+    - Prompt is sent to Ollama running on localhost:11434
+    - qwen2.5:3b generates the answer token by token
+    - Parameters optimized for speed:
+      * temperature=0.3     (less randomness = faster sampling)
+      * top_k=20            (only consider top 20 tokens at each step)
+      * top_p=0.7           (nucleus sampling cutoff)
+      * num_ctx=2048        (smaller context window)
+      * num_predict=384     (max output tokens)
+      * repeat_penalty=1.1  (avoid repetitive output)
+
+STEP 5: STREAMING
+    - query_stream() yields tokens as they arrive (Server-Sent Events)
+    - Frontend shows text appearing word-by-word in real-time
+    - Makes perceived response time feel near-instant
+
+STEP 6: SOURCE CITATIONS
+
+    - After generating the answer, source document metadata is attached
+    - Frontend shows "SOURCES" badge with filename/URL
+
+
+================================================================================
+6. BACKEND API (api.py)
+================================================================================
+
+FastAPI server with three endpoints:
+
+GET  /health          — Returns RAG engine status (db, ollama, ready)
+POST /chat            — Synchronous endpoint (sends full response at once)
+POST /chat/stream     — Streaming endpoint (Server-Sent Events, token by token)
+
+Request format:
+    {
+        "message": "What is the BTech CSE fee?",
+        "history": [
+            {"role": "user", "content": "Hi"},
+            {"role": "assistant", "content": "Hello!"}
+        ]
+    }
+
+Response format (/chat):
+    {
+        "answer": "The fee for BTech CSE is...",
+        "sources": [
+            {"source": "krmu_fee_structure.txt", "page": null}
+        ]
+    }
+
+Streaming format (/chat/stream):
+    data: {"type": "token", "content": "The"}
+    data: {"type": "token", "content": " fee"}
+    data: {"type": "token", "content": " for"}
+    ...
+    data: {"type": "done", "sources": [...]}
+
+CORS is enabled for all origins (development mode).
+Server starts with: uvicorn api:app --host 0.0.0.0 --port 8000 --reload
+
+
+================================================================================
+7. FRONTEND (React + Vite)
+================================================================================
+
+ENTRY POINT: main.jsx
+    └── ThemeProvider (dark/light theme context)
+         └── App.jsx (view routing: landing, chat, settings, projects, updates)
+
+COMPONENT TREE:
+    App.jsx
+    ├── LandingPage.jsx        — Hero section, animated stats, quick links
+    ├── ChatInterface.jsx       — Main chat UI (core component)
+    │   ├── Sidebar.jsx         — Left sidebar with category prompts
+    │   ├── HistorySidebar.jsx  — Right sidebar with chat session history
+    │   ├── ChatHeader.jsx      — Top bar with search, notifications, nav
+    │   └── MessageBubble.jsx   — Individual message (user/bot)
+    │       ├── MarkdownComponents.jsx — Custom markdown renderers
+    │       ├── SourceBadge.jsx — Document source citation badges
+    │       └── KRMAILogo.jsx  — Animated KRMAI logo SVG
+    ├── SettingsPage.jsx        — Theme toggle, voice language, data clearing
+    ├── StudentProjectsPage.jsx — Demo student project showcase
+    ├── UpdatesFAQPage.jsx      — App updates and FAQ section
+    └── BackgroundEffect.jsx    — Glass orb animations (behind landing page)
+
+KEY FEATURES:
+    • Dark/Light theme toggle (CSS variables, persisted in localStorage)
+    • Voice input (Web Speech API — Chrome/Edge, English/Hindi)
+    • Real-time streaming responses (SSE + ReadableStream)
+    • Chat session management (save/load/delete, localStorage)
+    • Markdown rendering with tables, code blocks, lists
+    • Responsive design (mobile and desktop)
+    • Animated transitions (Framer Motion)
+    • Suggestion prompts (click to auto-send a question)
+
+THEMING SYSTEM:
+    - CSS variables defined in index.css under :root and [data-theme="light"]
+    - Default: dark theme
+    - Variables: --bg-base, --bg-surface, --text-primary, --text-heading,
+      --accent, --border-default, etc.
+    - ThemeContext.jsx provides theme state + toggle function
+    - Smooth 0.3s transition on theme switch
+
+
+================================================================================
+8. STARTUP FLOW (start.sh)
+================================================================================
+
+When you run ./start.sh:
+
+1. CHECK OLLAMA    — Verifies ollama CLI is installed
+2. START OLLAMA    — If not running, starts ollama serve in background
+3. PULL MODEL      — If qwen2.5:3b not downloaded, pulls it (~2GB first time)
+4. CHECK PIP DEPS  — If fastapi not installed, runs pip install -r requirements.txt
+5. AUTO INGEST     — If chroma_db/ doesn't exist, runs python ingest.py
+6. LAUNCH BACKEND  — Starts FastAPI on port 8000 (with --reload for dev)
+7. LAUNCH FRONTEND — cd web-app && npm run dev (Vite on port 5173)
+8. TRAP CTRL+C     — Kills both processes cleanly on exit
+
+
+================================================================================
+9. KEY ALGORITHMS & CONCEPTS
+================================================================================
+
+RAG (Retrieval-Augmented Generation):
+    Instead of relying solely on the LLM's training data, we RETRIEVE relevant
+    documents first, then AUGMENT the prompt with that context, so the LLM
+    GENERATES grounded, factual answers. This prevents hallucination.
+
+Vector Embeddings:
+    Text is converted to numerical vectors (arrays of 384 numbers) that capture
+    semantic meaning. Similar texts have similar vectors. "fee structure" and
+    "tuition cost" will have vectors close together, even though the words differ.
+
+Cosine Similarity:
+    The distance metric used to compare vectors. Range: -1 to 1, where 1 means
+    identical. ChromaDB uses this to find the most relevant chunks for a query.
+
+HNSW (Hierarchical Navigable Small World):
+    The index algorithm ChromaDB uses. It builds a multi-layer graph where each
+    node is a vector. Allows approximate nearest-neighbor search in O(log n) time
+    instead of O(n) brute-force.
+
+Chunking Strategy:
+    RecursiveCharacterTextSplitter tries to split on:
+    1. Paragraph breaks (\n\n)
+    2. Line breaks (\n)
+    3. Sentence boundaries (. ? !)
+    4. Word boundaries (spaces)
+    5. Characters (last resort)
+    This preserves semantic coherence within chunks.
+
+Token Generation (LLM):
+    The LLM generates one token at a time. At each step, it computes a probability
+    distribution over all possible next tokens. Parameters like temperature, top_k,
+    and top_p control how this distribution is sampled:
+    - temperature=0.3: Sharper distribution, more deterministic
+    - top_k=20: Only consider the 20 most likely tokens
+    - top_p=0.7: Only consider tokens until cumulative probability reaches 0.7
+
+Prompt Engineering:
+    The system prompt instructs the LLM to:
+    - Only use the provided context (prevents hallucination)
+    - Respond in English only (even if asked in Hindi)
+    - Be concise and professional
+    - Admit when it doesn't have information
+
+
+================================================================================
+10. FILE-BY-FILE BREAKDOWN
+================================================================================
+
+ROOT DIRECTORY:
+───────────────
+ingest.py              — Document ingestion pipeline (load → chunk → embed → store)
+rag_engine.py          — RAG engine class (retrieval + LLM + slang expansion)
+api.py                 — FastAPI REST API (POST /chat, POST /chat/stream, GET /health)
+app.py                 — Streamlit UI (alternative interface, not used in production)
+start.sh               — Bash launcher script (Ollama → Backend → Frontend)
+start.bat              — Windows launcher script
+requirements.txt       — Python dependencies
+model_evaluation.py    — Model evaluation and benchmarking script
+
+data/                  — 12 KRMU knowledge base documents (.txt files)
+chroma_db/             — ChromaDB persistent storage (auto-generated by ingest.py)
+
+FRONTEND (web-app/):
+────────────────────
+package.json           — Node.js dependencies and scripts
+vite.config.js         — Vite build configuration
+src/
+  main.jsx             — React entry point (wraps App in ThemeProvider)
+  App.jsx              — Root component with view routing
+  index.css            — Global CSS, theme variables, animations
+
+  context/
+    ThemeContext.jsx    — React context for dark/light theme management
+
+  data/
+    constants.js       — Category data, suggestion prompts, FAQ cards
+
+  components/
+    LandingPage.jsx       — Landing page (hero, features, testimonials, CTA)
+    ChatInterface.jsx     — Chat UI (messages, input, voice, streaming)
+    Sidebar.jsx           — Left nav (categories, suggestion prompts)
+    HistorySidebar.jsx    — Right panel (chat sessions, clear history)
+    ChatHeader.jsx        — Top bar (search, notifications, navigation)
+    MessageBubble.jsx     — Message display (user blue, bot dark card)
+    MarkdownComponents.jsx— Custom markdown renderers for bot responses
+    KRMAILogo.jsx         — Animated graduation cap logo SVG
+    SourceBadge.jsx       — Source citation badge component
+    BackgroundEffect.jsx  — Glass orb + Aurora background animations
+    SettingsPage.jsx      — Settings (theme, voice lang, data clear)
+    StudentProjectsPage.jsx— Student projects showcase
+    UpdatesFAQPage.jsx    — Updates feed + FAQ accordion
+    LoadingDots.jsx       — Simple loading dots animation
+
+
+================================================================================
+11. EXPECTED Q&A (Questions They Will Ask)
+================================================================================
+
+Q: What is RAG? Why not just use the LLM directly?
+A: RAG stands for Retrieval-Augmented Generation. Pure LLMs hallucinate — they
+   make up facts. By retrieving actual university documents and feeding them as
+   context, the LLM's answer is grounded in real data. It's like giving an
+   open-book exam vs. relying on memory.
+
+Q: Why qwen2.5:3b? Why not GPT-4 or ChatGPT?
+A: qwen2.5:3b runs entirely locally via Ollama — no API costs, no internet needed,
+   no data leaves the machine. It has excellent multilingual support (Hindi,
+   Hinglish). 8B parameters is a sweet spot between quality and speed on consumer
+   hardware. Using GPT-4 would require paid API keys and internet dependency.
+
+Q: Why ChromaDB? Why not just a SQL database?
+A: ChromaDB is a vector database optimized for similarity search. SQL databases
+   do exact matching ("WHERE text = 'fee'"). ChromaDB does semantic matching —
+   "tuition cost" will match "fee structure" because their embeddings are similar.
+   It uses HNSW indexing for fast approximate nearest-neighbor search.
+
+Q: What is an embedding?
+A: An embedding is a fixed-size numerical representation of text (384 numbers
+   for our model). It captures the meaning of the text. Texts with similar
+   meanings have similar embeddings (close in vector space). Think of it as
+   converting words into coordinates on a map — related words are close together.
+
+Q: What embedding model do you use?
+A: all-MiniLM-L6-v2 from Sentence Transformers. It's a lightweight model
+   (22M parameters, ~80MB) that produces 384-dimensional embeddings. It runs
+   entirely locally, no API calls needed. Good balance of quality and speed.
+
+Q: Why chunk documents? Why not feed the entire document?
+A: LLMs have limited context windows (we use 2048 tokens). A full PDF could be
+   50,000+ tokens. By chunking (1000 chars with 200 overlap), we can retrieve
+   only the most relevant 2 chunks, keeping the prompt small and fast. The
+   overlap prevents losing context at chunk boundaries.
+
+Q: How does voice input work?
+A: We use the Web Speech API built into Chrome/Edge. It sends audio to Google's
+   speech recognition servers and returns text. We support English (en-IN) and
+   Hindi (hi-IN). The recognition runs continuously with interim results shown
+   in real-time.
+
+Q: How does streaming work?
+A: The /chat/stream endpoint uses Server-Sent Events (SSE). The LLM generates
+   tokens one at a time — each token is immediately sent to the frontend as a
+   JSON event. The React frontend reads this stream using the ReadableStream API
+   and updates the message bubble in real-time. This makes the first word appear
+   in 1-2 seconds instead of waiting 15-30 seconds for the full response.
+
+Q: What is the slang expansion engine?
+A: Students type casually — "bhai fees kitni h btw". Our engine has 200+ regex
+   patterns that expand abbreviations and slang before the query hits retrieval.
+   "btw" → "by the way", "kitni" → "how much is", "h" → "is". This dramatically
+   improves retrieval accuracy for informal queries.
+
+Q: What is Ollama?
+A: Ollama is an open-source tool that lets you run LLMs locally on your own
+   machine. It handles model downloading, GPU/CPU inference, and provides a REST
+   API at localhost:11434. Think of it as "Docker for LLMs" — you just do
+   "ollama pull qwen2.5:3b" and it's ready to use.
+
+Q: How do you handle dark/light theme?
+A: CSS variables defined in index.css (--bg-base, --text-primary, etc.) change
+   based on the data-theme attribute on <html>. ThemeContext.jsx manages the state
+   and persists it in localStorage. All components use var(--variable-name)
+   instead of hardcoded colors. A 0.3s CSS transition makes the switch smooth.
+
+Q: What happens if the LLM doesn't know the answer?
+A: The prompt instructs the LLM: "If the context does not contain the answer, say
+   'I don't have enough information to answer that.'" This prevents hallucination.
+   The LLM can only use the retrieved document chunks — it won't make up answers.
+
+Q: How is chat history handled?
+A: Sessions are stored in the browser's localStorage. Each session has a unique
+   ID and stores all messages. Users can create new sessions, switch between them,
+   or clear all history. The last 4 messages (2 Q&A pairs) are sent to the LLM
+   as conversational context.
+
+Q: What is LangChain?
+A: LangChain is a Python framework that provides building blocks for LLM
+   applications. We use its document loaders (PDF, DOCX, TXT), text splitters,
+   embedding wrappers, vector store integration, prompt templates, and LLM
+   chains. It abstracts away the complexity of connecting these components.
+
+Q: What are the system requirements?
+A: Ollama needs at least 8GB RAM for qwen2.5:3b (16GB recommended). Python 3.x,
+   Node.js for the frontend. Works on Linux, macOS, Windows. GPU optional but
+   significantly speeds up inference (NVIDIA recommended).
+
+Q: How would you scale this for production?
+A: Current setup is single-machine. For production:
+   - Use a cloud-hosted vector DB (Pinecone, Weaviate, or managed ChromaDB)
+   - Deploy FastAPI behind a reverse proxy (Nginx) with multiple workers
+   - Use a GPU server for Ollama (or switch to a cloud LLM API)
+   - Add authentication and rate limiting
+   - Containerize with Docker Compose
+   - Add proper logging and monitoring
+
+Q: What is the accuracy of the system?
+A: It depends on document coverage. For questions covered by the 12 knowledge
+   base documents, accuracy is very high because answers are grounded in actual
+   text. The system explicitly cites sources so users can verify. For questions
+   outside the knowledge base, it correctly responds "I don't have enough
+   information."
+
+
+================================================================================
+12. POTENTIAL IMPROVEMENTS / FUTURE SCOPE
+================================================================================
+
+• Multi-modal support (images, campus maps, timetable screenshots)
+• User authentication (SSO with university portal)
+• Admin panel for managing knowledge base documents
+• Analytics dashboard (most asked questions, usage stats)
+• Automatic document update pipeline (scrape university website)
+• GPU-accelerated inference for faster responses
+• Fine-tuning the LLM on university-specific data
+• Multi-language response support (Hindi output option)
+• Integration with university LMS (Moodle, Blackboard)
+• Mobile app (React Native)
+• Feedback loop to improve answer quality over time
+• Docker containerization for easy deployment
+
+
+================================================================================
+  END OF TECHNICAL GUIDE
+  Good luck with your presentation! 🎓
+================================================================================

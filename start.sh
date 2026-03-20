@@ -21,12 +21,12 @@ if ! curl -s http://localhost:11434/api/tags &>/dev/null; then
 fi
 
 # 3. Pull model if needed
-if ! ollama list 2>/dev/null | grep -q "llama3.2:3b"; then
-    echo "[INFO] Pulling llama3.2:3b model (first time only, ~2GB)..."
-    ollama pull llama3.2:3b
+if ! ollama list 2>/dev/null | grep -q "qwen2.5:3b"; then
+    echo "[INFO] Pulling qwen2.5:3b model (first time only)..."
+    ollama pull qwen2.5:3b
 fi
 
-echo "[OK] Ollama is running with llama3.2:3b"
+echo "[OK] Ollama is running with qwen2.5:3b"
 
 # 4. Check Python deps
 if ! python -c "import fastapi" &>/dev/null; then

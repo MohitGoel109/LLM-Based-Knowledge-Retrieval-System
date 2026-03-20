@@ -10,4 +10,4 @@ npm run dev
 3. All at once 
 
 cd ~/Documents/Programming/LLM-Based-Knowledge-Retrieval-System
-./start.sh
+./start.sh 
