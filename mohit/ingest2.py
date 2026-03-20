@@ -73,3 +73,6 @@ def create_vector_store(chunks):
         persist_directory=CHROMA_PATH,
     )
     print(f"Successfully ingested {len(chunks)} chunks into ChromaDB at {CHROMA_PATH}")
+
+def main():
+    print(f"{'=' * 50}")
