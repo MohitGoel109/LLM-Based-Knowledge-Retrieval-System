@@ -76,3 +76,7 @@ def create_vector_store(chunks):
 
 def main():
     print(f"{'=' * 50}")
+    print(f"  Document Ingestion Pipeline")
+    print(f"{'=' * 50}")
+    print(f"\nLoading documents from {DATA_DIR}...")
+    documents = load_documents(DATA_DIR)
