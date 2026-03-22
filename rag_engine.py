@@ -13,6 +13,7 @@ CHROMA_PATH = os.path.join(BASE_DIR, "chroma_db")
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 LLM_MODEL = "qwen2.5:3b"
 OLLAMA_BASE_URL = "http://localhost:11434"
+
 OLLAMA_TIMEOUT = 300  # seconds — CPU inference can be slow
 
 # Use cached model to avoid hanging on HuggingFace metadata checks
