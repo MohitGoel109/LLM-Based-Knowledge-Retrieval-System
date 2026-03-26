@@ -84,3 +84,4 @@ def main():
     if documents:
         print(f"\nTotal: {len(documents)} document pages loaded.")
         chunks = chunk_documents(documents)
+        print(f"Split into {len(chunks)} chunks (size={CHUNK_SIZE}, overlap={CHUNK_OVERLAP}).\n")
