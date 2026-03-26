@@ -80,3 +80,7 @@ def main():
     print(f"{'=' * 50}")
     print(f"\nLoading documents from {DATA_DIR}...")
     documents = load_documents(DATA_DIR)
+
+    if documents:
+        print(f"\nTotal: {len(documents)} document pages loaded.")
+        chunks = chunk_documents(documents)
