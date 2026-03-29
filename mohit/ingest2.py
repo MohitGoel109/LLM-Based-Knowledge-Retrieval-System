@@ -80,3 +80,9 @@ def main():
     print(f"{'=' * 50}")
     print(f"\nLoading documents from {DATA_DIR}...")
     documents = load_documents(DATA_DIR)
+
+    if documents:
+        print(f"\nTotal: {len(documents)} document pages loaded.")
+        chunks = chunk_documents(documents)
+        print(f"Split into {len(chunks)} chunks (size={CHUNK_SIZE}, overlap={CHUNK_OVERLAP}).\n")
+        create_vector_store(chunks)
