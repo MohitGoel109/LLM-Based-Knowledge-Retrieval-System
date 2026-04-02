@@ -1,280 +1,426 @@
-<p align="center">
-  <h1 align="center">🎓 Zeno — College Knowledge Retrieval System</h1>
-  <p align="center">
-    <strong>An AI-powered chatbot that gives college students instant answers from official documents</strong>
-  </p>
-  <p align="center">
-    Built with LLM + RAG (Retrieval-Augmented Generation) · Ollama · ChromaDB · React · FastAPI
-  </p>
-</p>
+# KRMAI - LLM-Based Knowledge Retrieval System
 
----
+Local AI assistant for KR Mangalam University students.
 
-<p align="center">
-  <img src="assets/landing_page.png" width="400" alt="Landing Page"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="assets/chat_interface.png" width="400" alt="Chat Interface"/>
-</p>
+![Demo](assets/demo.gif)
 
-## 🧐 Why This Project?
+## Project Summary
 
-College students often struggle to find specific information buried in lengthy policy documents, rulebooks, and scattered PDF files. Questions like:
+KRMAI is a fully local Retrieval-Augmented Generation (RAG) system for university FAQs. It ingests KRMU documents into ChromaDB and answers student questions through a FastAPI backend and React frontend.
 
-- *"What's the minimum attendance to sit for exams?"*
-- *"What CGPA do I need for placements?"*
-- *"How do I apply for a scholarship?"*
-- *"What are the hostel mess timings?"*
+The live query path in this repository is:
 
-...usually require digging through multiple documents or asking seniors who may not have accurate answers.
+1. User asks a question from the React app.
+2. FastAPI receives it on `/chat` or `/chat/stream`.
+3. `rag_engine.py` expands slang/Hinglish terms, retrieves top-`k=4` chunks from ChromaDB, and prompts Ollama (`qwen2.5:3b`).
+4. API returns answer plus unique source metadata.
+5. Frontend renders markdown response and source badges.
 
-**This project solves that.** It ingests official college documents (PDFs, DOCX, TXT) into a vector database, and uses a locally-running LLM to answer student questions in natural, conversational language — with source citations so students can verify the information.
+## What The System Actually Does
 
-### 🎯 Key Goals
+Based on `rag_engine.py` and `api.py`:
 
-- **Accessibility**: Students get instant, accurate answers without reading 50-page PDFs
-- **Privacy**: Everything runs locally — no data sent to OpenAI or any cloud service
-- **Student-friendly**: Understands slang, abbreviations, and informal language (e.g., "idk", "uk", "wanna")
-- **Trustworthy**: Every answer comes with source document citations
+- Uses local embeddings: `sentence-transformers/all-MiniLM-L6-v2`.
+- Uses local vector store: ChromaDB at `chroma_db/`.
+- Uses local LLM runtime: Ollama at `http://localhost:11434`.
+- Uses local model: `qwen2.5:3b`.
+- Supports non-stream and SSE streaming responses:
+  - `POST /chat`
+  - `POST /chat/stream`
+- Maintains short conversation memory (last 4 messages / ~2 Q&A pairs) inside `RAGEngine`.
+- Expands a large slang dictionary (`SLANG_MAP`) before retrieval.
+- Returns source file metadata with each answer.
 
----
+## Tech Stack (As Declared In Repo Files)
 
-## ✨ Features
+### Backend / Python (`requirements.txt`)
 
-| Feature | Description |
-|---------|-------------|
-| 🤖 **RAG-based Q&A** | Retrieves relevant document chunks and generates grounded answers |
-| 🧠 **Conversation Memory** | Remembers last 6 messages for follow-up questions |
-| 💬 **Slang Understanding** | Preprocesses 35+ common abbreviations (idk, uk, cgpa, etc.) |
-| 🎨 **Modern Web UI** | Minimalist, animated React frontend inspired by piplanning.io |
-| 📎 **Source Citations** | Shows which document the answer came from |
-| 💡 **Suggested Questions** | Clickable question chips for guided interaction |
-| 📄 **Multi-format Ingestion** | Supports PDF, DOCX, and TXT files |
-| 🖥️ **Streamlit Backup** | Alternative Streamlit interface available as fallback |
-| 🔒 **Fully Local** | Runs entirely on your machine — no API keys, no cloud |
+| Package | Version Spec In Repo |
+|---|---|
+| langchain | not pinned |
+| langchain_community | not pinned |
+| langchain_huggingface | not pinned |
+| langchain_chroma | not pinned |
+| langchain_ollama | not pinned |
+| langchain_text_splitters | not pinned |
+| langchain_core | not pinned |
+| chromadb | not pinned |
+| sentence-transformers | not pinned |
+| streamlit | not pinned |
+| pypdf | not pinned |
+| docx2txt | not pinned |
+| requests | not pinned |
+| fastapi | not pinned |
+| uvicorn | not pinned |
+| pydantic | not pinned |
+| pydantic-settings | not pinned |
 
----
+### Frontend (`web-app/package.json`)
 
-## 📁 Project Structure
+| Package | Version Spec In Repo |
+|---|---|
+| react | ^19.2.4 |
+| react-dom | ^19.2.4 |
+| vite | ^7.3.1 |
+| @vitejs/plugin-react | ^5.1.4 |
+| tailwindcss | ^4.2.1 |
+| @tailwindcss/vite | ^4.2.1 |
+| framer-motion | ^12.34.3 |
+| lucide-react | ^0.575.0 |
+| react-markdown | ^10.1.0 |
+| remark-gfm | ^4.0.1 |
 
+### Runtime/Model Constants From Code
+
+| Item | Value |
+|---|---|
+| Ollama base URL | `http://localhost:11434` |
+| LLM model | `qwen2.5:3b` |
+| Embedding model | `sentence-transformers/all-MiniLM-L6-v2` |
+| Retriever `k` | `4` |
+| Chunk size | `1500` |
+| Chunk overlap | `300` |
+
+## Actual Project Structure (Generated From Current Directory)
+
+The tree below is from a live `tree -a -L 5` run in this workspace (excluding `.git`, `node_modules`, `__pycache__`):
+
+```text
+.
+├── api.py
+├── app.py
+├── assets
+│   ├── chat_interface.png
+│   └── landing_page.png
+├── backend.log
+├── backend_test.log
+├── chroma_db
+│   ├── 5891704a-f6a1-44b8-87c4-0288723367d7
+│   │   ├── data_level0.bin
+│   │   ├── header.bin
+│   │   ├── length.bin
+│   │   └── link_lists.bin
+│   ├── chroma.sqlite3
+│   └── ebf16809-62eb-434d-9b94-2004a98edfc5
+│       ├── data_level0.bin
+│       ├── header.bin
+│       ├── length.bin
+│       └── link_lists.bin
+├── data
+│   ├── krmu_academic_calendar.txt
+│   ├── krmu_admissions.txt
+│   ├── krmu_anti_ragging.txt
+│   ├── krmu_bus_routes.txt
+│   ├── krmu_campus_facilities.txt
+│   ├── krmu_clubs_societies.txt
+│   ├── krmu_code_of_conduct.txt
+│   ├── krmu_fee_structure.txt
+│   ├── krmu_hostel.txt
+│   ├── krmu_placements.txt
+│   ├── krmu_scholarships.txt
+│   ├── krmu_soet_overview.txt
+│   └── krmu_student_welfare.txt
+├── evaluation
+│   ├── 01_benchmark_comparison.png
+│   ├── 02_radar_qwen_vs_llama.png
+│   ├── 03_parameter_efficiency.png
+│   ├── 04_feature_comparison_heatmap.png
+│   ├── benchmark_comparison.png
+│   ├── feature_heatmap.png
+│   ├── overall_ranking.png
+│   ├── parameter_efficiency.png
+│   ├── radar_comparison.png
+│   └── test_results.json
+├── For running the application.txt
+├── .gitignore
+├── ingest.py
+├── KRMAI_Technical_Guide.txt
+├── KRMU-BUS-ROUTE-AUG25.pdf
+├── Mid term ppt format.pptx
+├── mohit
+│   ├── collegedekho_260303_155544.pdf
+│   ├── collegedekho_260303_155611.pdf
+│   ├── ingest2.py
+│   └── KRMU Information Brochure.pdf
+├── new_file.txt
+├── nohup.out
+├── ollama.log
+├── project-implementation-pipeline
+│   ├── pipeline-visualization.html
+│   └── README.md
+├── pull.log
+├── rag_engine.py
+├── RAG_Implementation_Plan.html
+├── README.md
+├── requirements.txt
+├── start.bat
+├── start.sh
+├── streak_log.txt
+├── test_system.py
+├── .venv
+│   ├── bin
+│   │   ├── activate
+│   │   ├── activate.csh
+│   │   ├── activate.fish
+│   │   ├── Activate.ps1
+│   │   ├── pip
+│   │   ├── pip3
+│   │   ├── pip3.14
+│   │   ├── python -> /usr/bin/python
+│   │   ├── python3 -> python
+│   │   ├── python3.14 -> python
+│   │   └── 𝜋thon -> python
+│   ├── .gitignore
+│   ├── include
+│   ├── lib
+│   │   └── python3.14
+│   │       └── site-packages
+│   │           ├── pip
+│   │           └── pip-25.1.1.dist-info
+│   ├── lib64 -> lib
+│   └── pyvenv.cfg
+├── .vite
+│   └── deps
+│       ├── _metadata.json
+│       └── package.json
+├── .vscode
+│   └── settings.json
+└── web-app
+    ├── dist
+    │   ├── assets
+    │   │   ├── index-B-_2fJ5v.js
+    │   │   └── index-D7ITs23q.css
+    │   └── index.html
+    ├── frontend_test.log
+    ├── index.html
+    ├── nohup.out
+    ├── package.json
+    ├── package-lock.json
+    ├── src
+    │   ├── App.jsx
+    │   ├── components
+    │   │   ├── BackgroundEffect.jsx
+    │   │   ├── ChatHeader.jsx
+    │   │   ├── ChatInterface.jsx
+    │   │   ├── HistorySidebar.jsx
+    │   │   ├── KRMAILogo.jsx
+    │   │   ├── LandingPage.jsx
+    │   │   ├── LoadingDots.jsx
+    │   │   ├── MarkdownComponents.jsx
+    │   │   ├── MessageBubble.jsx
+    │   │   ├── SettingsPage.jsx
+    │   │   ├── Sidebar.jsx
+    │   │   ├── SourceBadge.jsx
+    │   │   ├── StudentProjectsPage.jsx
+    │   │   └── UpdatesFAQPage.jsx
+    │   ├── context
+    │   │   └── ThemeContext.jsx
+    │   ├── data
+    │   │   └── constants.js
+    │   ├── index.css
+    │   └── main.jsx
+    ├── vite.config.js
+    └── vite.log
 ```
-LLM-Based-Knowledge-Retrieval-System/
-│
-├── data/                          # 📄 College documents (add your own here)
-│   ├── sample_policy.txt          # General policies (attendance, grading, library)
-│   ├── placement_cell_guidelines.txt  # Placement eligibility, company stats
-│   ├── hostel_rules.txt           # Hostel timings, mess, visitor policy
-│   ├── fee_structure.txt          # Tuition, exam fees, scholarships, refund
-│   ├── anti_ragging_policy.txt    # Zero-tolerance policy, helplines
-│   └── scholarship_info.txt       # Merit, need-based, government scholarships
-│
-├── rag_engine.py                  # 🧠 Core RAG engine (retrieval + LLM + memory)
-├── ingest.py                      # 📥 Document ingestion pipeline (→ ChromaDB)
-├── api.py                         # 🌐 FastAPI backend (REST API for frontend)
-├── app.py                         # 🖥️ Streamlit app (backup UI)
-│
-├── web-app/                       # ⚛️ React frontend
-│   ├── src/
-│   │   ├── App.jsx                # Main chat interface component
-│   │   ├── index.css              # Tailwind v4 theme (colors, animations)
-│   │   └── main.jsx               # React entry point
-│   ├── index.html                 # HTML shell
-│   ├── vite.config.js             # Vite + Tailwind plugin config
-│   └── package.json               # Node.js dependencies
-│
-├── assets/                        # 🖼️ README images
-├── requirements.txt               # Python dependencies
-├── start.sh                       # Linux/Mac startup script
-├── start.bat                      # Windows startup script
-└── .gitignore
+
+## How It Works End-To-End
+
+```text
+data/*.txt,.pdf,.docx
+    -> ingest.py (load + split into chunks)
+    -> sentence-transformers/all-MiniLM-L6-v2 embeddings
+    -> ChromaDB persisted at chroma_db/
+    -> rag_engine.py retrieval + prompt + Ollama inference
+    -> api.py endpoints (/chat, /chat/stream, /health)
+    -> React frontend (web-app/src) renders answers and source badges
 ```
 
----
+### Ingestion Details (`ingest.py`)
 
-## 🛠️ Tech Stack
+- Supported loaders:
+  - `.pdf` -> `PyPDFLoader`
+  - `.docx` -> `Docx2txtLoader`
+  - `.txt` -> `TextLoader`
+- Chunking: `RecursiveCharacterTextSplitter` with
+  - `chunk_size=1500`
+  - `chunk_overlap=300`
+- Rebuild behavior: wipes existing `chroma_db/` before rebuilding.
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| **LLM** | [Ollama](https://ollama.ai) (Llama 3.2 3B) | Local language model for answer generation |
-| **Vector DB** | [ChromaDB](https://www.trychroma.com) | Store and retrieve document embeddings |
-| **Embeddings** | sentence-transformers/all-MiniLM-L6-v2 | Convert text to vector embeddings |
-| **Backend** | [FastAPI](https://fastapi.tiangolo.com) | REST API serving the RAG engine |
-| **Frontend** | [React](https://react.dev) + [Vite](https://vitejs.dev) | Modern web interface |
-| **Styling** | [Tailwind CSS v4](https://tailwindcss.com) | Utility-first CSS framework |
-| **Orchestration** | [LangChain](https://langchain.com) | RAG pipeline, prompt management |
-| **Backup UI** | [Streamlit](https://streamlit.io) | Quick-deploy alternative interface |
+### Retrieval/Generation Details (`rag_engine.py`)
 
----
+- Expands slang before retrieval with `SLANG_MAP` (262 patterns).
+- Retrieves top 4 chunks (`k=4`).
+- Adds short recent chat context.
+- Uses prompt template requiring English output and grounded answers.
+- Strips `<think>...</think>` sections from model output.
+- Supports streaming token generation for SSE endpoint.
 
-## 🚀 Getting Started
+### API Contract (`api.py`)
+
+- `GET /health` -> engine status (`db`, `ollama`, `ready`)
+- `POST /chat` -> full response + source list
+- `POST /chat/stream` -> SSE token stream + final source event
+
+## Setup Instructions (From Repo Scripts And Notes)
 
 ### Prerequisites
 
-- **Python 3.10+**
-- **Node.js 18+** and **npm**
-- **Ollama** installed and running ([install guide](https://ollama.ai/download))
+- Python environment with dependencies from `requirements.txt`
+- Node.js + npm for frontend
+- Ollama installed and available in PATH
+- Model pulled: `qwen2.5:3b`
 
-### 1. Clone the Repository
+### Manual Run (As In `For running the application.txt`)
 
-```bash
-git clone https://github.com/MohitGoel109/LLM-Based-Knowledge-Retrieval-System.git
-cd LLM-Based-Knowledge-Retrieval-System
-```
-
-### 2. Install Python Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Pull the LLM Model
-
-```bash
-ollama pull llama3.2:3b
-```
-
-### 4. Add Your Documents
-
-Place your college PDF, DOCX, or TXT files in the `data/` directory. Sample files are provided to get started.
-
-### 5. Ingest Documents into Vector DB
-
-```bash
-python ingest.py
-```
-
-This converts your documents into vector embeddings and stores them in ChromaDB.
-
-### 6. Start the Backend
+Backend:
 
 ```bash
 python api.py
-# Server starts at http://localhost:8000
 ```
 
-### 7. Start the Frontend
+Frontend:
 
 ```bash
 cd web-app
-npm install
-npx vite --port 5173
-# Opens at http://localhost:5173
+npm run dev
 ```
 
-### Alternative: Streamlit UI
+### One-Command Linux/Mac (`start.sh`)
 
 ```bash
-streamlit run app.py
+./start.sh
 ```
 
----
+What `start.sh` does:
 
-## 🔍 How It Works
+1. Checks Ollama installation.
+2. Starts `ollama serve` if not already running.
+3. Pulls `qwen2.5:3b` if missing.
+4. Installs Python deps if `fastapi` import is missing.
+5. Runs `python ingest.py` if vector DB is missing.
+6. Starts FastAPI on `:8000` and Vite on `:5173`.
 
-```
-┌──────────────┐     ┌─────────────────┐     ┌──────────────────┐
-│   Student    │     │   FastAPI API   │     │   RAG Engine     │
-│   (React)    │────▶│   (api.py)      │────▶│  (rag_engine.py) │
-│              │     │                 │     │                  │
-│  "What's the │     │  POST /chat     │     │  1. Expand slang │
-│   attendance │     │  {message,      │     │  2. Retrieve docs│
-│   policy?"   │     │   history}      │     │  3. Build prompt │
-│              │◀────│                 │◀────│  4. LLM answer   │
-│  Answer +    │     │  {answer,       │     │  5. Save history │
-│  Sources     │     │   sources}      │     │                  │
-└──────────────┘     └─────────────────┘     └──────────────────┘
-                                                     │
-                                               ┌─────┴─────┐
-                                               │  ChromaDB  │
-                                               │ (Vector DB)│
-                                               └───────────┘
+### Windows Launcher (`start.bat`)
+
+```bat
+start.bat
 ```
 
-1. **Student asks a question** (possibly with slang like "idk about the attendance rules")
-2. **Slang preprocessing** expands it to "I don't know about the attendance rules"
-3. **Vector retrieval** finds the 3 most relevant document chunks from ChromaDB
-4. **LLM generates an answer** using only the retrieved context + conversation history
-5. **Source citations** are returned so students can verify the information
+What `start.bat` does:
 
----
+- Creates/activates local `venv`.
+- Installs requirements.
+- Shows menu:
+  1. Ingest documents
+  2. Run Streamlit UI (`streamlit run app.py`)
 
-## 💬 Slang & Abbreviation Support
+Note: `start.bat` currently launches the Streamlit path, not the React frontend.
 
-The system understands common student language:
+## Knowledge Base In This Repo
 
-| Slang | Expands To |
-|-------|-----------|
-| `uk` | you know |
-| `idk` | I don't know |
-| `wdym` | what do you mean |
-| `tbh` | to be honest |
-| `pls` / `plz` | please |
-| `wanna` | want to |
-| `gonna` | going to |
-| `cgpa` | CGPA cumulative grade point average |
-| `hod` | Head of Department |
-| `kt` | backlog subject |
+Current text corpus in `data/`:
 
-...and 25+ more. See [`rag_engine.py`](rag_engine.py) for the full list.
+- krmu_academic_calendar.txt
+- krmu_admissions.txt
+- krmu_anti_ragging.txt
+- krmu_bus_routes.txt
+- krmu_campus_facilities.txt
+- krmu_clubs_societies.txt
+- krmu_code_of_conduct.txt
+- krmu_fee_structure.txt
+- krmu_hostel.txt
+- krmu_placements.txt
+- krmu_scholarships.txt
+- krmu_soet_overview.txt
+- krmu_student_welfare.txt
 
----
+## Slang Expansion List (From `SLANG_MAP` In `rag_engine.py`)
 
-## 📄 Sample Data Included
+`SLANG_MAP` currently contains 262 expansion patterns.
 
-The project comes with 6 realistic sample documents:
+Representative entries (verbatim pattern style from code):
 
-| Document | Content |
-|----------|---------|
-| `sample_policy.txt` | Attendance, grading system, library rules, IT lab guidelines |
-| `placement_cell_guidelines.txt` | Eligibility criteria, CGPA cutoffs, company visit history, placement stats |
-| `hostel_rules.txt` | Timings, mess schedule, room allocation, visitor policy, prohibited items |
-| `fee_structure.txt` | Tuition, exam fees, hostel charges, scholarships, refund policy |
-| `anti_ragging_policy.txt` | Definitions, punishments, reporting channels, helpline numbers |
-| `scholarship_info.txt` | Merit-based, need-based, government, sports scholarships |
+| Pattern | Expansion |
+|---|---|
+| `\bu\b` | `you` |
+| `\bppl\b` | `people` |
+| `\bb4\b` | `before` |
+| `\b2\b` | `to` |
+| `\bbtw\b` | `by the way` |
+| `\bafaik\b` | `as far as I know` |
+| `\bidk\b` | `I don't know` |
+| `\bwdym\b` | `what do you mean` |
+| `\bw/\b` | `with` |
+| `\bw/o\b` | `without` |
+| `\bwanna\b` | `want to` |
+| `\bgonna\b` | `going to` |
+| `\bdunno\b` | `don't know` |
+| `\bgoated\b` | `greatest of all time` |
+| `\bsus\b` | `suspicious` |
+| `\bcap\b` | `lie` |
+| `\bno cap\b` | `seriously` |
+| `\bdrip\b` | `style` |
+| `\bvibe check\b` | `assessment` |
+| `\bdelulu\b` | `delusional` |
+| `\bdept\b` | `department` |
+| `\bsem\b` | `semester` |
+| `\bacad\b` | `academic` |
+| `\bhosty\b` | `hostel` |
+| `\bkya\b` | `what is` |
+| `\bkitna\b` | `how much is` |
+| `\btheek\b` | `ok fine` |
+| `\bpaisa\b` | `money fees` |
+| `\battendance %\b` | `attendance percentage` |
+| `\bkt\b` | `backlog subject` |
+| `\bcgpa\b` | `CGPA cumulative grade point average` |
+| `\bsgpa\b` | `SGPA semester grade point average` |
+| `\bhod\b` | `Head of Department` |
+| `\bfr fr\b` | `for real for real` |
+| `\bwya\b` | `where you at` |
+| `\bttyl\b` | `talk to you later` |
+| `\b2moro\b` | `tomorrow` |
+| `\bgr8\b` | `great` |
+| `\bscene kya hai\b` | `what is the situation` |
+| `\bbacklog\b` | `failed subject to be cleared later` |
 
-> **Note:** These are sample documents for demonstration. Replace them with your actual college documents for production use.
+For the complete set, see the `SLANG_MAP` dictionary in `rag_engine.py`.
 
----
+## Current Limitations (Observed In Code)
 
-## ⚠️ Current Limitations
+- No authentication backend; sidebar explicitly shows sign-in as "coming soon".
+- Chat/session history is browser-local (`localStorage`), not server-side persistent.
+- Source badges are normalized labels; they do not provide deep links to exact source passages.
+- CORS is wide open (`allow_origins=["*"]`) for development convenience.
+- Python dependencies are unpinned in `requirements.txt`, so installs are not reproducible.
+- `ingest.py` wipes and rebuilds `chroma_db/` each run.
+- Windows launcher currently follows Streamlit flow, while React+FastAPI flow is handled in `start.sh`.
+- Settings page model text currently mentions `Qwen3:8B`, while backend code uses `qwen2.5:3b`.
 
-- **Offline LLM**: Requires Ollama running locally with sufficient RAM (~4 GB for Llama 3.2 3B)
-- **Sample data only**: Real college documents need to be added for actual deployment
-- **No authentication**: Currently no user login system — anyone with access can query
-- **Single-session memory**: Conversation history resets when the server restarts
-- **English only**: The slang dictionary and LLM are optimized for English
-- **No document upload UI**: Documents must be manually added to `data/` and re-ingested via CLI
+## Roadmap (From Existing Hints In Repository)
 
----
+No explicit `TODO`/`FIXME` comments were found in core source files, but these roadmap signals exist:
 
-## 🗺️ Roadmap / What's Left
+1. `web-app/src/components/Sidebar.jsx`: sign-in/sync is marked "coming soon".
+2. `RAG_Implementation_Plan.html`: phased roadmap includes setup/ingestion, core API/UI development, integration/testing, and final documentation/deployment.
+3. `test_system.py`: existing broad test harness can be integrated into a repeatable CI check pipeline.
 
-- [ ] **Add real college documents** (PDFs from administration)
-- [ ] **Document upload via UI** — drag-and-drop documents through the web interface
-- [ ] **User authentication** — student login with college roll number
-- [ ] **Persistent chat history** — save conversations to a database
-- [ ] **Multi-language support** — Hindi + English for broader accessibility
-- [ ] **Admin dashboard** — view query analytics, popular questions, system health
-- [ ] **Mobile responsive** — optimize the UI for phone screens
-- [ ] **Deploy to production** — host on a college server or cloud platform
+Practical next roadmap items grounded in current codebase:
 
----
+1. Implement real auth + multi-device sync for sessions.
+2. Align model labels in UI and backend configuration.
+3. Add upload/re-index workflow in UI for new documents.
+4. Add CI automation for `test_system.py` and health checks.
+5. Tighten CORS and deployment hardening for production use.
 
-## 🤝 Contributing
+## Contributors (From `git log`)
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
-3. Commit your changes (`git commit -m 'Add your feature'`)
-4. Push to the branch (`git push origin feature/your-feature`)
-5. Open a Pull Request
+Unique commit authors detected:
 
----
+- Pyro Sensei `<143206370+pyrosensei@users.noreply.github.com>`
+- Pyro Sensei `<swetank0648@gmail.com>`
+- Swetank Pritam `<swetank0648@gmail.com>`
+- pyrosensei `<swetank0648@gmail.com>`
+- MohitGoel109 `<goel0277@gmail.com>`
+- Ankit Kumar `<anxkit5@gmail.com>`
 
-## 📝 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
----
-
-<p align="center">
-  Made with ❤️ for college students who deserve better access to information
-</p>
+If you want, this section can be normalized to canonical display names.
