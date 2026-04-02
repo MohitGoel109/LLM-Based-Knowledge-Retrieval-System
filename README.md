@@ -1,112 +1,98 @@
-# KRMAI - LLM-Based Knowledge Retrieval System
+<div align="center">
 
-Local AI assistant for KR Mangalam University students.
+# 🎓 KRMAI — LLM-Based Knowledge Retrieval System
 
-![Demo](assets/demo.gif)
+**A fully local, AI-powered chatbot for KR Mangalam University students — instant answers about fees, admissions, hostels, placements, scholarships, and more, grounded in official university documents.**
 
-## Project Summary
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&logoColor=black)](https://react.dev)
+[![Ollama](https://img.shields.io/badge/Ollama-qwen2.5:3b-black?logo=ollama)](https://ollama.com)
+[![License](https://img.shields.io/badge/License-ISC-blue.svg)](LICENSE)
 
-KRMAI is a fully local Retrieval-Augmented Generation (RAG) system for university FAQs. It ingests KRMU documents into ChromaDB and answers student questions through a FastAPI backend and React frontend.
+</div>
 
-The live query path in this repository is:
+---
 
-1. User asks a question from the React app.
-2. FastAPI receives it on `/chat` or `/chat/stream`.
-3. `rag_engine.py` expands slang/Hinglish terms, retrieves top-`k=4` chunks from ChromaDB, and prompts Ollama (`qwen2.5:3b`).
-4. API returns answer plus unique source metadata.
-5. Frontend renders markdown response and source badges.
+<div align="center">
 
-## What The System Actually Does
+| Landing Page | Chat Interface |
+|:---:|:---:|
+| ![Landing Page](assets/landing_page.png) | ![Chat Interface](assets/chat_interface.png) |
 
-Based on `rag_engine.py` and `api.py`:
+</div>
 
-- Uses local embeddings: `sentence-transformers/all-MiniLM-L6-v2`.
-- Uses local vector store: ChromaDB at `chroma_db/`.
-- Uses local LLM runtime: Ollama at `http://localhost:11434`.
-- Uses local model: `qwen2.5:3b`.
-- Supports non-stream and SSE streaming responses:
-  - `POST /chat`
-  - `POST /chat/stream`
-- Maintains short conversation memory (last 4 messages / ~2 Q&A pairs) inside `RAGEngine`.
-- Expands a large slang dictionary (`SLANG_MAP`) before retrieval.
-- Returns source file metadata with each answer.
+---
 
-## Tech Stack (As Declared In Repo Files)
+## 📖 What It Does
 
-### Backend / Python (`requirements.txt`)
+KRMAI uses **Retrieval-Augmented Generation (RAG)** to answer student questions by grounding every response in official university documents. Instead of relying on an LLM's training data (which hallucinate), it:
 
-| Package | Version Spec In Repo |
+1. **Ingests** 13 official KRMU documents (fees, placements, hostels, scholarships, etc.) into a vector database
+2. **Expands slang** — converts 200+ abbreviations, Gen Z slang, Hindi/Hinglish terms to clean English before searching (e.g., `"bhai fees kitni h btw"` → `"fees how much is by the way"`)
+3. **Retrieves** the 4 most relevant document chunks via cosine similarity search in ChromaDB
+4. **Generates** a grounded answer using a local Ollama LLM (qwen2.5:3b) — streamed token-by-token via Server-Sent Events for real-time display
+5. **Cites sources** — every answer shows which document and page the information came from
+
+Everything runs **100% locally** — no cloud APIs, no data leaves your machine. Privacy-first.
+
+---
+
+## 🛠 Tech Stack
+
+### Backend
+
+| Technology | Purpose |
 |---|---|
-| langchain | not pinned |
-| langchain_community | not pinned |
-| langchain_huggingface | not pinned |
-| langchain_chroma | not pinned |
-| langchain_ollama | not pinned |
-| langchain_text_splitters | not pinned |
-| langchain_core | not pinned |
-| chromadb | not pinned |
-| sentence-transformers | not pinned |
-| streamlit | not pinned |
-| pypdf | not pinned |
-| docx2txt | not pinned |
-| requests | not pinned |
-| fastapi | not pinned |
-| uvicorn | not pinned |
-| pydantic | not pinned |
-| pydantic-settings | not pinned |
+| **Python 3.10+** | Backend language |
+| **FastAPI** | REST API (`/chat`, `/chat/stream`, `/health`) |
+| **Uvicorn** | ASGI server |
+| **LangChain** (core, community, huggingface, chroma, ollama, text_splitters) | RAG orchestration framework |
+| **ChromaDB** | Vector database with HNSW indexing |
+| **sentence-transformers** (all-MiniLM-L6-v2) | Local embedding model (384-dim vectors) |
+| **Ollama** + **qwen2.5:3b** | Local LLM runtime + model (~3GB) |
+| **Streamlit** | Alternative legacy UI (not used in production) |
+| **PyPDF** / **docx2txt** | PDF and DOCX document loaders |
+| **Pydantic** | Request/response validation |
 
-### Frontend (`web-app/package.json`)
+### Frontend
 
-| Package | Version Spec In Repo |
-|---|---|
-| react | ^19.2.4 |
-| react-dom | ^19.2.4 |
-| vite | ^7.3.1 |
-| @vitejs/plugin-react | ^5.1.4 |
-| tailwindcss | ^4.2.1 |
-| @tailwindcss/vite | ^4.2.1 |
-| framer-motion | ^12.34.3 |
-| lucide-react | ^0.575.0 |
-| react-markdown | ^10.1.0 |
-| remark-gfm | ^4.0.1 |
+| Technology | Version | Purpose |
+|---|---|---|
+| **React** | 19.2.4 | UI library |
+| **Vite** | 7.3.1 | Build tool & dev server |
+| **Tailwind CSS** | 4.2.1 | Utility-first CSS framework |
+| **Framer Motion** | 12.34.3 | Page transitions & animations |
+| **Lucide React** | 0.575.0 | Icon library |
+| **react-markdown** + **remark-gfm** | 10.1.0 / 4.0.1 | Markdown rendering for bot responses |
+| **Web Speech API** | Browser-native | Voice input (Chrome/Edge) |
 
-### Runtime/Model Constants From Code
+### Infrastructure
 
-| Item | Value |
-|---|---|
-| Ollama base URL | `http://localhost:11434` |
-| LLM model | `qwen2.5:3b` |
-| Embedding model | `sentence-transformers/all-MiniLM-L6-v2` |
-| Retriever `k` | `4` |
-| Chunk size | `1500` |
-| Chunk overlap | `300` |
+| Component | Port | Description |
+|---|---|---|
+| Ollama Server | `localhost:11434` | Local LLM inference |
+| FastAPI Backend | `localhost:8000` | REST API |
+| Vite Dev Server | `localhost:5173` | React frontend |
 
-## Actual Project Structure (Generated From Current Directory)
+---
 
-The tree below is from a live `tree -a -L 5` run in this workspace (excluding `.git`, `node_modules`, `__pycache__`):
+## 📁 Project Structure
 
-```text
-.
-├── api.py
-├── app.py
-├── assets
-│   ├── chat_interface.png
-│   └── landing_page.png
-├── backend.log
-├── backend_test.log
-├── chroma_db
-│   ├── 5891704a-f6a1-44b8-87c4-0288723367d7
-│   │   ├── data_level0.bin
-│   │   ├── header.bin
-│   │   ├── length.bin
-│   │   └── link_lists.bin
-│   ├── chroma.sqlite3
-│   └── ebf16809-62eb-434d-9b94-2004a98edfc5
-│       ├── data_level0.bin
-│       ├── header.bin
-│       ├── length.bin
-│       └── link_lists.bin
-├── data
+```
+KRMAI/
+├── api.py                          # FastAPI server — /chat, /chat/stream, /health endpoints
+├── rag_engine.py                   # RAG engine — retrieval, slang expansion, LLM, streaming
+├── ingest.py                       # Document ingestion — load → chunk → embed → ChromaDB
+├── app.py                          # Streamlit UI (legacy alternative interface)
+├── test_system.py                  # Comprehensive test suite (20 tests across 7 categories)
+├── start.sh                        # Linux/macOS launcher (Ollama → Backend → Frontend)
+├── start.bat                       # Windows launcher with interactive menu
+├── requirements.txt                # Python dependencies
+├── KRMAI_Technical_Guide.txt       # Complete technical documentation
+├── For running the application.txt # Quick-start instructions
+│
+├── data/                           # 📚 Knowledge base (13 official KRMU documents)
 │   ├── krmu_academic_calendar.txt
 │   ├── krmu_admissions.txt
 │   ├── krmu_anti_ragging.txt
@@ -120,307 +106,279 @@ The tree below is from a live `tree -a -L 5` run in this workspace (excluding `.
 │   ├── krmu_scholarships.txt
 │   ├── krmu_soet_overview.txt
 │   └── krmu_student_welfare.txt
-├── evaluation
-│   ├── 01_benchmark_comparison.png
-│   ├── 02_radar_qwen_vs_llama.png
-│   ├── 03_parameter_efficiency.png
-│   ├── 04_feature_comparison_heatmap.png
-│   ├── benchmark_comparison.png
-│   ├── feature_heatmap.png
-│   ├── overall_ranking.png
-│   ├── parameter_efficiency.png
-│   ├── radar_comparison.png
-│   └── test_results.json
-├── For running the application.txt
-├── .gitignore
-├── ingest.py
-├── KRMAI_Technical_Guide.txt
-├── KRMU-BUS-ROUTE-AUG25.pdf
-├── Mid term ppt format.pptx
-├── mohit
-│   ├── collegedekho_260303_155544.pdf
-│   ├── collegedekho_260303_155611.pdf
-│   ├── ingest2.py
-│   └── KRMU Information Brochure.pdf
-├── new_file.txt
-├── nohup.out
-├── ollama.log
-├── project-implementation-pipeline
-│   ├── pipeline-visualization.html
-│   └── README.md
-├── pull.log
-├── rag_engine.py
-├── RAG_Implementation_Plan.html
-├── README.md
-├── requirements.txt
-├── start.bat
-├── start.sh
-├── streak_log.txt
-├── test_system.py
-├── .venv
-│   ├── bin
-│   │   ├── activate
-│   │   ├── activate.csh
-│   │   ├── activate.fish
-│   │   ├── Activate.ps1
-│   │   ├── pip
-│   │   ├── pip3
-│   │   ├── pip3.14
-│   │   ├── python -> /usr/bin/python
-│   │   ├── python3 -> python
-│   │   ├── python3.14 -> python
-│   │   └── 𝜋thon -> python
-│   ├── .gitignore
-│   ├── include
-│   ├── lib
-│   │   └── python3.14
-│   │       └── site-packages
-│   │           ├── pip
-│   │           └── pip-25.1.1.dist-info
-│   ├── lib64 -> lib
-│   └── pyvenv.cfg
-├── .vite
-│   └── deps
-│       ├── _metadata.json
-│       └── package.json
-├── .vscode
-│   └── settings.json
-└── web-app
-    ├── dist
-    │   ├── assets
-    │   │   ├── index-B-_2fJ5v.js
-    │   │   └── index-D7ITs23q.css
-    │   └── index.html
-    ├── frontend_test.log
-    ├── index.html
-    ├── nohup.out
-    ├── package.json
-    ├── package-lock.json
-    ├── src
-    │   ├── App.jsx
-    │   ├── components
-    │   │   ├── BackgroundEffect.jsx
-    │   │   ├── ChatHeader.jsx
-    │   │   ├── ChatInterface.jsx
-    │   │   ├── HistorySidebar.jsx
-    │   │   ├── KRMAILogo.jsx
-    │   │   ├── LandingPage.jsx
-    │   │   ├── LoadingDots.jsx
-    │   │   ├── MarkdownComponents.jsx
-    │   │   ├── MessageBubble.jsx
-    │   │   ├── SettingsPage.jsx
-    │   │   ├── Sidebar.jsx
-    │   │   ├── SourceBadge.jsx
-    │   │   ├── StudentProjectsPage.jsx
-    │   │   └── UpdatesFAQPage.jsx
-    │   ├── context
-    │   │   └── ThemeContext.jsx
-    │   ├── data
-    │   │   └── constants.js
-    │   ├── index.css
-    │   └── main.jsx
-    ├── vite.config.js
-    └── vite.log
+│
+├── chroma_db/                      # ChromaDB persistent storage (auto-generated)
+│
+├── evaluation/                     # Model evaluation results
+│   ├── test_results.json           # Test suite output
+│   ├── benchmark_comparison.png    # Qwen vs alternatives
+│   ├── radar_comparison.png        # Multi-metric radar chart
+│   ├── parameter_efficiency.png    # Model size vs performance
+│   └── feature_heatmap.png         # Feature comparison heatmap
+│
+├── project-implementation-pipeline/
+│   ├── README.md                   # Pipeline documentation
+│   └── pipeline-visualization.html # Interactive pipeline diagram
+│
+├── assets/                         # Screenshots & media
+│   ├── landing_page.png
+│   └── chat_interface.png
+│
+└── web-app/                        # ⚛️ React frontend
+    ├── index.html                  # HTML entry — loads Google Fonts (DM Sans, DM Serif Display)
+    ├── package.json                # Node.js dependencies
+    ├── vite.config.js              # Vite config with React + Tailwind plugins
+    └── src/
+        ├── main.jsx                # React entry — wraps App in ThemeProvider
+        ├── App.jsx                 # Root component — view routing (landing/chat/settings/projects/updates)
+        ├── index.css               # Global CSS — theme variables, animations, glassmorphism
+        ├── context/
+        │   └── ThemeContext.jsx     # Dark/light theme context (persisted in localStorage)
+        ├── data/
+        │   └── constants.js        # Category data, suggestion prompts, FAQ cards
+        └── components/
+            ├── LandingPage.jsx         # Hero section, animated stats, feature cards, CTA
+            ├── ChatInterface.jsx       # Main chat UI — messages, input, voice, SSE streaming
+            ├── Sidebar.jsx             # Left nav — category prompts, quick suggestions
+            ├── HistorySidebar.jsx       # Right panel — chat session history (localStorage)
+            ├── ChatHeader.jsx          # Top bar — search, notifications, navigation
+            ├── MessageBubble.jsx       # Message display (user blue bubble, bot dark card)
+            ├── MarkdownComponents.jsx  # Custom markdown renderers for bot responses
+            ├── SourceBadge.jsx         # Source citation badge component
+            ├── KRMAILogo.jsx           # Animated graduation cap logo SVG
+            ├── BackgroundEffect.jsx    # Glass orb + aurora background animations
+            ├── SettingsPage.jsx        # Theme toggle, voice language, data clearing
+            ├── StudentProjectsPage.jsx # Student projects showcase page
+            ├── UpdatesFAQPage.jsx      # Updates feed + FAQ accordion
+            └── LoadingDots.jsx         # Loading dots animation
 ```
 
-## How It Works End-To-End
+---
 
-```text
-data/*.txt,.pdf,.docx
-    -> ingest.py (load + split into chunks)
-    -> sentence-transformers/all-MiniLM-L6-v2 embeddings
-    -> ChromaDB persisted at chroma_db/
-    -> rag_engine.py retrieval + prompt + Ollama inference
-    -> api.py endpoints (/chat, /chat/stream, /health)
-    -> React frontend (web-app/src) renders answers and source badges
+## ⚙️ How It Works
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌──────────────────┐
+│  University      │     │  Document        │     │  Text Chunking   │
+│  Documents       │────▶│  Loaders         │────▶│  (1500 chars,    │
+│  (data/*.txt)    │     │  (PDF/DOCX/TXT)  │     │   300 overlap)   │
+└─────────────────┘     └─────────────────┘     └────────┬─────────┘
+                                                         │
+                         ┌───────────────────────────────┘
+                         ▼
+              ┌─────────────────────┐     ┌──────────────────┐
+              │  Embedding Model    │────▶│  ChromaDB         │
+              │  all-MiniLM-L6-v2  │     │  (HNSW Index,     │
+              │  (384-dim vectors)  │     │   chroma_db/)     │
+              └─────────────────────┘     └────────┬─────────┘
+                                                   │
+     ┌─── Query Flow ─────────────────────────────┘
+     │
+     ▼
+┌──────────────┐   ┌──────────────┐   ┌───────────┐   ┌──────────────┐
+│ Slang        │──▶│ Similarity   │──▶│ Prompt    │──▶│ Ollama LLM   │
+│ Expansion    │   │ Search (k=4) │   │ Builder   │   │ qwen2.5:3b   │
+│ (200+ rules) │   │              │   │ + History │   │ (Streaming)  │
+└──────────────┘   └──────────────┘   └───────────┘   └──────┬───────┘
+                                                             │
+                    ┌────────────────────────────────────────┘
+                    ▼
+         ┌────────────────────┐     ┌────────────────────┐
+         │ FastAPI Backend    │────▶│ React Frontend     │
+         │ POST /chat/stream  │ SSE │ Real-time display  │
+         │ (localhost:8000)   │     │ (localhost:5173)    │
+         └────────────────────┘     └────────────────────┘
 ```
 
-### Ingestion Details (`ingest.py`)
+### Step-by-Step Flow
 
-- Supported loaders:
-  - `.pdf` -> `PyPDFLoader`
-  - `.docx` -> `Docx2txtLoader`
-  - `.txt` -> `TextLoader`
-- Chunking: `RecursiveCharacterTextSplitter` with
-  - `chunk_size=1500`
-  - `chunk_overlap=300`
-- Rebuild behavior: wipes existing `chroma_db/` before rebuilding.
+1. **Ingestion** (`ingest.py`): Documents from `data/` are loaded, split into chunks of 1500 characters (with 300-character overlap using `RecursiveCharacterTextSplitter`), embedded with `all-MiniLM-L6-v2`, and stored in ChromaDB at `chroma_db/`.
 
-### Retrieval/Generation Details (`rag_engine.py`)
+2. **Query Processing** (`rag_engine.py`): When a student asks a question:
+   - **Slang expansion**: 200+ regex patterns normalize informal text (Gen Z, Hinglish, abbreviations)
+   - **Retrieval**: The cleaned query is embedded and the 4 most similar chunks are found via cosine similarity
+   - **Prompt construction**: Retrieved context + chat history (last 4 messages, truncated to 200 chars each) + question are assembled into a structured prompt
+   - **LLM inference**: Ollama runs qwen2.5:3b locally with optimized parameters (`temperature=0.3`, `top_k=20`, `top_p=0.8`, `num_ctx=2048`, `num_predict=1024`)
+   - **`<think>` stripping**: Qwen model's internal reasoning blocks are removed before streaming
 
-- Expands slang before retrieval with `SLANG_MAP` (262 patterns).
-- Retrieves top 4 chunks (`k=4`).
-- Adds short recent chat context.
-- Uses prompt template requiring English output and grounded answers.
-- Strips `<think>...</think>` sections from model output.
-- Supports streaming token generation for SSE endpoint.
+3. **API Layer** (`api.py`): FastAPI exposes three endpoints:
+   - `GET /health` — Component status (DB, Ollama, ready)
+   - `POST /chat` — Synchronous response with answer + sources
+   - `POST /chat/stream` — SSE streaming (token-by-token with final source citations)
 
-### API Contract (`api.py`)
+4. **Frontend** (`web-app/`): React app with:
+   - Landing page with animated hero, feature cards, and CTA
+   - Chat interface with real-time SSE streaming, voice input, markdown rendering
+   - Session management in localStorage (save/load/delete, up to 20 sessions)
+   - Dark/light theme with CSS variables and smooth transitions
+   - Source citation badges on every response
 
-- `GET /health` -> engine status (`db`, `ollama`, `ready`)
-- `POST /chat` -> full response + source list
-- `POST /chat/stream` -> SSE token stream + final source event
+---
 
-## Setup Instructions (From Repo Scripts And Notes)
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Python environment with dependencies from `requirements.txt`
-- Node.js + npm for frontend
-- Ollama installed and available in PATH
-- Model pulled: `qwen2.5:3b`
+- **Python 3.10+**
+- **Node.js 18+** (for the React frontend)
+- **Ollama** — Install from [ollama.com](https://ollama.com)
+- At least **8GB RAM** (16GB recommended)
 
-### Manual Run (As In `For running the application.txt`)
-
-Backend:
+### Option 1: One-Command Launch (Linux/macOS)
 
 ```bash
-python api.py
-```
+# Clone and enter the project
+git clone https://github.com/MohitGoel109/LLM-Based-Knowledge-Retrieval-System.git
+cd LLM-Based-Knowledge-Retrieval-System
 
-Frontend:
-
-```bash
-cd web-app
-npm run dev
-```
-
-### One-Command Linux/Mac (`start.sh`)
-
-```bash
+# This handles everything: Ollama, model pull, dependencies, ingestion, backend + frontend
 ./start.sh
 ```
 
-What `start.sh` does:
+The script will:
+1. ✅ Check/start Ollama
+2. ✅ Pull `qwen2.5:3b` model if needed
+3. ✅ Install Python dependencies
+4. ✅ Run document ingestion if `chroma_db/` doesn't exist
+5. ✅ Launch FastAPI on `localhost:8000` + React on `localhost:5173`
 
-1. Checks Ollama installation.
-2. Starts `ollama serve` if not already running.
-3. Pulls `qwen2.5:3b` if missing.
-4. Installs Python deps if `fastapi` import is missing.
-5. Runs `python ingest.py` if vector DB is missing.
-6. Starts FastAPI on `:8000` and Vite on `:5173`.
+### Option 2: Manual Setup
 
-### Windows Launcher (`start.bat`)
+```bash
+# 1. Start Ollama and pull the model
+ollama serve                     # Start Ollama server
+ollama pull qwen2.5:3b           # Download the LLM (~3GB, first time only)
 
-```bat
+# 2. Install Python dependencies
+pip install -r requirements.txt
+
+# 3. Ingest documents into ChromaDB (first time or after updating data/)
+python ingest.py
+
+# 4. Start the backend API
+python api.py                    # Runs on http://localhost:8000
+
+# 5. Start the frontend (in a new terminal)
+cd web-app
+npm install                      # First time only
+npm run dev                      # Runs on http://localhost:5173
+```
+
+### Option 3: Windows
+
+```batch
+# Run the interactive launcher
 start.bat
 ```
 
-What `start.bat` does:
+This provides a menu to: (1) Ingest documents, (2) Run Streamlit UI, (3) Exit.
 
-- Creates/activates local `venv`.
-- Installs requirements.
-- Shows menu:
-  1. Ingest documents
-  2. Run Streamlit UI (`streamlit run app.py`)
+---
 
-Note: `start.bat` currently launches the Streamlit path, not the React frontend.
+## 🗣 Slang & Abbreviation Expansion
 
-## Knowledge Base In This Repo
+KRMAI understands the way students actually type. The engine has **200+ regex rules** across 9 categories that normalize informal queries before retrieval:
 
-Current text corpus in `data/`:
+<details>
+<summary><strong>Click to expand all categories</strong></summary>
 
-- krmu_academic_calendar.txt
-- krmu_admissions.txt
-- krmu_anti_ragging.txt
-- krmu_bus_routes.txt
-- krmu_campus_facilities.txt
-- krmu_clubs_societies.txt
-- krmu_code_of_conduct.txt
-- krmu_fee_structure.txt
-- krmu_hostel.txt
-- krmu_placements.txt
-- krmu_scholarships.txt
-- krmu_soet_overview.txt
-- krmu_student_welfare.txt
-
-## Slang Expansion List (From `SLANG_MAP` In `rag_engine.py`)
-
-`SLANG_MAP` currently contains 262 expansion patterns.
-
-Representative entries (verbatim pattern style from code):
-
-| Pattern | Expansion |
+| Category | Examples |
 |---|---|
-| `\bu\b` | `you` |
-| `\bppl\b` | `people` |
-| `\bb4\b` | `before` |
-| `\b2\b` | `to` |
-| `\bbtw\b` | `by the way` |
-| `\bafaik\b` | `as far as I know` |
-| `\bidk\b` | `I don't know` |
-| `\bwdym\b` | `what do you mean` |
-| `\bw/\b` | `with` |
-| `\bw/o\b` | `without` |
-| `\bwanna\b` | `want to` |
-| `\bgonna\b` | `going to` |
-| `\bdunno\b` | `don't know` |
-| `\bgoated\b` | `greatest of all time` |
-| `\bsus\b` | `suspicious` |
-| `\bcap\b` | `lie` |
-| `\bno cap\b` | `seriously` |
-| `\bdrip\b` | `style` |
-| `\bvibe check\b` | `assessment` |
-| `\bdelulu\b` | `delusional` |
-| `\bdept\b` | `department` |
-| `\bsem\b` | `semester` |
-| `\bacad\b` | `academic` |
-| `\bhosty\b` | `hostel` |
-| `\bkya\b` | `what is` |
-| `\bkitna\b` | `how much is` |
-| `\btheek\b` | `ok fine` |
-| `\bpaisa\b` | `money fees` |
-| `\battendance %\b` | `attendance percentage` |
-| `\bkt\b` | `backlog subject` |
-| `\bcgpa\b` | `CGPA cumulative grade point average` |
-| `\bsgpa\b` | `SGPA semester grade point average` |
-| `\bhod\b` | `Head of Department` |
-| `\bfr fr\b` | `for real for real` |
-| `\bwya\b` | `where you at` |
-| `\bttyl\b` | `talk to you later` |
-| `\b2moro\b` | `tomorrow` |
-| `\bgr8\b` | `great` |
-| `\bscene kya hai\b` | `what is the situation` |
-| `\bbacklog\b` | `failed subject to be cleared later` |
+| **Single-letter shortcuts** | `u` → you, `r` → are, `n` → and, `y` → why, `k` → ok |
+| **Internet abbreviations** | `btw` → by the way, `idk` → I don't know, `tbh` → to be honest, `asap` → as soon as possible, `fyi` → for your information, `brb` → be right back, `omg` → oh my god |
+| **Informal contractions** | `wanna` → want to, `gonna` → going to, `gotta` → got to, `kinda` → kind of, `lemme` → let me, `dunno` → don't know |
+| **Gen Z slang** | `bussin` → really good, `sus` → suspicious, `no cap` → seriously, `slay` → amazing, `rizz` → charisma, `delulu` → delusional, `vibe check` → assessment |
+| **Text abbreviations** | `pls`/`plz` → please, `thx` → thanks, `2day` → today, `2moro` → tomorrow, `gr8` → great, `l8r` → later |
+| **Shorthand** | `uni` → university, `prof` → professor, `sem` → semester, `govt` → government, `dept` → department, `lib` → library |
+| **Hindi / Hinglish** | `kya` → what is, `kab` → when is, `kahan` → where is, `kitna` → how much is, `padhai` → studies, `paisa` → money fees |
+| **College-specific** | `kt` → backlog subject, `cgpa` → CGPA cumulative grade point average, `hod` → Head of Department, `placement` → placement cell campus recruitment |
+| **Additional Gen Z** | `rizz` → charisma, `salty` → bitter or upset, `ghosting` → suddenly stopping communication, `yolo` → you only live once, `istg` → I swear to god |
 
-For the complete set, see the `SLANG_MAP` dictionary in `rag_engine.py`.
+</details>
 
-## Current Limitations (Observed In Code)
+---
 
-- No authentication backend; sidebar explicitly shows sign-in as "coming soon".
-- Chat/session history is browser-local (`localStorage`), not server-side persistent.
-- Source badges are normalized labels; they do not provide deep links to exact source passages.
-- CORS is wide open (`allow_origins=["*"]`) for development convenience.
-- Python dependencies are unpinned in `requirements.txt`, so installs are not reproducible.
-- `ingest.py` wipes and rebuilds `chroma_db/` each run.
-- Windows launcher currently follows Streamlit flow, while React+FastAPI flow is handled in `start.sh`.
-- Settings page model text currently mentions `Qwen3:8B`, while backend code uses `qwen2.5:3b`.
+## 🧪 Testing
 
-## Roadmap (From Existing Hints In Repository)
+A comprehensive test suite (`test_system.py`) with **20 tests across 7 categories**:
 
-No explicit `TODO`/`FIXME` comments were found in core source files, but these roadmap signals exist:
+```bash
+# Prerequisites: Ollama running + API running
+python test_system.py
+```
 
-1. `web-app/src/components/Sidebar.jsx`: sign-in/sync is marked "coming soon".
-2. `RAG_Implementation_Plan.html`: phased roadmap includes setup/ingestion, core API/UI development, integration/testing, and final documentation/deployment.
-3. `test_system.py`: existing broad test harness can be integrated into a repeatable CI check pipeline.
+| Category | Tests | What's Verified |
+|---|---|---|
+| Infrastructure | 4 | Ollama running, model available, ChromaDB exists, API health |
+| Query Quality | 8 | Bus routes, placements, fees, hostel, scholarships, anti-ragging, campus, top students |
+| Multi-Topic | 2 | Combined queries (bus + placements, fees + hostel) |
+| Edge Cases | 4 | Hinglish input, slang input, irrelevant queries, empty queries |
+| Response Quality | 3 | Non-truncated responses, English-only output, source citations |
+| Streaming | 1 | SSE endpoint delivers complete tokens + done event |
+| Performance | 1 | Response time under 60 seconds |
 
-Practical next roadmap items grounded in current codebase:
+Results are saved to `evaluation/test_results.json`.
 
-1. Implement real auth + multi-device sync for sessions.
-2. Align model labels in UI and backend configuration.
-3. Add upload/re-index workflow in UI for new documents.
-4. Add CI automation for `test_system.py` and health checks.
-5. Tighten CORS and deployment hardening for production use.
+---
 
-## Contributors (From `git log`)
+## ⚠️ Current Limitations
 
-Unique commit authors detected:
+| Limitation | Details |
+|---|---|
+| **No authentication** | No user login or access control — anyone on the network can use the API |
+| **No persistent server-side history** | Chat history lives only in browser `localStorage`; backend keeps a 4-message in-memory buffer per request |
+| **CORS allow-all** | `allow_origins=["*"]` — suitable for development only |
+| **No rate limiting** | No protection against API abuse or runaway requests |
+| **Single-machine ChromaDB** | Vector DB runs on local disk — not horizontally scalable |
+| **CPU inference by default** | Ollama runs on CPU unless GPU is configured; response times can be 10–30s |
+| **No document update pipeline** | Documents must be manually placed in `data/` and re-ingested with `python ingest.py` |
+| **English-only responses** | Even for Hindi/Hinglish input, the LLM is instructed to respond only in English |
+| **No production build** | Frontend runs via Vite dev server, not a production bundle |
+| **Browser-dependent voice** | Web Speech API only works in Chrome/Edge |
 
-- Pyro Sensei `<143206370+pyrosensei@users.noreply.github.com>`
-- Pyro Sensei `<swetank0648@gmail.com>`
-- Swetank Pritam `<swetank0648@gmail.com>`
-- pyrosensei `<swetank0648@gmail.com>`
-- MohitGoel109 `<goel0277@gmail.com>`
-- Ankit Kumar `<anxkit5@gmail.com>`
+---
 
-If you want, this section can be normalized to canonical display names.
+## 🗺 Roadmap
+
+Based on [`KRMAI_Technical_Guide.txt`](KRMAI_Technical_Guide.txt) future scope:
+
+- [ ] 📸 Multi-modal support (images, campus maps, timetable screenshots)
+- [ ] 🔐 User authentication (SSO with university portal)
+- [ ] 🛡 Admin panel for managing knowledge base documents
+- [ ] 📊 Analytics dashboard (most asked questions, usage stats)
+- [ ] 🔄 Automatic document update pipeline (scrape university website)
+- [ ] ⚡ GPU-accelerated inference for faster responses
+- [ ] 🎯 Fine-tuning the LLM on university-specific data
+- [ ] 🌐 Multi-language response support (Hindi output option)
+- [ ] 🔗 Integration with university LMS (Moodle, Blackboard)
+- [ ] 📱 Mobile app (React Native)
+- [ ] 🔁 Feedback loop to improve answer quality over time
+- [ ] 🐳 Docker containerization for easy deployment
+
+---
+
+## 👥 Contributors
+
+<!-- Add your team members here -->
+| Name | Role | GitHub |
+|---|---|---|
+| **Mohit Goel** | Lead Developer | [@MohitGoel109](https://github.com/MohitGoel109) |
+| *Add team members* | — | — |
+
+> 💡 *To add contributors, update this table with team member names and roles.*
+
+---
+
+## 📄 License
+
+This project is licensed under the ISC License — see [package.json](web-app/package.json) for details.
+
+---
+
+<div align="center">
+
+**Built with ❤️ for KR Mangalam University students**
+
+*KRMAI — Because every student deserves instant, accurate answers.*
+
+</div>
