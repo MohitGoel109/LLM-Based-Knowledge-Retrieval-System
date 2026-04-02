@@ -16,9 +16,7 @@
 
 <div align="center">
 
-| Landing Page | Chat Interface |
-|:---:|:---:|
-| ![Landing Page](assets/landing_page.png) | ![Chat Interface](assets/chat_interface.png) |
+![KRMAI Demo Chat](assets/demo.webp)
 
 </div>
 
@@ -362,7 +360,7 @@ Based on [`KRMAI_Technical_Guide.txt`](KRMAI_Technical_Guide.txt) future scope:
 <!-- Add your team members here -->
 | Name | Role | GitHub |
 |---|---|---|
-| **Mohit Goel** | Lead Developer | [@MohitGoel109](https://github.com/MohitGoel109) |
+| **Swetank Pritam** | Lead Developer | [@pyrosensei](https://github.com/pyrosensei) |
 | *Add team members* | — | — |
 
 > 💡 *To add contributors, update this table with team member names and roles.*
