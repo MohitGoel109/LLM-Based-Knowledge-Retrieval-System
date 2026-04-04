@@ -1,0 +1,13 @@
+1. For backend 
+
+cd ~/Documents/Programming/LLM-Based-Knowledge-Retrieval-System
+python api.py
+
+2. For frontend 
+cd ~/Documents/Programming/LLM-Based-Knowledge-Retrieval-System/web-app
+npm run dev
+
+3. All at once 
+
+cd ~/Documents/Programming/LLM-Based-Knowledge-Retrieval-System
+./start.sh 
