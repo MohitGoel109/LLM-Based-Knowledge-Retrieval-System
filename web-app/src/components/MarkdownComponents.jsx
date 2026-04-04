@@ -1,27 +1,27 @@
 const mdComponents = {
     h1: ({ node, ...props }) => (
-        <h1 className="text-2xl font-bold mt-6 mb-3 tracking-tight text-[var(--accent)]" {...props} />
+        <h1 className="text-2xl font-bold mt-4 first:mt-0 mb-3 tracking-tight text-[var(--accent)]" {...props} />
     ),
     h2: ({ node, ...props }) => (
-        <h2 className="text-xl font-bold mt-5 mb-3 tracking-tight text-[var(--text-heading)]" {...props} />
+        <h2 className="text-xl font-bold mt-4 first:mt-0 mb-2.5 tracking-tight text-[var(--text-heading)]" {...props} />
     ),
     h3: ({ node, ...props }) => (
-        <h3 className="text-lg font-semibold mt-4 mb-2 text-[var(--text-heading)]" {...props} />
+        <h3 className="text-lg font-semibold mt-3 first:mt-0 mb-2 text-[var(--text-heading)]" {...props} />
     ),
     p: ({ node, ...props }) => (
-        <p className="leading-relaxed mb-4 text-[16px] text-[var(--text-primary)]" {...props} />
+        <p className="leading-relaxed mb-3 last:mb-0 text-[16px] text-[var(--text-primary)]" {...props} />
     ),
     ul: ({ node, ...props }) => (
-        <ul className="list-disc list-outside ml-6 mb-4 space-y-2 text-[var(--text-primary)]" {...props} />
+        <ul className="list-disc list-outside ml-6 mb-3 space-y-1.5 text-[var(--text-primary)]" {...props} />
     ),
     ol: ({ node, ...props }) => (
-        <ol className="list-decimal list-outside ml-6 mb-4 space-y-2 text-[var(--text-primary)]" {...props} />
+        <ol className="list-decimal list-outside ml-6 mb-3 space-y-1.5 text-[var(--text-primary)]" {...props} />
     ),
     li: ({ node, ...props }) => (
         <li className="pl-1 leading-relaxed" {...props} />
     ),
     table: ({ node, ...props }) => (
-        <div className="overflow-x-auto my-5 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-elevated)]">
+        <div className="overflow-x-auto my-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-elevated)]">
             <table className="text-[15px] text-left w-full whitespace-nowrap" {...props} />
         </div>
     ),

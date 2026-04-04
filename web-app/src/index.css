@@ -65,7 +65,7 @@
 
 /* ─── Base ─────────────────────────────────────── */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 *,
@@ -88,7 +88,9 @@ body {
 }
 
 /* Smooth theme transition for all elements */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease, box-shadow 0.3s ease;
 }
 
@@ -174,6 +176,7 @@ body {
   border-left: 3px solid rgba(59, 130, 246, 0.4);
   box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
   color: var(--text-primary);
+  contain: layout paint;
   transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -55,26 +55,24 @@ const timestampVariants = {
 
 /* Source section stagger container */
 const sourcesContainerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 0, y: 4 },
     visible: {
         opacity: 1,
+        y: 0,
         transition: {
-            delay: 0.3,
-            staggerChildren: 0.08,
+            duration: 0.18,
+            ease: 'easeOut',
         },
     },
 };
 
 const sourceBadgeVariants = {
-    hidden: { opacity: 0, scale: 0.7, y: 6 },
+    hidden: { opacity: 0 },
     visible: {
         opacity: 1,
-        scale: 1,
-        y: 0,
         transition: {
-            type: 'spring',
-            stiffness: 300,
-            damping: 15,
+            duration: 0.12,
+            ease: 'easeOut',
         },
     },
 };
@@ -102,6 +100,7 @@ function MessageBubble({ message, index, isNew }) {
     };
 
     const isUser = message.role === 'user';
+    const isStreaming = Boolean(message.isStreaming);
 
     // Brief ripple effect on new messages
     useEffect(() => {
@@ -116,7 +115,6 @@ function MessageBubble({ message, index, isNew }) {
 
     return (
         <motion.div
-            layout
             variants={isUser ? userBubbleVariants : botBubbleVariants}
             initial="hidden"
             animate="visible"
@@ -153,12 +151,13 @@ function MessageBubble({ message, index, isNew }) {
                     </div>
                     <div className="flex-1 min-w-0">
                         <motion.div
-                            whileHover={{
+                            whileHover={isStreaming ? undefined : {
                                 y: -3,
                                 boxShadow: '0 8px 32px rgba(59, 130, 246, 0.18), 0 0 0 1px rgba(59, 130, 246, 0.12)',
                             }}
                             transition={{ duration: 0.25, ease: 'easeOut' }}
                             className={`rounded-3xl rounded-tl-sm px-5 py-4 bot-bubble relative overflow-hidden ${message.isError ? 'border-red-500/50' : ''}`}
+                            style={{ contain: 'layout paint' }}
                         >
 
                             <div className={`relative z-[1] ${message.isError ? 'text-red-400 font-medium' : ''}`}>
@@ -191,8 +190,8 @@ function MessageBubble({ message, index, isNew }) {
                                         >
                                             <Zap className="w-3.5 h-3.5" /> Sources
                                         </motion.div>
-                                        {uniqueSources.map((s, si) => (
-                                            <motion.div key={si} variants={sourceBadgeVariants}>
+                                        {uniqueSources.map((s) => (
+                                            <motion.div key={getSourceLabel(s.source)} variants={sourceBadgeVariants}>
                                                 <SourceBadge source={s.source} />
                                             </motion.div>
                                         ))}
@@ -256,4 +255,4 @@ function MessageBubble({ message, index, isNew }) {
     );
 }
 
-export default MessageBubble;
+export default memo(MessageBubble);

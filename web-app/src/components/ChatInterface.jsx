@@ -49,6 +49,7 @@ import { FAQ_CARDS } from '../data/constants';
 const VOICE_LANG_MAP = { EN: 'en-IN', HI: 'hi-IN', AUTO: 'en-IN' };
 const VOICE_LANG_LABELS = { EN: 'English', HI: 'Hindi', AUTO: 'Auto Detect' };
 const VOICE_LANG_ORDER = ['EN', 'HI', 'AUTO'];
+const STREAM_FLUSH_MS = 60;
 
 function ChatInterface({
     apiUrl,
@@ -78,10 +79,14 @@ function ChatInterface({
     const mainRef = useRef(null);
     const [prevMsgCount, setPrevMsgCount] = useState(0);
     const voiceLang = externalVoiceLang || 'EN';
-    const setVoiceLang = externalSetVoiceLang || (() => {});
+    const setVoiceLang = externalSetVoiceLang || (() => { });
     const [interimText, setInterimText] = useState('');
     const [voiceJustCaptured, setVoiceJustCaptured] = useState(false);
     const baseTextRef = useRef('');
+    const streamMessageIdRef = useRef(null);
+    const pendingStreamTextRef = useRef('');
+    const streamFlushTimerRef = useRef(null);
+    const [isStreaming, setIsStreaming] = useState(false);
 
     const cycleVoiceLang = useCallback(() => {
         if (isListening) return;
@@ -97,6 +102,45 @@ function ChatInterface({
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
+    useEffect(() => {
+        return () => {
+            if (streamFlushTimerRef.current) {
+                clearTimeout(streamFlushTimerRef.current);
+                streamFlushTimerRef.current = null;
+            }
+        };
+    }, []);
+
+    const createMessageId = () => `msg-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+    const flushStreamContent = useCallback((force = false) => {
+        const streamId = streamMessageIdRef.current;
+        const nextContent = pendingStreamTextRef.current;
+        if (!streamId || !nextContent) return;
+
+        setMessages((prev) => {
+            const idx = prev.findIndex((m) => m.id === streamId);
+            if (idx < 0) return prev;
+            if (prev[idx].content === nextContent) return prev;
+            const copy = [...prev];
+            copy[idx] = { ...copy[idx], content: nextContent, isStreaming: true };
+            return copy;
+        });
+
+        if (force && streamFlushTimerRef.current) {
+            clearTimeout(streamFlushTimerRef.current);
+            streamFlushTimerRef.current = null;
+        }
+    }, [setMessages]);
+
+    const scheduleStreamFlush = useCallback(() => {
+        if (streamFlushTimerRef.current) return;
+        streamFlushTimerRef.current = setTimeout(() => {
+            streamFlushTimerRef.current = null;
+            flushStreamContent();
+        }, STREAM_FLUSH_MS);
+    }, [flushStreamContent]);
+
     // Detect scroll position to show/hide scroll-to-bottom button
     useEffect(() => {
         const el = mainRef.current;
@@ -109,13 +153,22 @@ function ChatInterface({
         return () => el.removeEventListener('scroll', onScroll);
     }, []);
 
-    const scrollToBottom = useCallback(() => {
-        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages, loading]);
+    const scrollToBottom = useCallback((behavior = 'smooth') => {
+        bottomRef.current?.scrollIntoView({ behavior });
+    }, []);
 
     useEffect(() => {
-        scrollToBottom();
-    }, [messages, loading, scrollToBottom]);
+        if (loading || isStreaming) {
+            scrollToBottom('auto');
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            scrollToBottom('smooth');
+        }, 80);
+
+        return () => clearTimeout(timer);
+    }, [messages, loading, isStreaming, scrollToBottom]);
 
     // Track message count for ripple effect
     useEffect(() => {
@@ -140,7 +193,15 @@ function ChatInterface({
     const send = async (text) => {
         if (!text.trim() || loading) return;
         const msg = text.trim();
+        const userMessageId = createMessageId();
         setInput('');
+        setIsStreaming(false);
+        streamMessageIdRef.current = null;
+        pendingStreamTextRef.current = '';
+        if (streamFlushTimerRef.current) {
+            clearTimeout(streamFlushTimerRef.current);
+            streamFlushTimerRef.current = null;
+        }
 
         // Stop voice recording if active
         if (recognitionRef.current) {
@@ -156,7 +217,7 @@ function ChatInterface({
 
         const updated = [
             ...messages,
-            { role: 'user', content: msg, timestamp: Date.now() },
+            { id: userMessageId, role: 'user', content: msg, timestamp: Date.now(), isStreaming: false },
         ];
         setMessages(updated);
         setLoading(true);
@@ -177,10 +238,12 @@ function ChatInterface({
             setMessages((prev) => [
                 ...prev,
                 {
+                    id: createMessageId(),
                     role: 'assistant',
                     content: cleanAnswer || "I received an empty response. Please try again.",
                     sources: data.sources || [],
                     timestamp: Date.now(),
+                    isStreaming: false,
                 },
             ]);
         };
@@ -224,38 +287,63 @@ function ChatInterface({
                                 // Only show the bubble once we have visible content
                                 if (cleaned && !botMessageAdded) {
                                     botMessageAdded = true;
+                                    const assistantMessageId = createMessageId();
+                                    streamMessageIdRef.current = assistantMessageId;
+                                    pendingStreamTextRef.current = cleaned;
+                                    setIsStreaming(true);
                                     setLoading(false); // Hide thinking indicator
                                     setMessages((prev) => [...prev, {
+                                        id: assistantMessageId,
                                         role: 'assistant',
                                         content: cleaned,
                                         sources: [],
                                         timestamp: Date.now(),
+                                        isStreaming: true,
                                     }]);
                                 } else if (cleaned && botMessageAdded) {
-                                    setMessages((prev) => {
-                                        const copy = [...prev];
-                                        const last = copy.length - 1;
-                                        if (last >= 0 && copy[last].role === 'assistant') {
-                                            copy[last] = { ...copy[last], content: cleaned };
-                                        }
-                                        return copy;
-                                    });
+                                    pendingStreamTextRef.current = cleaned;
+                                    scheduleStreamFlush();
                                 }
                             } else if (parsed.type === 'done') {
+                                flushStreamContent(true);
                                 if (botMessageAdded) {
+                                    const streamId = streamMessageIdRef.current;
                                     setMessages((prev) => {
                                         const copy = [...prev];
-                                        const last = copy.length - 1;
-                                        if (last >= 0 && copy[last].role === 'assistant') {
-                                            copy[last] = { ...copy[last], sources: parsed.sources || [] };
+                                        const idx = streamId
+                                            ? copy.findIndex((m) => m.id === streamId)
+                                            : copy.length - 1;
+                                        if (idx >= 0 && copy[idx].role === 'assistant') {
+                                            copy[idx] = {
+                                                ...copy[idx],
+                                                sources: parsed.sources || [],
+                                                isStreaming: false,
+                                            };
                                         }
                                         return copy;
                                     });
                                 }
+                                setIsStreaming(false);
                             }
                         } catch { /* skip malformed SSE lines */ }
                     }
                 }
+
+                flushStreamContent(true);
+                if (botMessageAdded) {
+                    const streamId = streamMessageIdRef.current;
+                    setMessages((prev) => {
+                        const copy = [...prev];
+                        const idx = streamId
+                            ? copy.findIndex((m) => m.id === streamId)
+                            : copy.length - 1;
+                        if (idx >= 0 && copy[idx].role === 'assistant' && copy[idx].isStreaming) {
+                            copy[idx] = { ...copy[idx], isStreaming: false };
+                        }
+                        return copy;
+                    });
+                }
+                setIsStreaming(false);
 
                 // If stream produced no visible content, fall back
                 if (!botMessageAdded) {
@@ -273,14 +361,23 @@ function ChatInterface({
             setMessages((prev) => [
                 ...prev,
                 {
+                    id: createMessageId(),
                     role: 'assistant',
                     content: "Couldn't reach the server right now. Please try again.",
                     isError: true,
                     timestamp: Date.now(),
+                    isStreaming: false,
                 },
             ]);
         } finally {
+            if (streamFlushTimerRef.current) {
+                clearTimeout(streamFlushTimerRef.current);
+                streamFlushTimerRef.current = null;
+            }
+            streamMessageIdRef.current = null;
+            pendingStreamTextRef.current = '';
             setLoading(false);
+            setIsStreaming(false);
             if (!isMobile) setTimeout(() => inputRef.current?.focus(), 100);
         }
     };
@@ -296,7 +393,7 @@ function ChatInterface({
     const toggleListening = useCallback(() => {
         if (isListening) {
             if (recognitionRef.current) {
-                try { recognitionRef.current.stop(); } catch {}
+                try { recognitionRef.current.stop(); } catch { }
                 recognitionRef.current = null;
             }
             setIsListening(false);
@@ -312,7 +409,7 @@ function ChatInterface({
 
         // Stop any existing recognition session first
         if (recognitionRef.current) {
-            try { recognitionRef.current.stop(); } catch {}
+            try { recognitionRef.current.stop(); } catch { }
             recognitionRef.current = null;
         }
 
@@ -425,7 +522,11 @@ function ChatInterface({
                 />
 
                 {/* Messages */}
-                <main ref={mainRef} className="flex-1 overflow-y-auto px-4 md:px-8 pt-20 pb-40" style={{ scrollBehavior: 'smooth' }}>
+                <main
+                    ref={mainRef}
+                    className="flex-1 overflow-y-auto px-4 md:px-8 pt-20 pb-40"
+                    style={{ scrollBehavior: loading || isStreaming ? 'auto' : 'smooth' }}
+                >
                     <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
                         {messages.length === 0 ? (
                             /* Welcome Empty State */
@@ -488,7 +589,7 @@ function ChatInterface({
                             <AnimatePresence initial={false}>
                                 {messages.map((msg, idx) => (
                                     <MessageBubble
-                                        key={idx}
+                                        key={msg.id || `${msg.timestamp || 'legacy'}-${idx}`}
                                         message={msg}
                                         index={idx}
                                         isNew={idx >= prevMsgCount}
@@ -511,7 +612,7 @@ function ChatInterface({
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.7 }}
                                 transition={{ type: 'spring', bounce: 0.4 }}
-                                onClick={scrollToBottom}
+                                onClick={() => scrollToBottom('smooth')}
                                 className="scroll-fab fixed bottom-36 right-8 z-40 p-3 rounded-full bg-[var(--accent)] text-white shadow-lg hover:bg-[var(--accent-hover)]"
                                 title="Scroll to bottom"
                             >
