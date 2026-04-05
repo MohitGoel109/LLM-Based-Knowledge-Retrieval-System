@@ -18,6 +18,7 @@ GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+SKIP_EMBEDDINGS = os.getenv("SKIP_EMBEDDINGS", "false").lower() == "true"
 
 OLLAMA_TIMEOUT = 300  # seconds — CPU inference can be slow
 
@@ -438,7 +439,10 @@ class RAGEngine:
     # ── Setup ──────────────────────────────────────────────────
     def _initialize(self):
         # 1. Vector store and Embeddings check
-        if os.path.exists(CHROMA_PATH) and os.listdir(CHROMA_PATH):
+        if SKIP_EMBEDDINGS:
+            self.embeddings = None
+            print("[RAG] SKIP_EMBEDDINGS=true — skipping heavy embedding load for cloud deployment")
+        elif os.path.exists(CHROMA_PATH) and os.listdir(CHROMA_PATH):
             print("[RAG] Found ChromaDB, loading sentence-transformer embeddings (this uses RAM)...")
             try:
                 self.embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)

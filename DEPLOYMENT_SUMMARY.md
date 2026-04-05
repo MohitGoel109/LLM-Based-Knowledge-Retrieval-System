@@ -34,6 +34,7 @@
    - `LLM_PROVIDER=groq`
    - `GROQ_API_KEY=your_actual_key`
    - `GROQ_MODEL=llama-3.3-70b-versatile`
+   - `SKIP_EMBEDDINGS=true`
 
 ### Step 2: Get Backend URL
 - After deployment, copy your Render app URL
