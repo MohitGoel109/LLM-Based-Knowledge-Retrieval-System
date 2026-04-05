@@ -4,8 +4,11 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
 import os
 import json
+
+load_dotenv()
 
 # Set HuggingFace to offline mode before importing rag_engine
 os.environ.setdefault("HF_HUB_OFFLINE", "1")

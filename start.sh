@@ -7,26 +7,49 @@ echo "=================================================="
 echo "  LLM Knowledge Retrieval System"
 echo "=================================================="
 
-# 1. Check Ollama
-if ! command -v ollama &>/dev/null; then
-    echo "[ERROR] Ollama not found. Install from https://ollama.com"
+# Load environment variables from .env when present
+if [ -f ".env" ]; then
+    set -a
+    . ./.env
+    set +a
+fi
+
+LLM_PROVIDER="$(printf "%s" "${LLM_PROVIDER:-groq}" | tr '[:upper:]' '[:lower:]')"
+GROQ_MODEL="${GROQ_MODEL:-llama-3.3-70b-versatile}"
+OLLAMA_MODEL="${OLLAMA_MODEL:-qwen2.5:3b}"
+OLLAMA_BASE_URL="${OLLAMA_BASE_URL:-http://localhost:11434}"
+
+if [ "$LLM_PROVIDER" = "groq" ]; then
+    if [ -z "${GROQ_API_KEY:-}" ] || [ "${GROQ_API_KEY:-}" = "your_groq_api_key_here" ]; then
+        echo "[ERROR] GROQ_API_KEY is missing. Set it in .env or your shell environment."
+        exit 1
+    fi
+    echo "[OK] Using Groq provider with model: $GROQ_MODEL"
+elif [ "$LLM_PROVIDER" = "ollama" ]; then
+    # 1. Check Ollama
+    if ! command -v ollama &>/dev/null; then
+        echo "[ERROR] Ollama not found. Install from https://ollama.com"
+        exit 1
+    fi
+
+    # 2. Start Ollama if not running
+    if ! curl -s "${OLLAMA_BASE_URL%/}/api/tags" &>/dev/null; then
+        echo "[INFO] Starting Ollama server..."
+        ollama serve &>/dev/null &
+        sleep 3
+    fi
+
+    # 3. Pull model if needed
+    if ! ollama list 2>/dev/null | grep -Fq "$OLLAMA_MODEL"; then
+        echo "[INFO] Pulling $OLLAMA_MODEL model (first time only)..."
+        ollama pull "$OLLAMA_MODEL"
+    fi
+
+    echo "[OK] Ollama is running with $OLLAMA_MODEL"
+else
+    echo "[ERROR] Unsupported LLM_PROVIDER: $LLM_PROVIDER (use 'groq' or 'ollama')"
     exit 1
 fi
-
-# 2. Start Ollama if not running
-if ! curl -s http://localhost:11434/api/tags &>/dev/null; then
-    echo "[INFO] Starting Ollama server..."
-    ollama serve &>/dev/null &
-    sleep 3
-fi
-
-# 3. Pull model if needed
-if ! ollama list 2>/dev/null | grep -q "qwen2.5:3b"; then
-    echo "[INFO] Pulling qwen2.5:3b model (first time only)..."
-    ollama pull qwen2.5:3b
-fi
-
-echo "[OK] Ollama is running with qwen2.5:3b"
 
 # 4. Check Python deps
 if ! python -c "import fastapi" &>/dev/null; then
@@ -73,6 +96,6 @@ else
     fi
 
     # Trap Ctrl+C to kill both
-    trap "echo ''; echo '[INFO] Shutting down...'; kill $API_PID $FRONTEND_PID 2>/dev/null; exit 0" INT TERM
+    trap 'echo ""; echo "[INFO] Shutting down..."; kill ${API_PID:-} ${FRONTEND_PID:-} 2>/dev/null || true; exit 0' INT TERM
     wait
 fi

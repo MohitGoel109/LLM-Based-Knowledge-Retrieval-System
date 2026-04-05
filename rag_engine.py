@@ -1,6 +1,7 @@
 import os
 import requests
 from langchain_chroma import Chroma
+from langchain_groq import ChatGroq
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_ollama import OllamaLLM
 from langchain_core.prompts import PromptTemplate
@@ -11,8 +12,12 @@ from langchain_core.output_parsers import StrOutputParser
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CHROMA_PATH = os.path.join(BASE_DIR, "chroma_db")
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-LLM_MODEL = "qwen2.5:3b"
-OLLAMA_BASE_URL = "http://localhost:11434"
+SUPPORTED_PROVIDERS = {"groq", "ollama"}
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq").strip().lower()
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
 OLLAMA_TIMEOUT = 300  # seconds — CPU inference can be slow
 
@@ -362,8 +367,26 @@ def _format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
 
+def _as_text(chunk) -> str:
+    """Normalize LangChain outputs from LLMs and chat models into plain text."""
+    if isinstance(chunk, str):
+        return chunk
+    content = getattr(chunk, "content", chunk)
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = []
+        for item in content:
+            if isinstance(item, str):
+                parts.append(item)
+            elif isinstance(item, dict) and "text" in item:
+                parts.append(str(item["text"]))
+        return "".join(parts)
+    return str(content)
+
+
 class RAGEngine:
-    """Retrieval-Augmented Generation engine backed by ChromaDB + Ollama."""
+    """Retrieval-Augmented Generation engine backed by ChromaDB + selectable LLM."""
 
     def __init__(self):
         self.vector_store = None
@@ -372,7 +395,13 @@ class RAGEngine:
         self.qa_chain = None
         self.chat_history = []  # Stores last N messages for conversational memory
         self.max_history = 4    # Keep last 4 messages (2 Q&A pairs) — reduced for speed
-        self.status = {"db": False, "ollama": False, "ready": False}
+        self.status = {
+            "db": False,
+            "provider": LLM_PROVIDER,
+            "ollama": False,
+            "groq": False,
+            "ready": False,
+        }
         self._initialize()
 
     # ── Setup ──────────────────────────────────────────────────
@@ -395,26 +424,46 @@ class RAGEngine:
         else:
             print("[RAG] ChromaDB not found — run ingest.py first.")
 
-        # 3. Ollama LLM — optimized parameters for speed
-        if self._ollama_is_running():
-            try:
-                self.llm = OllamaLLM(
-                    model=LLM_MODEL,
-                    base_url=OLLAMA_BASE_URL,
-                    timeout=OLLAMA_TIMEOUT,
-                    # ── Tuned for qwen3:4b on CPU: fast + complete ──
-                    num_predict=1024,    # Enough tokens for thorough answers
-                    temperature=0.3,     # Lower = faster sampling, less randomness
-                    top_k=20,            # Consider top 20 tokens
-                    top_p=0.8,           # Nucleus sampling cutoff
-                    num_ctx=2048,        # Lean context window for speed
-                )
-                self.status["ollama"] = True
-                print(f"[RAG] Ollama connected: {LLM_MODEL}")
-            except Exception as e:
-                print(f"[RAG] Error initializing Ollama: {e}")
-        else:
-            print("[RAG] Ollama is not running. Start it with: ollama serve")
+        # 3. LLM provider
+        provider = LLM_PROVIDER
+        if provider not in SUPPORTED_PROVIDERS:
+            print(f"[RAG] Unsupported LLM_PROVIDER='{provider}'. Use one of: {sorted(SUPPORTED_PROVIDERS)}")
+            provider = "groq"
+            self.status["provider"] = provider
+
+        if provider == "groq":
+            if not GROQ_API_KEY:
+                print("[RAG] GROQ_API_KEY not found. Set it in your environment or .env file.")
+            else:
+                try:
+                    self.llm = ChatGroq(
+                        api_key=GROQ_API_KEY,
+                        model=GROQ_MODEL,
+                    )
+                    self.status["groq"] = True
+                    print(f"[RAG] Groq connected: {GROQ_MODEL}")
+                except Exception as e:
+                    print(f"[RAG] Error initializing Groq: {e}")
+        elif provider == "ollama":
+            if self._ollama_is_running():
+                try:
+                    self.llm = OllamaLLM(
+                        model=OLLAMA_MODEL,
+                        base_url=OLLAMA_BASE_URL,
+                        timeout=OLLAMA_TIMEOUT,
+                        # ── Tuned for qwen2.5:3b on CPU: fast + complete ──
+                        num_predict=1024,    # Enough tokens for thorough answers
+                        temperature=0.3,     # Lower = faster sampling, less randomness
+                        top_k=20,            # Consider top 20 tokens
+                        top_p=0.8,           # Nucleus sampling cutoff
+                        num_ctx=2048,        # Lean context window for speed
+                    )
+                    self.status["ollama"] = True
+                    print(f"[RAG] Ollama connected: {OLLAMA_MODEL}")
+                except Exception as e:
+                    print(f"[RAG] Error initializing Ollama: {e}")
+            else:
+                print("[RAG] Ollama is not running. Start it with: ollama serve")
 
         # 4. RAG chain (using LCEL instead of deprecated RetrievalQA)
         if self.llm and self.retriever:
@@ -436,8 +485,13 @@ class RAGEngine:
             parts = []
             if not self.status["db"]:
                 parts.append("Vector database not found — run 'python ingest.py' first.")
-            if not self.status["ollama"]:
+            provider = self.status.get("provider", LLM_PROVIDER)
+            if provider == "groq" and not self.status["groq"]:
+                parts.append("Groq is not configured — set GROQ_API_KEY in your environment or .env file.")
+            elif provider == "ollama" and not self.status["ollama"]:
                 parts.append("Ollama is not running — start it with 'ollama serve'.")
+            elif provider not in SUPPORTED_PROVIDERS:
+                parts.append("Unsupported LLM_PROVIDER. Use 'groq' or 'ollama'.")
             return " | ".join(parts) if parts else "System not initialized."
 
         # Expand slang/abbreviations so retrieval finds the right docs
@@ -467,7 +521,7 @@ class RAGEngine:
             question=cleaned_question,
             chat_history=chat_history_str,
         )
-        answer = _strip_think(self.llm.invoke(prompt_text))
+        answer = _strip_think(_as_text(self.llm.invoke(prompt_text)))
 
         # Update internal history
         self.chat_history.append({"role": "user", "content": question})
@@ -506,11 +560,14 @@ class RAGEngine:
             chat_history=chat_history_str,
         )
 
-        # Stream from Ollama — buffer to strip <think> blocks
+        # Stream from provider — buffer to strip <think> blocks when present
         full_answer = ""
         thinking_done = False
         for chunk in self.llm.stream(prompt_text):
-            full_answer += chunk
+            chunk_text = _as_text(chunk)
+            if not chunk_text:
+                continue
+            full_answer += chunk_text
             # Buffer until we see </think> or confirm no think tags
             if not thinking_done:
                 if '<think>' not in full_answer:
@@ -526,7 +583,7 @@ class RAGEngine:
                     full_answer = after_think  # reset to only the answer part
                 # else: still inside <think> block, keep buffering
             else:
-                yield chunk
+                yield chunk_text
         
         # Final cleanup
         full_answer = _strip_think(full_answer)
@@ -551,11 +608,11 @@ class RAGEngine:
             if r.status_code == 200:
                 models = r.json().get("models", [])
                 model_names = [m.get("name", "") for m in models]
-                if LLM_MODEL in model_names:
-                    print(f"[RAG] Found model: {LLM_MODEL}")
+                if OLLAMA_MODEL in model_names:
+                    print(f"[RAG] Found model: {OLLAMA_MODEL}")
                 else:
-                    print(f"[RAG] Warning: {LLM_MODEL} not found. Available: {model_names}")
-                    print(f"[RAG] Pull it with: ollama pull {LLM_MODEL}")
+                    print(f"[RAG] Warning: {OLLAMA_MODEL} not found. Available: {model_names}")
+                    print(f"[RAG] Pull it with: ollama pull {OLLAMA_MODEL}")
                 return True
             return False
         except Exception:
