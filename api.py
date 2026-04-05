@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 from contextlib import asynccontextmanager
@@ -59,6 +60,9 @@ async def lifespan(app: FastAPI):
     print("[API] Shutting down.")
 
 app = FastAPI(title="KRMAI API", lifespan=lifespan)
+
+# ── Serve React frontend static files ──────────────────────────
+FRONTEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "web-app", "dist")
 
 # Setup CORS to allow React frontend to call the API
 app.add_middleware(
@@ -175,6 +179,20 @@ def chat_stream(request: ChatRequest):
 def _extract_sources(source_docs=None):
     """Return a single public website reference instead of local document paths."""
     return [SourceDoc(source=OFFICIAL_REFERENCE_URL, page=None)]
+
+
+# ── Serve React SPA ────────────────────────────────────────────
+# Mount static assets (JS/CSS/images) from the React build
+if os.path.isdir(FRONTEND_DIR):
+    app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIR, "assets")), name="static-assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        """Catch-all: serve index.html for any non-API route (SPA client routing)."""
+        file_path = os.path.join(FRONTEND_DIR, full_path)
+        if full_path and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 
 
 if __name__ == "__main__":
