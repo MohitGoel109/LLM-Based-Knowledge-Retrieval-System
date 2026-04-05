@@ -16,6 +16,8 @@ os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
 
 from rag_engine import RAGEngine
 
+OFFICIAL_REFERENCE_URL = "https://www.krmangalam.edu.in/"
+
 # Global RAG engine (initialized at startup)
 rag_engine: Optional[RAGEngine] = None
 
@@ -104,8 +106,7 @@ def chat_stream(request: ChatRequest):
             yield f"data: {data}\n\n"
 
         # After streaming completes, send sources as a final event
-        source_docs = rag_engine.last_source_docs
-        sources_out = [{"source": s.source, "page": s.page} for s in _extract_sources(source_docs)]
+        sources_out = [{"source": s.source, "page": s.page} for s in _extract_sources(None)]
         data = json.dumps({"type": "done", "sources": sources_out})
         yield f"data: {data}\n\n"
 
@@ -120,18 +121,9 @@ def chat_stream(request: ChatRequest):
     )
 
 
-def _extract_sources(source_docs):
-    """Extract unique sources from retrieved documents."""
-    sources_out = []
-    seen = set()
-    for doc in source_docs:
-        src = doc.metadata.get("source", "Unknown")
-        page = doc.metadata.get("page", None)
-        key = f"{src}-{page}"
-        if key not in seen:
-            seen.add(key)
-            sources_out.append(SourceDoc(source=src, page=page))
-    return sources_out
+def _extract_sources(source_docs=None):
+    """Return a single public website reference instead of local document paths."""
+    return [SourceDoc(source=OFFICIAL_REFERENCE_URL, page=None)]
 
 
 if __name__ == "__main__":

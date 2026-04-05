@@ -2,6 +2,14 @@ import { motion } from 'framer-motion';
 import { ExternalLink } from 'lucide-react';
 
 function getSourceLabel(source) {
+    if (!source) return 'source';
+    const lower = source.toLowerCase();
+    if (lower.includes('krmangalam.edu.in')) {
+        return 'krmangalam.edu.in';
+    }
+    if (lower.startsWith('http://') || lower.startsWith('https://')) {
+        return source;
+    }
     const name = source.replace(/\.[^.]+$/, '');
     if (name.startsWith('krmu_') || name.startsWith('krmu-')) {
         return 'krmangalam.edu.in';

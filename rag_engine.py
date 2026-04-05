@@ -21,6 +21,11 @@ OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
 OLLAMA_TIMEOUT = 300  # seconds — CPU inference can be slow
 
+CREATOR_RESPONSE = (
+    "This KRMAI chatbot was created by Swetank Pritam from 6th semester (3rd year).\n"
+    "LinkedIn: https://www.linkedin.com/in/swetank-pritam-1557082a8/"
+)
+
 # Use cached model to avoid hanging on HuggingFace metadata checks
 os.environ.setdefault("HF_HUB_OFFLINE", "1")
 os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
@@ -385,6 +390,37 @@ def _as_text(chunk) -> str:
     return str(content)
 
 
+def _is_creator_query(text: str) -> bool:
+    """Detect creator/author attribution questions for a deterministic response."""
+    lowered = text.lower().strip()
+    patterns = [
+        r"\bwho\s+is\s+your\s+creator\b",
+        r"\bwho\s+is\s+the\s+creator\b",
+        r"\bwho'?s\s+the\s+creator\b",
+        r"\bwho\s+(created|made|built|developed)\s+(you|this|krmai|chatbot|bot|assistant)\b",
+        r"\bcreator\s+of\s+(this|the)?\s*(chatbot|bot|assistant|krmai)\b",
+        r"\bdeveloper\s+of\s+(this|the)?\s*(chatbot|bot|assistant|krmai)\b",
+    ]
+    return any(re.search(pattern, lowered) for pattern in patterns)
+
+
+def _build_chat_history(history: list | None, max_history: int) -> str:
+    """Convert request history to prompt text without using shared server state."""
+    if not history:
+        return ""
+
+    recent_history = history[-max_history:]
+    chat_history_str = "Recent conversation:\n"
+    for msg in recent_history:
+        role = "Student" if msg.get("role") == "user" else "Assistant"
+        content = str(msg.get("content", ""))
+        if len(content) > 200:
+            content = content[:200]
+        chat_history_str += f"{role}: {content}\n"
+    chat_history_str += "\n"
+    return chat_history_str
+
+
 class RAGEngine:
     """Retrieval-Augmented Generation engine backed by ChromaDB + selectable LLM."""
 
@@ -393,7 +429,6 @@ class RAGEngine:
         self.retriever = None
         self.llm = None
         self.qa_chain = None
-        self.chat_history = []  # Stores last N messages for conversational memory
         self.max_history = 4    # Keep last 4 messages (2 Q&A pairs) — reduced for speed
         self.status = {
             "db": False,
@@ -481,6 +516,14 @@ class RAGEngine:
     # ── Public API ─────────────────────────────────────────────
     def query(self, question: str, history: list = None):
         """Ask a question. Returns dict with answer + sources, or error string."""
+        cleaned_question = _expand_slang(question)
+
+        if _is_creator_query(cleaned_question):
+            return {
+                "answer": CREATOR_RESPONSE,
+                "source_documents": [],
+            }
+
         if not self.qa_chain:
             parts = []
             if not self.status["db"]:
@@ -494,21 +537,8 @@ class RAGEngine:
                 parts.append("Unsupported LLM_PROVIDER. Use 'groq' or 'ollama'.")
             return " | ".join(parts) if parts else "System not initialized."
 
-        # Expand slang/abbreviations so retrieval finds the right docs
-        cleaned_question = _expand_slang(question)
-
-        # Build chat history string from provided history or internal buffer
-        if history:
-            self.chat_history = history[-self.max_history:]
-        chat_history_str = ""
-        if self.chat_history:
-            chat_history_str = "Recent conversation:\n"
-            for msg in self.chat_history:
-                role = "Student" if msg["role"] == "user" else "Assistant"
-                # Truncate long messages in history to save context tokens
-                content = msg['content'][:200] if len(msg['content']) > 200 else msg['content']
-                chat_history_str += f"{role}: {content}\n"
-            chat_history_str += "\n"
+        # Build chat history from request payload only (no shared server memory)
+        chat_history_str = _build_chat_history(history, self.max_history)
 
         # Retrieve source documents for citations
         assert self.retriever is not None  # guaranteed when qa_chain is set
@@ -523,11 +553,6 @@ class RAGEngine:
         )
         answer = _strip_think(_as_text(self.llm.invoke(prompt_text)))
 
-        # Update internal history
-        self.chat_history.append({"role": "user", "content": question})
-        self.chat_history.append({"role": "assistant", "content": answer})
-        self.chat_history = self.chat_history[-self.max_history:]
-
         return {
             "answer": answer,
             "source_documents": source_docs,
@@ -535,22 +560,17 @@ class RAGEngine:
 
     def query_stream(self, question: str, history: list = None):
         """Streaming version — yields chunks as they arrive from Ollama."""
+        cleaned_question = _expand_slang(question)
+
+        if _is_creator_query(cleaned_question):
+            yield CREATOR_RESPONSE
+            return
+
         if not self.qa_chain:
             yield "System not initialized."
             return
 
-        cleaned_question = _expand_slang(question)
-
-        if history:
-            self.chat_history = history[-self.max_history:]
-        chat_history_str = ""
-        if self.chat_history:
-            chat_history_str = "Recent conversation:\n"
-            for msg in self.chat_history:
-                role = "Student" if msg["role"] == "user" else "Assistant"
-                content = msg['content'][:200] if len(msg['content']) > 200 else msg['content']
-                chat_history_str += f"{role}: {content}\n"
-            chat_history_str += "\n"
+        chat_history_str = _build_chat_history(history, self.max_history)
 
         source_docs = self.retriever.invoke(cleaned_question)
         context = _format_docs(source_docs)
@@ -587,18 +607,6 @@ class RAGEngine:
         
         # Final cleanup
         full_answer = _strip_think(full_answer)
-
-        # Update history after streaming completes
-        self.chat_history.append({"role": "user", "content": question})
-        self.chat_history.append({"role": "assistant", "content": full_answer})
-        self.chat_history = self.chat_history[-self.max_history:]
-
-        # Attach source docs to a special attribute for the caller
-        self._last_source_docs = source_docs
-
-    @property
-    def last_source_docs(self):
-        return getattr(self, '_last_source_docs', [])
 
     # ── Helpers ────────────────────────────────────────────────
     @staticmethod
