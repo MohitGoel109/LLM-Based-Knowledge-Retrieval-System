@@ -10,23 +10,25 @@ import json
 
 load_dotenv()
 
-# Set HuggingFace to offline mode before importing rag_engine
-os.environ.setdefault("HF_HUB_OFFLINE", "1")
-os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
-
-from rag_engine import RAGEngine
-
 OFFICIAL_REFERENCE_URL = "https://www.krmangalam.edu.in/"
 
 # Global RAG engine (initialized at startup)
-rag_engine: Optional[RAGEngine] = None
+rag_engine: Optional[Any] = None
+
+
+def initialize_rag():
+    """Lazy import + initialize heavy RAG dependencies at startup time."""
+    from rag_engine import RAGEngine
+
+    return RAGEngine()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialize RAG engine at server startup."""
     global rag_engine
     print("[API] Initializing RAG Engine...")
-    rag_engine = RAGEngine()
+    print("[API] Loading embedding model, this may take 2-3 minutes...")
+    rag_engine = initialize_rag()
     print(f"[API] RAG Engine ready: {rag_engine.status}")
     yield
     print("[API] Shutting down.")
@@ -106,7 +108,7 @@ def chat_stream(request: ChatRequest):
             yield f"data: {data}\n\n"
 
         # After streaming completes, send sources as a final event
-        sources_out = [{"source": s.source, "page": s.page} for s in _extract_sources(None)]
+        sources_out = [{"source": OFFICIAL_REFERENCE_URL, "page": None}]
         data = json.dumps({"type": "done", "sources": sources_out})
         yield f"data: {data}\n\n"
 
