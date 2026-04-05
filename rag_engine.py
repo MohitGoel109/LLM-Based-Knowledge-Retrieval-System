@@ -20,6 +20,9 @@ OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 SKIP_EMBEDDINGS = os.getenv("SKIP_EMBEDDINGS", "false").lower() == "true"
 
+# Auto-detect cloud deployment and skip embeddings to save memory
+IS_CLOUD_DEPLOYMENT = os.getenv("RENDER", "false").lower() == "true" or os.getenv("PYTHON_VERSION", "") != ""
+
 OLLAMA_TIMEOUT = 300  # seconds — CPU inference can be slow
 
 CREATOR_RESPONSE = (
@@ -439,9 +442,9 @@ class RAGEngine:
     # ── Setup ──────────────────────────────────────────────────
     def _initialize(self):
         # 1. Vector store and Embeddings check
-        if SKIP_EMBEDDINGS:
+        if SKIP_EMBEDDINGS or IS_CLOUD_DEPLOYMENT:
             self.embeddings = None
-            print("[RAG] SKIP_EMBEDDINGS=true — skipping heavy embedding load for cloud deployment")
+            print("[RAG] Cloud deployment detected — skipping heavy embedding load to save memory")
         elif os.path.exists(CHROMA_PATH) and os.listdir(CHROMA_PATH):
             print("[RAG] Found ChromaDB, loading sentence-transformer embeddings (this uses RAM)...")
             try:
@@ -501,7 +504,20 @@ class RAGEngine:
                 print("[RAG] Ollama is not running. Start it with: ollama serve")
 
         # 4. RAG chain (using LCEL instead of deprecated RetrievalQA)
-        if self.llm and self.retriever:
+        if self.llm:
+            # Create a simple retriever even when embeddings are skipped
+            if not self.retriever:
+                # Fallback: create empty retriever for cloud deployment
+                from langchain_core.documents import Document
+                from langchain_core.retrievers import BaseRetriever
+                
+                class EmptyRetriever(BaseRetriever):
+                    def _get_relevant_documents(self, query: str):
+                        return []
+                
+                self.retriever = EmptyRetriever()
+                print("[RAG] Using empty retriever for cloud deployment")
+            
             self.qa_chain = (
                 {
                     "context": self.retriever | _format_docs,
