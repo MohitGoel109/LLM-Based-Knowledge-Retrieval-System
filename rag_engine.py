@@ -437,12 +437,11 @@ class RAGEngine:
 
     # ── Setup ──────────────────────────────────────────────────
     def _initialize(self):
-        # 1. Embeddings (runs locally via sentence-transformers)
-        self.embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
-
-        # 2. Vector store
+        # 1. Vector store and Embeddings check
         if os.path.exists(CHROMA_PATH) and os.listdir(CHROMA_PATH):
+            print("[RAG] Found ChromaDB, loading sentence-transformer embeddings (this uses RAM)...")
             try:
+                self.embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
                 self.vector_store = Chroma(
                     persist_directory=CHROMA_PATH,
                     embedding_function=self.embeddings,
@@ -451,9 +450,10 @@ class RAGEngine:
                 self.retriever = self.vector_store.as_retriever(search_kwargs={"k": 4})
                 self.status["db"] = True
             except Exception as e:
-                print(f"[RAG] Error loading vector store: {e}")
+                print(f"[RAG] Error loading vector store or embeddings: {e}")
         else:
-            print("[RAG] ChromaDB not found — run ingest.py first.")
+            self.embeddings = None
+            print("[RAG] ChromaDB not found — skipping heavy embedding load to save memory.")
 
         # 3. LLM provider
         provider = LLM_PROVIDER

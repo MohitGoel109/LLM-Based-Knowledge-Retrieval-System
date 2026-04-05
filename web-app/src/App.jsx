@@ -7,7 +7,7 @@ import SettingsPage from './components/SettingsPage';
 import StudentProjectsPage from './components/StudentProjectsPage';
 import UpdatesFAQPage from './components/UpdatesFAQPage';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = import.meta.env.PROD ? (import.meta.env.VITE_API_URL || '') : (import.meta.env.VITE_API_URL || 'http://localhost:8000');
 const ACTIVE_USER_KEY = 'krmai_active_user';
 
 function sessionsKeyForUser(userId) {
