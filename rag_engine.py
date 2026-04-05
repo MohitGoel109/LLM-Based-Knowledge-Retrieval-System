@@ -26,10 +26,6 @@ CREATOR_RESPONSE = (
     "LinkedIn: https://www.linkedin.com/in/swetank-pritam-1557082a8/"
 )
 
-# Use cached model to avoid hanging on HuggingFace metadata checks
-os.environ.setdefault("HF_HUB_OFFLINE", "1")
-os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
-
 # ── Slang / Abbreviation Dictionary ───────────────────────────
 # Maps common student slang and internet abbreviations to their
 # full forms so both retrieval and the LLM see clean text.

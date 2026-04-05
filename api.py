@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 import os
 import json
+import threading
 
 load_dotenv()
 
@@ -14,6 +15,9 @@ OFFICIAL_REFERENCE_URL = "https://www.krmangalam.edu.in/"
 
 # Global RAG engine (initialized at startup)
 rag_engine: Optional[Any] = None
+rag_init_error: Optional[str] = None
+_rag_init_thread: Optional[threading.Thread] = None
+_rag_init_lock = threading.Lock()
 
 
 def initialize_rag():
@@ -22,14 +26,35 @@ def initialize_rag():
 
     return RAGEngine()
 
+
+def _initialize_rag_worker():
+    """Load heavy RAG dependencies in a background thread."""
+    global rag_engine, rag_init_error
+    try:
+        print("[API] Initializing RAG Engine...")
+        print("[API] Loading embedding model, this may take 2-3 minutes...")
+        rag_engine = initialize_rag()
+        print(f"[API] RAG Engine ready: {rag_engine.status}")
+    except Exception as e:
+        rag_init_error = str(e)
+        print(f"[API] RAG Engine failed to initialize: {e}")
+
+
+def _start_rag_init_if_needed():
+    """Start background RAG initialization once per process."""
+    global _rag_init_thread
+    with _rag_init_lock:
+        if rag_engine is not None:
+            return
+        if _rag_init_thread is not None and _rag_init_thread.is_alive():
+            return
+        _rag_init_thread = threading.Thread(target=_initialize_rag_worker, daemon=True)
+        _rag_init_thread.start()
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Initialize RAG engine at server startup."""
-    global rag_engine
-    print("[API] Initializing RAG Engine...")
-    print("[API] Loading embedding model, this may take 2-3 minutes...")
-    rag_engine = initialize_rag()
-    print(f"[API] RAG Engine ready: {rag_engine.status}")
+    """Start non-blocking RAG initialization at server startup."""
+    _start_rag_init_if_needed()
     yield
     print("[API] Shutting down.")
 
@@ -64,20 +89,45 @@ class ChatResponse(BaseModel):
 @app.get("/health")
 def health_check():
     """Returns the status of the RAG engine components."""
-    return rag_engine.status
+    if rag_engine is None:
+        return {
+            "db": False,
+            "provider": os.getenv("LLM_PROVIDER", "groq").strip().lower(),
+            "ollama": False,
+            "groq": False,
+            "ready": False,
+            "initializing": True,
+            "error": rag_init_error,
+        }
+    status = dict(rag_engine.status)
+    status["initializing"] = False
+    status["error"] = rag_init_error
+    return status
+
+
+def _get_ready_engine():
+    """Return a ready RAG engine or raise a 503 while it is initializing."""
+    _start_rag_init_if_needed()
+    if rag_engine is None:
+        detail = "RAG Engine is initializing. Please retry in a few seconds."
+        if rag_init_error:
+            detail = f"RAG Engine failed to initialize: {rag_init_error}"
+        raise HTTPException(status_code=503, detail=detail)
+    if not rag_engine.status.get("ready", False):
+        raise HTTPException(status_code=503, detail="RAG Engine is not ready. Check /health endpoint.")
+    return rag_engine
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
     """Processes a user message and returns the LLM response with sources."""
-    if not rag_engine.status["ready"]:
-        raise HTTPException(status_code=503, detail="RAG Engine is not ready. Check /health endpoint.")
+    engine = _get_ready_engine()
     
     # Convert history to list of dicts for the engine
     history = None
     if request.history:
         history = [{"role": h.role, "content": h.content} for h in request.history]
     
-    result = rag_engine.query(request.message, history=history)
+    result = engine.query(request.message, history=history)
     
     # If the response is just a string, it means an error occurred in query()
     if isinstance(result, str):
@@ -94,15 +144,14 @@ def chat(request: ChatRequest):
 @app.post("/chat/stream")
 def chat_stream(request: ChatRequest):
     """Streaming endpoint — sends tokens as Server-Sent Events for real-time display."""
-    if not rag_engine.status["ready"]:
-        raise HTTPException(status_code=503, detail="RAG Engine is not ready.")
+    engine = _get_ready_engine()
 
     history = None
     if request.history:
         history = [{"role": h.role, "content": h.content} for h in request.history]
 
     def event_generator():
-        for chunk in rag_engine.query_stream(request.message, history=history):
+        for chunk in engine.query_stream(request.message, history=history):
             # Send each text chunk as an SSE data event
             data = json.dumps({"type": "token", "content": chunk})
             yield f"data: {data}\n\n"
