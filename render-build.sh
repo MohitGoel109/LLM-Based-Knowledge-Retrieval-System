@@ -10,7 +10,9 @@ pip install -r requirements.txt
 
 echo "==> Building React frontend..."
 cd web-app
-npm install --include=dev
+rm -rf node_modules package-lock.json
+npm cache clean --force
+npm install
 VITE_API_URL="" npm run build
 cd ..
 
