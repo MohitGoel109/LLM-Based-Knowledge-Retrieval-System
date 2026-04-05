@@ -9,6 +9,6 @@ def run_cmd(cmd):
     except subprocess.TimeoutExpired:
         print(f"TIMEOUT: {cmd}")
 
-run_cmd("git add -A")
-run_cmd("git commit -m 'Fix FastAPI 404 and create render build script'")
+run_cmd("git add render-build.sh")
+run_cmd("git commit -m 'Fix Vite dependency for frontend build on Render'")
 run_cmd("git push origin HEAD")
