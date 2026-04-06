@@ -1,0 +1,29 @@
+{
+  "version": 3,
+  "builds": [
+    {
+      "src": "api_vercel.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "web-app/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api_vercel.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/web-app/$1"
+    }
+  ],
+  "env": {
+    "PYTHON_VERSION": "3.11"
+  }
+}
