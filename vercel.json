@@ -1,8 +1,8 @@
 {
-    "version": 3,
+    "version": 2,
     "builds": [
         {
-            "src": "api_vercel.py",
+            "src": "api_minimal.py",
             "use": "@vercel/python"
         },
         {
@@ -16,7 +16,7 @@
     "routes": [
         {
             "src": "/api/(.*)",
-            "dest": "/api_vercel.py"
+            "dest": "/api_minimal.py"
         },
         {
             "src": "/(.*)",
