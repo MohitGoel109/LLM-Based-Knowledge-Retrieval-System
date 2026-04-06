@@ -15,7 +15,27 @@
     ],
     "routes": [
         {
+            "src": "/api",
+            "dest": "/api_minimal.py"
+        },
+        {
             "src": "/api/(.*)",
+            "dest": "/api_minimal.py"
+        },
+        {
+            "src": "/health",
+            "dest": "/api_minimal.py"
+        },
+        {
+            "src": "/chat",
+            "dest": "/api_minimal.py"
+        },
+        {
+            "src": "/chat/stream",
+            "dest": "/api_minimal.py"
+        },
+        {
+            "src": "/sources",
             "dest": "/api_minimal.py"
         },
         {
