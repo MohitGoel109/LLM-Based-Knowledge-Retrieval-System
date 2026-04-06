@@ -21,7 +21,10 @@ OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 SKIP_EMBEDDINGS = os.getenv("SKIP_EMBEDDINGS", "false").lower() == "true"
 
 # Auto-detect cloud deployment and skip embeddings to save memory
-IS_CLOUD_DEPLOYMENT = os.getenv("RENDER", "false").lower() == "true" or os.getenv("PYTHON_VERSION", "") != ""
+# Render sets PORT environment variable, local development doesn't
+IS_CLOUD_DEPLOYMENT = (os.getenv("PORT") is not None or 
+                     os.getenv("RENDER") is not None or 
+                     os.getenv("PYTHON_VERSION") is not None)
 
 OLLAMA_TIMEOUT = 300  # seconds — CPU inference can be slow
 
