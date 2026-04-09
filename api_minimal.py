@@ -1,5 +1,6 @@
 # Minimal Vercel API - Groq only, no local embeddings
 import os
+import re
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -10,6 +11,11 @@ import json
 import requests
 
 load_dotenv()
+
+CREATOR_RESPONSE = (
+    "I was made by Swetank Pritam, a 3rd year B.Tech CSE (AI & ML) student.\n"
+    "LinkedIn: https://www.linkedin.com/in/swetank-pritam-1557082a8/"
+)
 
 app = FastAPI(title="KRMAI Chatbot API", version="1.0.0")
 
@@ -37,6 +43,20 @@ def get_user_question(request: ChatRequest) -> str:
     if not question:
         raise HTTPException(status_code=422, detail="Request must include `question` or `message`")
     return question
+
+
+def is_creator_query(text: str) -> bool:
+    lowered = text.lower().strip()
+    patterns = [
+        r"\bwho\s+made\s+(you|u|this|krmai|chatbot|bot|assistant)\b",
+        r"\bwho\s+created\s+(you|u|this|krmai|chatbot|bot|assistant)\b",
+        r"\bwho\s+developed\s+(you|u|this|krmai|chatbot|bot|assistant)\b",
+        r"\bwho\s+built\s+(you|u|this|krmai|chatbot|bot|assistant)\b",
+        r"\bwho\s+is\s+your\s+creator\b",
+        r"\bcreator\s+of\s+(this|the)?\s*(chatbot|bot|assistant|krmai)\b",
+        r"\bwho\s+made\s+u\b",
+    ]
+    return any(re.search(pattern, lowered) for pattern in patterns)
 
 def query_groq(question: str) -> str:
     """Direct Groq API call without local embeddings"""
@@ -102,6 +122,12 @@ async def chat(request: ChatRequest):
     
     try:
         question = get_user_question(request)
+        if is_creator_query(question):
+            return {
+                "answer": CREATOR_RESPONSE,
+                "sources": [],
+                "source_documents": []
+            }
         answer = query_groq(question)
         return {
             "answer": answer,
@@ -128,7 +154,10 @@ async def chat_stream(request: ChatRequest):
         raise HTTPException(status_code=500, detail="GROQ_API_KEY not configured")
 
     question = get_user_question(request)
-    answer = query_groq(question)
+    if is_creator_query(question):
+        answer = CREATOR_RESPONSE
+    else:
+        answer = query_groq(question)
     headers = {
         "Cache-Control": "no-cache",
         "Connection": "keep-alive",

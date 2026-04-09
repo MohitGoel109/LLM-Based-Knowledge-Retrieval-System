@@ -29,7 +29,7 @@ IS_CLOUD_DEPLOYMENT = (os.getenv("PORT") is not None or
 OLLAMA_TIMEOUT = 300  # seconds — CPU inference can be slow
 
 CREATOR_RESPONSE = (
-    "This KRMAI chatbot was created by Swetank Pritam from 6th semester (3rd year).\n"
+    "I was made by Swetank Pritam, a 3rd year B.Tech CSE (AI & ML) student.\n"
     "LinkedIn: https://www.linkedin.com/in/swetank-pritam-1557082a8/"
 )
 
