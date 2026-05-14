@@ -1,6 +1,7 @@
 import os
 import requests
 from langchain_chroma import Chroma
+from langchain_groq import ChatGroq
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_ollama import OllamaLLM
 from langchain_core.prompts import PromptTemplate
@@ -11,14 +12,26 @@ from langchain_core.output_parsers import StrOutputParser
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CHROMA_PATH = os.path.join(BASE_DIR, "chroma_db")
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-LLM_MODEL = "qwen2.5:3b"
-OLLAMA_BASE_URL = "http://localhost:11434"
+SUPPORTED_PROVIDERS = {"groq", "ollama"}
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq").strip().lower()
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+SKIP_EMBEDDINGS = os.getenv("SKIP_EMBEDDINGS", "false").lower() == "true"
+
+# Auto-detect cloud deployment and skip embeddings to save memory
+# Render sets PORT environment variable, local development doesn't
+IS_CLOUD_DEPLOYMENT = (os.getenv("PORT") is not None or 
+                     os.getenv("RENDER") is not None or 
+                     os.getenv("PYTHON_VERSION") is not None)
 
 OLLAMA_TIMEOUT = 300  # seconds — CPU inference can be slow
 
-# Use cached model to avoid hanging on HuggingFace metadata checks
-os.environ.setdefault("HF_HUB_OFFLINE", "1")
-os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+CREATOR_RESPONSE = (
+    "I was made by Swetank Pritam, a 3rd year B.Tech CSE (AI & ML) student.\n"
+    "LinkedIn: https://www.linkedin.com/in/swetank-pritam-1557082a8/"
+)
 
 # ── Slang / Abbreviation Dictionary ───────────────────────────
 # Maps common student slang and internet abbreviations to their
@@ -362,27 +375,83 @@ def _format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
 
+def _as_text(chunk) -> str:
+    """Normalize LangChain outputs from LLMs and chat models into plain text."""
+    if isinstance(chunk, str):
+        return chunk
+    content = getattr(chunk, "content", chunk)
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = []
+        for item in content:
+            if isinstance(item, str):
+                parts.append(item)
+            elif isinstance(item, dict) and "text" in item:
+                parts.append(str(item["text"]))
+        return "".join(parts)
+    return str(content)
+
+
+def _is_creator_query(text: str) -> bool:
+    """Detect creator/author attribution questions for a deterministic response."""
+    lowered = text.lower().strip()
+    patterns = [
+        r"\bwho\s+is\s+your\s+creator\b",
+        r"\bwho\s+is\s+the\s+creator\b",
+        r"\bwho'?s\s+the\s+creator\b",
+        r"\bwho\s+(created|made|built|developed)\s+(you|this|krmai|chatbot|bot|assistant)\b",
+        r"\bcreator\s+of\s+(this|the)?\s*(chatbot|bot|assistant|krmai)\b",
+        r"\bdeveloper\s+of\s+(this|the)?\s*(chatbot|bot|assistant|krmai)\b",
+    ]
+    return any(re.search(pattern, lowered) for pattern in patterns)
+
+
+def _build_chat_history(history: list | None, max_history: int) -> str:
+    """Convert request history to prompt text without using shared server state."""
+    if not history:
+        return ""
+
+    recent_history = history[-max_history:]
+    chat_history_str = "Recent conversation:\n"
+    for msg in recent_history:
+        role = "Student" if msg.get("role") == "user" else "Assistant"
+        content = str(msg.get("content", ""))
+        if len(content) > 200:
+            content = content[:200]
+        chat_history_str += f"{role}: {content}\n"
+    chat_history_str += "\n"
+    return chat_history_str
+
+
 class RAGEngine:
-    """Retrieval-Augmented Generation engine backed by ChromaDB + Ollama."""
+    """Retrieval-Augmented Generation engine backed by ChromaDB + selectable LLM."""
 
     def __init__(self):
         self.vector_store = None
         self.retriever = None
         self.llm = None
         self.qa_chain = None
-        self.chat_history = []  # Stores last N messages for conversational memory
         self.max_history = 4    # Keep last 4 messages (2 Q&A pairs) — reduced for speed
-        self.status = {"db": False, "ollama": False, "ready": False}
+        self.status = {
+            "db": False,
+            "provider": LLM_PROVIDER,
+            "ollama": False,
+            "groq": False,
+            "ready": False,
+        }
         self._initialize()
 
     # ── Setup ──────────────────────────────────────────────────
     def _initialize(self):
-        # 1. Embeddings (runs locally via sentence-transformers)
-        self.embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
-
-        # 2. Vector store
-        if os.path.exists(CHROMA_PATH) and os.listdir(CHROMA_PATH):
+        # 1. Vector store and Embeddings check
+        if SKIP_EMBEDDINGS or IS_CLOUD_DEPLOYMENT:
+            self.embeddings = None
+            print("[RAG] Cloud deployment detected — skipping heavy embedding load to save memory")
+        elif os.path.exists(CHROMA_PATH) and os.listdir(CHROMA_PATH):
+            print("[RAG] Found ChromaDB, loading sentence-transformer embeddings (this uses RAM)...")
             try:
+                self.embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
                 self.vector_store = Chroma(
                     persist_directory=CHROMA_PATH,
                     embedding_function=self.embeddings,
@@ -391,33 +460,67 @@ class RAGEngine:
                 self.retriever = self.vector_store.as_retriever(search_kwargs={"k": 4})
                 self.status["db"] = True
             except Exception as e:
-                print(f"[RAG] Error loading vector store: {e}")
+                print(f"[RAG] Error loading vector store or embeddings: {e}")
         else:
-            print("[RAG] ChromaDB not found — run ingest.py first.")
+            self.embeddings = None
+            print("[RAG] ChromaDB not found — skipping heavy embedding load to save memory.")
 
-        # 3. Ollama LLM — optimized parameters for speed
-        if self._ollama_is_running():
-            try:
-                self.llm = OllamaLLM(
-                    model=LLM_MODEL,
-                    base_url=OLLAMA_BASE_URL,
-                    timeout=OLLAMA_TIMEOUT,
-                    # ── Tuned for qwen3:4b on CPU: fast + complete ──
-                    num_predict=1024,    # Enough tokens for thorough answers
-                    temperature=0.3,     # Lower = faster sampling, less randomness
-                    top_k=20,            # Consider top 20 tokens
-                    top_p=0.8,           # Nucleus sampling cutoff
-                    num_ctx=2048,        # Lean context window for speed
-                )
-                self.status["ollama"] = True
-                print(f"[RAG] Ollama connected: {LLM_MODEL}")
-            except Exception as e:
-                print(f"[RAG] Error initializing Ollama: {e}")
-        else:
-            print("[RAG] Ollama is not running. Start it with: ollama serve")
+        # 3. LLM provider
+        provider = LLM_PROVIDER
+        if provider not in SUPPORTED_PROVIDERS:
+            print(f"[RAG] Unsupported LLM_PROVIDER='{provider}'. Use one of: {sorted(SUPPORTED_PROVIDERS)}")
+            provider = "groq"
+            self.status["provider"] = provider
+
+        if provider == "groq":
+            if not GROQ_API_KEY:
+                print("[RAG] GROQ_API_KEY not found. Set it in your environment or .env file.")
+            else:
+                try:
+                    self.llm = ChatGroq(
+                        api_key=GROQ_API_KEY,
+                        model=GROQ_MODEL,
+                    )
+                    self.status["groq"] = True
+                    print(f"[RAG] Groq connected: {GROQ_MODEL}")
+                except Exception as e:
+                    print(f"[RAG] Error initializing Groq: {e}")
+        elif provider == "ollama":
+            if self._ollama_is_running():
+                try:
+                    self.llm = OllamaLLM(
+                        model=OLLAMA_MODEL,
+                        base_url=OLLAMA_BASE_URL,
+                        timeout=OLLAMA_TIMEOUT,
+                        # ── Tuned for qwen2.5:3b on CPU: fast + complete ──
+                        num_predict=1024,    # Enough tokens for thorough answers
+                        temperature=0.3,     # Lower = faster sampling, less randomness
+                        top_k=20,            # Consider top 20 tokens
+                        top_p=0.8,           # Nucleus sampling cutoff
+                        num_ctx=2048,        # Lean context window for speed
+                    )
+                    self.status["ollama"] = True
+                    print(f"[RAG] Ollama connected: {OLLAMA_MODEL}")
+                except Exception as e:
+                    print(f"[RAG] Error initializing Ollama: {e}")
+            else:
+                print("[RAG] Ollama is not running. Start it with: ollama serve")
 
         # 4. RAG chain (using LCEL instead of deprecated RetrievalQA)
-        if self.llm and self.retriever:
+        if self.llm:
+            # Create a simple retriever even when embeddings are skipped
+            if not self.retriever:
+                # Fallback: create empty retriever for cloud deployment
+                from langchain_core.documents import Document
+                from langchain_core.retrievers import BaseRetriever
+                
+                class EmptyRetriever(BaseRetriever):
+                    def _get_relevant_documents(self, query: str):
+                        return []
+                
+                self.retriever = EmptyRetriever()
+                print("[RAG] Using empty retriever for cloud deployment")
+            
             self.qa_chain = (
                 {
                     "context": self.retriever | _format_docs,
@@ -432,29 +535,29 @@ class RAGEngine:
     # ── Public API ─────────────────────────────────────────────
     def query(self, question: str, history: list = None):
         """Ask a question. Returns dict with answer + sources, or error string."""
+        cleaned_question = _expand_slang(question)
+
+        if _is_creator_query(cleaned_question):
+            return {
+                "answer": CREATOR_RESPONSE,
+                "source_documents": [],
+            }
+
         if not self.qa_chain:
             parts = []
             if not self.status["db"]:
                 parts.append("Vector database not found — run 'python ingest.py' first.")
-            if not self.status["ollama"]:
+            provider = self.status.get("provider", LLM_PROVIDER)
+            if provider == "groq" and not self.status["groq"]:
+                parts.append("Groq is not configured — set GROQ_API_KEY in your environment or .env file.")
+            elif provider == "ollama" and not self.status["ollama"]:
                 parts.append("Ollama is not running — start it with 'ollama serve'.")
+            elif provider not in SUPPORTED_PROVIDERS:
+                parts.append("Unsupported LLM_PROVIDER. Use 'groq' or 'ollama'.")
             return " | ".join(parts) if parts else "System not initialized."
 
-        # Expand slang/abbreviations so retrieval finds the right docs
-        cleaned_question = _expand_slang(question)
-
-        # Build chat history string from provided history or internal buffer
-        if history:
-            self.chat_history = history[-self.max_history:]
-        chat_history_str = ""
-        if self.chat_history:
-            chat_history_str = "Recent conversation:\n"
-            for msg in self.chat_history:
-                role = "Student" if msg["role"] == "user" else "Assistant"
-                # Truncate long messages in history to save context tokens
-                content = msg['content'][:200] if len(msg['content']) > 200 else msg['content']
-                chat_history_str += f"{role}: {content}\n"
-            chat_history_str += "\n"
+        # Build chat history from request payload only (no shared server memory)
+        chat_history_str = _build_chat_history(history, self.max_history)
 
         # Retrieve source documents for citations
         assert self.retriever is not None  # guaranteed when qa_chain is set
@@ -467,12 +570,7 @@ class RAGEngine:
             question=cleaned_question,
             chat_history=chat_history_str,
         )
-        answer = _strip_think(self.llm.invoke(prompt_text))
-
-        # Update internal history
-        self.chat_history.append({"role": "user", "content": question})
-        self.chat_history.append({"role": "assistant", "content": answer})
-        self.chat_history = self.chat_history[-self.max_history:]
+        answer = _strip_think(_as_text(self.llm.invoke(prompt_text)))
 
         return {
             "answer": answer,
@@ -481,22 +579,17 @@ class RAGEngine:
 
     def query_stream(self, question: str, history: list = None):
         """Streaming version — yields chunks as they arrive from Ollama."""
+        cleaned_question = _expand_slang(question)
+
+        if _is_creator_query(cleaned_question):
+            yield CREATOR_RESPONSE
+            return
+
         if not self.qa_chain:
             yield "System not initialized."
             return
 
-        cleaned_question = _expand_slang(question)
-
-        if history:
-            self.chat_history = history[-self.max_history:]
-        chat_history_str = ""
-        if self.chat_history:
-            chat_history_str = "Recent conversation:\n"
-            for msg in self.chat_history:
-                role = "Student" if msg["role"] == "user" else "Assistant"
-                content = msg['content'][:200] if len(msg['content']) > 200 else msg['content']
-                chat_history_str += f"{role}: {content}\n"
-            chat_history_str += "\n"
+        chat_history_str = _build_chat_history(history, self.max_history)
 
         source_docs = self.retriever.invoke(cleaned_question)
         context = _format_docs(source_docs)
@@ -506,11 +599,14 @@ class RAGEngine:
             chat_history=chat_history_str,
         )
 
-        # Stream from Ollama — buffer to strip <think> blocks
+        # Stream from provider — buffer to strip <think> blocks when present
         full_answer = ""
         thinking_done = False
         for chunk in self.llm.stream(prompt_text):
-            full_answer += chunk
+            chunk_text = _as_text(chunk)
+            if not chunk_text:
+                continue
+            full_answer += chunk_text
             # Buffer until we see </think> or confirm no think tags
             if not thinking_done:
                 if '<think>' not in full_answer:
@@ -526,22 +622,10 @@ class RAGEngine:
                     full_answer = after_think  # reset to only the answer part
                 # else: still inside <think> block, keep buffering
             else:
-                yield chunk
+                yield chunk_text
         
         # Final cleanup
         full_answer = _strip_think(full_answer)
-
-        # Update history after streaming completes
-        self.chat_history.append({"role": "user", "content": question})
-        self.chat_history.append({"role": "assistant", "content": full_answer})
-        self.chat_history = self.chat_history[-self.max_history:]
-
-        # Attach source docs to a special attribute for the caller
-        self._last_source_docs = source_docs
-
-    @property
-    def last_source_docs(self):
-        return getattr(self, '_last_source_docs', [])
 
     # ── Helpers ────────────────────────────────────────────────
     @staticmethod
@@ -551,11 +635,11 @@ class RAGEngine:
             if r.status_code == 200:
                 models = r.json().get("models", [])
                 model_names = [m.get("name", "") for m in models]
-                if LLM_MODEL in model_names:
-                    print(f"[RAG] Found model: {LLM_MODEL}")
+                if OLLAMA_MODEL in model_names:
+                    print(f"[RAG] Found model: {OLLAMA_MODEL}")
                 else:
-                    print(f"[RAG] Warning: {LLM_MODEL} not found. Available: {model_names}")
-                    print(f"[RAG] Pull it with: ollama pull {LLM_MODEL}")
+                    print(f"[RAG] Warning: {OLLAMA_MODEL} not found. Available: {model_names}")
+                    print(f"[RAG] Pull it with: ollama pull {OLLAMA_MODEL}")
                 return True
             return False
         except Exception:

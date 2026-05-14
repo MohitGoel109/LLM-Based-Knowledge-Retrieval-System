@@ -1,9 +1,10 @@
 .vscode/
 __pycache__/
 *.pyc
-chroma_db/
 venv/
 .env
+.env.*
+!.env.example
 *.egg-info/
 dist/
 build/
@@ -12,3 +13,4 @@ node_modules/
 *.log
 nohup.out
 web-app/package-lock.json
+.vercel

@@ -1,32 +1,74 @@
+# Disable memory fragmentation which crashes small Render instances
+import os
+os.environ["MALLOC_ARENA_MAX"] = "2"
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
 import os
 import json
+import threading
 
-# Set HuggingFace to offline mode before importing rag_engine
-os.environ.setdefault("HF_HUB_OFFLINE", "1")
-os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+load_dotenv()
 
-from rag_engine import RAGEngine
+OFFICIAL_REFERENCE_URL = "https://www.krmangalam.edu.in/"
 
 # Global RAG engine (initialized at startup)
-rag_engine: Optional[RAGEngine] = None
+rag_engine: Optional[Any] = None
+rag_init_error: Optional[str] = None
+_rag_init_thread: Optional[threading.Thread] = None
+_rag_init_lock = threading.Lock()
+
+
+def initialize_rag():
+    """Lazy import + initialize heavy RAG dependencies at startup time."""
+    from rag_engine import RAGEngine
+
+    return RAGEngine()
+
+
+def _initialize_rag_worker():
+    """Load heavy RAG dependencies in a background thread."""
+    global rag_engine, rag_init_error
+    try:
+        print("[API] Initializing RAG Engine...")
+        print("[API] Loading embedding model, this may take 2-3 minutes...")
+        rag_engine = initialize_rag()
+        print(f"[API] RAG Engine ready: {rag_engine.status}")
+    except Exception as e:
+        rag_init_error = str(e)
+        print(f"[API] RAG Engine failed to initialize: {e}")
+
+
+def _start_rag_init_if_needed():
+    """Start background RAG initialization once per process."""
+    global _rag_init_thread
+    with _rag_init_lock:
+        if rag_engine is not None:
+            return
+        if _rag_init_thread is not None and _rag_init_thread.is_alive():
+            return
+        _rag_init_thread = threading.Thread(target=_initialize_rag_worker, daemon=True)
+        _rag_init_thread.start()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Initialize RAG engine at server startup."""
-    global rag_engine
-    print("[API] Initializing RAG Engine...")
-    rag_engine = RAGEngine()
-    print(f"[API] RAG Engine ready: {rag_engine.status}")
+    """Start non-blocking RAG initialization at server startup."""
+    _start_rag_init_if_needed()
     yield
     print("[API] Shutting down.")
 
 app = FastAPI(title="KRMAI API", lifespan=lifespan)
+
+# ── Serve React frontend static files ──────────────────────────
+FRONTEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "web-app", "dist")
 
 # Setup CORS to allow React frontend to call the API
 app.add_middleware(
@@ -57,20 +99,45 @@ class ChatResponse(BaseModel):
 @app.get("/health")
 def health_check():
     """Returns the status of the RAG engine components."""
-    return rag_engine.status
+    if rag_engine is None:
+        return {
+            "db": False,
+            "provider": os.getenv("LLM_PROVIDER", "groq").strip().lower(),
+            "ollama": False,
+            "groq": False,
+            "ready": False,
+            "initializing": True,
+            "error": rag_init_error,
+        }
+    status = dict(rag_engine.status)
+    status["initializing"] = False
+    status["error"] = rag_init_error
+    return status
+
+
+def _get_ready_engine():
+    """Return a ready RAG engine or raise a 503 while it is initializing."""
+    _start_rag_init_if_needed()
+    if rag_engine is None:
+        detail = "RAG Engine is initializing. Please retry in a few seconds."
+        if rag_init_error:
+            detail = f"RAG Engine failed to initialize: {rag_init_error}"
+        raise HTTPException(status_code=503, detail=detail)
+    if not rag_engine.status.get("ready", False):
+        raise HTTPException(status_code=503, detail="RAG Engine is not ready. Check /health endpoint.")
+    return rag_engine
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
     """Processes a user message and returns the LLM response with sources."""
-    if not rag_engine.status["ready"]:
-        raise HTTPException(status_code=503, detail="RAG Engine is not ready. Check /health endpoint.")
+    engine = _get_ready_engine()
     
     # Convert history to list of dicts for the engine
     history = None
     if request.history:
         history = [{"role": h.role, "content": h.content} for h in request.history]
     
-    result = rag_engine.query(request.message, history=history)
+    result = engine.query(request.message, history=history)
     
     # If the response is just a string, it means an error occurred in query()
     if isinstance(result, str):
@@ -87,22 +154,20 @@ def chat(request: ChatRequest):
 @app.post("/chat/stream")
 def chat_stream(request: ChatRequest):
     """Streaming endpoint — sends tokens as Server-Sent Events for real-time display."""
-    if not rag_engine.status["ready"]:
-        raise HTTPException(status_code=503, detail="RAG Engine is not ready.")
+    engine = _get_ready_engine()
 
     history = None
     if request.history:
         history = [{"role": h.role, "content": h.content} for h in request.history]
 
     def event_generator():
-        for chunk in rag_engine.query_stream(request.message, history=history):
+        for chunk in engine.query_stream(request.message, history=history):
             # Send each text chunk as an SSE data event
             data = json.dumps({"type": "token", "content": chunk})
             yield f"data: {data}\n\n"
 
         # After streaming completes, send sources as a final event
-        source_docs = rag_engine.last_source_docs
-        sources_out = [{"source": s.source, "page": s.page} for s in _extract_sources(source_docs)]
+        sources_out = [{"source": OFFICIAL_REFERENCE_URL, "page": None}]
         data = json.dumps({"type": "done", "sources": sources_out})
         yield f"data: {data}\n\n"
 
@@ -117,18 +182,23 @@ def chat_stream(request: ChatRequest):
     )
 
 
-def _extract_sources(source_docs):
-    """Extract unique sources from retrieved documents."""
-    sources_out = []
-    seen = set()
-    for doc in source_docs:
-        src = doc.metadata.get("source", "Unknown")
-        page = doc.metadata.get("page", None)
-        key = f"{src}-{page}"
-        if key not in seen:
-            seen.add(key)
-            sources_out.append(SourceDoc(source=src, page=page))
-    return sources_out
+def _extract_sources(source_docs=None):
+    """Return a single public website reference instead of local document paths."""
+    return [SourceDoc(source=OFFICIAL_REFERENCE_URL, page=None)]
+
+
+# ── Serve React SPA ────────────────────────────────────────────
+# Mount static assets (JS/CSS/images) from the React build
+if os.path.isdir(FRONTEND_DIR):
+    app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIR, "assets")), name="static-assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        """Catch-all: serve index.html for any non-API route (SPA client routing)."""
+        file_path = os.path.join(FRONTEND_DIR, full_path)
+        if full_path and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 
 
 if __name__ == "__main__":

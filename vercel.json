@@ -1,0 +1,49 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "api_minimal.py",
+            "use": "@vercel/python"
+        },
+        {
+            "src": "web-app/package.json",
+            "use": "@vercel/static-build",
+            "config": {
+                "distDir": "dist"
+            }
+        }
+    ],
+    "routes": [
+        {
+            "src": "/api",
+            "dest": "/api_minimal.py"
+        },
+        {
+            "src": "/api/(.*)",
+            "dest": "/api_minimal.py"
+        },
+        {
+            "src": "/health",
+            "dest": "/api_minimal.py"
+        },
+        {
+            "src": "/chat",
+            "dest": "/api_minimal.py"
+        },
+        {
+            "src": "/chat/stream",
+            "dest": "/api_minimal.py"
+        },
+        {
+            "src": "/sources",
+            "dest": "/api_minimal.py"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/web-app/$1"
+        }
+    ],
+    "env": {
+        "PYTHON_VERSION": "3.11"
+    }
+}

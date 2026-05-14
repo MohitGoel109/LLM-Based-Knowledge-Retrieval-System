@@ -1,0 +1,17 @@
+commit 57941493b37eae1a61d2340a09161bfc8f3b3c9e
+Author: Pyro Sensei <swetank0648@gmail.com>
+Date:   Sun Apr 5 19:04:32 2026 +0530
+
+    sdsd
+
+commit b9f7e05c3b717a95d13a6246d313c259f452c9bd
+Author: Pyro Sensei <swetank0648@gmail.com>
+Date:   Sun Apr 5 18:43:46 2026 +0530
+
+    sdsd
+
+commit f46a787370141163d871d4861d5e13635b3a90cc
+Author: Pyro Sensei <swetank0648@gmail.com>
+Date:   Sun Apr 5 18:42:47 2026 +0530
+
+    Fix Vite dependency for frontend build on Render
