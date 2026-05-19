@@ -1,12 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import AsyncGenerator, Generator
 
 from langchain_anthropic import ChatAnthropic
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import AIMessage, HumanMessage
-from langchain_core.outputs import ChatGenerationChunk
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_groq import ChatGroq
 from langchain_openai import ChatOpenAI
 
 from backend.config import Settings
@@ -20,13 +16,16 @@ class LLMProvider(ABC):
         ...
 
 
-class GroqProvider(LLMProvider):
-    name = "groq"
+class NIMProvider(LLMProvider):
+    """NVIDIA NIM — OpenAI-compatible, uses ChatOpenAI pointed at NIM base URL."""
+
+    name = "nim"
 
     def get_chat_model(self, settings: Settings) -> BaseChatModel:
-        return ChatGroq(
-            api_key=settings.groq_api_key,
-            model=settings.groq_model,
+        return ChatOpenAI(
+            api_key=settings.nim_api_key,
+            model=settings.nim_model,
+            base_url=settings.nim_base_url,
         )
 
 
@@ -61,7 +60,7 @@ class GeminiProvider(LLMProvider):
 
 
 PROVIDER_MAP: dict[str, LLMProvider] = {
-    "groq": GroqProvider(),
+    "nim": NIMProvider(),
     "openai": OpenAIProvider(),
     "anthropic": AnthropicProvider(),
     "gemini": GeminiProvider(),

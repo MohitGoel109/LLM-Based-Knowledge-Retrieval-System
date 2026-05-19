@@ -19,15 +19,16 @@ def _csv_env(name: str, default: str) -> list[str]:
     return [item.strip() for item in os.getenv(name, default).split(",") if item.strip()]
 
 
-SUPPORTED_PROVIDERS = {"groq", "openai", "anthropic", "gemini"}
+SUPPORTED_PROVIDERS = {"nim", "openai", "anthropic", "gemini"}
 
 
 @dataclass(frozen=True)
 class Settings:
-    llm_provider: str = field(default_factory=lambda: os.getenv("LLM_PROVIDER", "groq").strip().lower())
+    llm_provider: str = field(default_factory=lambda: os.getenv("LLM_PROVIDER", "nim").strip().lower())
 
-    groq_api_key: Optional[str] = field(default_factory=lambda: os.getenv("GROQ_API_KEY"))
-    groq_model: str = field(default_factory=lambda: os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"))
+    nim_api_key: Optional[str] = field(default_factory=lambda: os.getenv("NIM_API_KEY"))
+    nim_base_url: str = field(default_factory=lambda: os.getenv("NIM_BASE_URL", "https://integrate.api.nvidia.com/v1"))
+    nim_model: str = field(default_factory=lambda: os.getenv("NIM_MODEL", "deepseek-ai/deepseek-v4-flash"))
 
     openai_api_key: Optional[str] = field(default_factory=lambda: os.getenv("OPENAI_API_KEY"))
     openai_model: str = field(default_factory=lambda: os.getenv("OPENAI_MODEL", "gpt-4o-mini"))
@@ -50,8 +51,8 @@ class Settings:
         return getattr(self, f"{self.llm_provider}_model", "unknown")
 
     @property
-    def groq_configured(self) -> bool:
-        return bool(self.groq_api_key and self.groq_api_key != "your_groq_api_key_here")
+    def nim_configured(self) -> bool:
+        return bool(self.nim_api_key and self.nim_api_key != "your-nvapi-key-here")
 
     @property
     def openai_configured(self) -> bool:
@@ -67,7 +68,7 @@ class Settings:
 
     def provider_configured(self) -> bool:
         cfg = {
-            "groq": self.groq_configured,
+            "nim": self.nim_configured,
             "openai": self.openai_configured,
             "anthropic": self.anthropic_configured,
             "gemini": self.gemini_configured,
@@ -78,7 +79,7 @@ class Settings:
         return {
             "provider": self.llm_provider,
             "active_model": self.active_model,
-            "groq_configured": self.groq_configured,
+            "nim_configured": self.nim_configured,
             "openai_configured": self.openai_configured,
             "anthropic_configured": self.anthropic_configured,
             "gemini_configured": self.gemini_configured,

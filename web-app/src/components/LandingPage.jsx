@@ -561,7 +561,7 @@ function LandingPage({ onEnterChat, onNavigate }) {
                             { name: 'FastAPI', icon: Zap },
                             { name: 'LangChain', icon: Code },
                             { name: 'ChromaDB', icon: Cpu },
-                            { name: 'Groq / Ollama', icon: Bot },
+                            { name: 'NVIDIA NIM', icon: Bot },
                             { name: 'Configurable Model', icon: Sparkles },
                         ].map((tech, i) => (
                             <motion.div

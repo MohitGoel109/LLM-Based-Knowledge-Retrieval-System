@@ -73,7 +73,7 @@ const FAQS = [
     },
     {
         q: 'What model does KRMAI use?',
-        a: 'KRMAI uses the model configured on the backend. The default cloud-ready setup is Groq with llama-3.3-70b-versatile, and local deployments can switch to Ollama with LLM_PROVIDER=ollama.',
+        a: 'KRMAI uses the model configured on the backend. The default is NVIDIA NIM with deepseek-ai/deepseek-v4-flash. Set LLM_PROVIDER in .env to switch between nim, openai, anthropic, or gemini.',
     },
 ];
 

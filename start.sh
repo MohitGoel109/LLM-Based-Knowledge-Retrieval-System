@@ -17,9 +17,9 @@ if [ ! -f ".env" ]; then
     echo ""
     echo "  ⚠  Open .env and set your API key, then re-run this script."
     echo ""
-    echo "     Provider options: groq | openai | anthropic | gemini"
-    echo "     Example:  LLM_PROVIDER=groq"
-    echo "               GROQ_API_KEY=gsk_your_key_here"
+    echo "     Provider options: nim | openai | anthropic | gemini"
+    echo "     Example:  LLM_PROVIDER=nim"
+    echo "               NIM_API_KEY=nvapi-your_key_here"
     echo ""
     exit 0
 fi
@@ -27,7 +27,7 @@ fi
 set -a; source .env; set +a
 
 # ── 2. Pick provider ───────────────────────────────────
-PROVIDER="${LLM_PROVIDER:-groq}"
+PROVIDER="${LLM_PROVIDER:-nim}"
 KEY_VAR="${PROVIDER}_API_KEY"
 API_KEY="${!KEY_VAR}"
 

@@ -15,9 +15,9 @@ if not exist ".env" (
     echo.
     echo   ^⚠  Open .env and set your API key, then re-run this script.
     echo.
-    echo      Provider options: groq ^| openai ^| anthropic ^| gemini
-    echo      Example:  LLM_PROVIDER=groq
-    echo                GROQ_API_KEY=gsk_your_key_here
+    echo      Provider options: nim ^| openai ^| anthropic ^| gemini
+    echo      Example:  LLM_PROVIDER=nim
+    echo                NIM_API_KEY=nvapi-your_key_here
     echo.
     pause
     exit /b 1

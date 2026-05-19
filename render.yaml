@@ -11,8 +11,8 @@ services:
       - key: PYTHON_VERSION
         value: 3.11.9
       - key: LLM_PROVIDER
-        value: groq
-      - key: GROQ_API_KEY
+        value: nim
+      - key: NIM_API_KEY
         sync: false
       - key: RAG_ENABLED
         value: "true"
