@@ -1,0 +1,12 @@
+.git
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+node_modules
+dist
+.vite
+*.log
+nohup.out
+.env
+chroma_db

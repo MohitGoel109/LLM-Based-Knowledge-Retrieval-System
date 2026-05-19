@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: krmai
+    runtime: python
+    plan: free
+    buildCommand: |
+      pip install -r requirements.txt
+      cd web-app && npm ci && VITE_API_URL="" npm run build && cd ..
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: LLM_PROVIDER
+        value: groq
+      - key: GROQ_API_KEY
+        sync: false
+      - key: RAG_ENABLED
+        value: "true"
+      - key: ALLOWED_ORIGINS
+        value: "*"

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sidebar as SidebarIcon, Plus, Zap, ChevronRight, Settings, HelpCircle, LogOut, BookOpen, FolderKanban } from 'lucide-react';
+import { Sidebar as SidebarIcon, Plus, Zap, ChevronRight, Settings, HelpCircle, LogOut, FolderKanban } from 'lucide-react';
 import KRMAILogo from './KRMAILogo';
 import { CATEGORIES } from '../data/constants';
 

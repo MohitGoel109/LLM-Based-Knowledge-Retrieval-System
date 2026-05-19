@@ -1,14 +1,14 @@
 import { motion } from 'framer-motion';
 import {
-    ArrowLeft, ExternalLink, Github, Users, Cpu,
-    BookOpen, Wifi, Bot, Brain, Database
+    ArrowLeft, ExternalLink, Users, Cpu,
+    BookOpen, Wifi, Brain, Database
 } from 'lucide-react';
 
 const PROJECTS = [
     {
         title: 'KRMU Smart Campus',
         desc: 'An AI-powered campus navigation system that helps students find classrooms, labs, and facilities using natural language queries.',
-        tech: ['React', 'FastAPI', 'ChromaDB', 'Qwen3'],
+        tech: ['React', 'FastAPI', 'ChromaDB', 'RAG'],
         status: 'Active',
         statusColor: 'bg-green-400',
         icon: Cpu,
@@ -18,7 +18,7 @@ const PROJECTS = [
     {
         title: 'Library AI Connect',
         desc: 'Intelligent library assistant that recommends books, tracks availability, and manages reservations through conversational AI.',
-        tech: ['Python', 'LangChain', 'Ollama', 'SQLite'],
+        tech: ['Python', 'LangChain', 'Configurable LLM', 'SQLite'],
         status: 'In Development',
         statusColor: 'bg-yellow-400',
         icon: BookOpen,
@@ -48,7 +48,7 @@ const PROJECTS = [
     {
         title: 'Exam Prep Bot',
         desc: 'Personalized exam preparation assistant that generates practice questions and study plans based on syllabus analysis.',
-        tech: ['React', 'FastAPI', 'RAG', 'Ollama'],
+        tech: ['React', 'FastAPI', 'RAG', 'Configurable LLM'],
         status: 'In Development',
         statusColor: 'bg-yellow-400',
         icon: Brain,

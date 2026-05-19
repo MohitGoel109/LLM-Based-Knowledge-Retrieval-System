@@ -1,9 +1,19 @@
-fastapi==0.135.3
-uvicorn==0.43.0
-groq==0.37.1
-langchain-core==1.2.26
-langchain-groq==1.1.2
-pydantic==2.12.5
-python-dotenv==1.2.2
-requests==2.33.1
-# Lightweight dependencies only - no heavy ML packages
+fastapi>=0.115.0
+uvicorn>=0.32.0
+pydantic>=2.5.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+
+# RAG / Vector store
+langchain-chroma>=0.2.0
+langchain-community>=0.3.0
+langchain-core>=0.3.0
+langchain-huggingface>=0.1.0
+langchain-text-splitters>=0.3.0
+sentence-transformers>=3.0.0
+
+# LLM providers (install only the ones you need)
+langchain-groq>=0.2.0
+langchain-openai>=0.2.0
+langchain-anthropic>=0.2.0
+langchain-google-genai>=2.0.0

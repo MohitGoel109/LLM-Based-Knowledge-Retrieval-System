@@ -12,7 +12,7 @@ const VOICE_LANGUAGES = [
     { value: 'AUTO', label: 'Auto Detect' },
 ];
 
-function SettingsPage({ onBack, voiceLang, setVoiceLang }) {
+function SettingsPage({ onBack, onClearAll, voiceLang, setVoiceLang }) {
     const { theme, setTheme } = useTheme();
     const [notifications, setNotifications] = useState(() => {
         try { return localStorage.getItem('krmai_notifications') !== 'false'; } catch { return true; }
@@ -33,9 +33,11 @@ function SettingsPage({ onBack, voiceLang, setVoiceLang }) {
 
     const handleClearHistory = () => {
         if (window.confirm('Are you sure you want to clear all chat history? This cannot be undone.')) {
-            localStorage.removeItem('krmai_sessions');
+            if (onClearAll) onClearAll();
+            Object.keys(localStorage)
+                .filter((key) => key.startsWith('krmai_sessions_') || key.startsWith('krmai_active_session_'))
+                .forEach((key) => localStorage.removeItem(key));
             localStorage.removeItem('krmai_feedback');
-            window.location.reload();
         }
     };
 
@@ -195,7 +197,7 @@ function SettingsPage({ onBack, voiceLang, setVoiceLang }) {
                     <div className="flex items-center gap-3 p-4 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)]">
                         <Info className="w-4 h-4 text-[var(--accent)] shrink-0" />
                         <p className="text-xs text-[var(--text-muted)]">
-                            KRMAI v1.0 — Built with React, FastAPI, LangChain, ChromaDB & Ollama (Qwen3:8B). All data is stored locally in your browser.
+                            KRMAI v1.0 — Built with React, FastAPI, LangChain, ChromaDB, and a configurable AI provider. Chat history is stored locally in your browser.
                         </p>
                     </div>
                 </section>

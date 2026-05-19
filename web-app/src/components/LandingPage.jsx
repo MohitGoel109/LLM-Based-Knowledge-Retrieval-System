@@ -12,7 +12,7 @@ const FEATURES = [
     {
         icon: Bot,
         title: 'AI-Powered Answers',
-        desc: 'Get instant, context-aware responses powered by advanced RAG technology and local LLMs.',
+        desc: 'Get instant, context-aware responses powered by RAG and a configurable AI provider.',
         gradient: 'from-blue-500/20 to-cyan-500/20',
     },
     {
@@ -561,8 +561,8 @@ function LandingPage({ onEnterChat, onNavigate }) {
                             { name: 'FastAPI', icon: Zap },
                             { name: 'LangChain', icon: Code },
                             { name: 'ChromaDB', icon: Cpu },
-                            { name: 'Ollama', icon: Bot },
-                            { name: 'Qwen3:8B', icon: Sparkles },
+                            { name: 'Groq / Ollama', icon: Bot },
+                            { name: 'Configurable Model', icon: Sparkles },
                         ].map((tech, i) => (
                             <motion.div
                                 key={i}
@@ -710,7 +710,7 @@ function LandingPage({ onEnterChat, onNavigate }) {
                         <button onClick={() => onNavigate && onNavigate('updates')} className="text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer">Updates</button>
                         <a href="#features" className="text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition">Features</a>
                     </div>
-                    <p className="text-sm text-[var(--text-muted)]">KR Mangalam University AI Assistant — Built with RAG + Ollama</p>
+                    <p className="text-sm text-[var(--text-muted)]">KR Mangalam University AI Assistant — Built with RAG and configurable AI providers</p>
                 </div>
             </footer>
         </div>

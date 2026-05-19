@@ -86,7 +86,9 @@ function ChatInterface({
     const streamMessageIdRef = useRef(null);
     const pendingStreamTextRef = useRef('');
     const streamFlushTimerRef = useRef(null);
+    const activeRequestRef = useRef(null);
     const [isStreaming, setIsStreaming] = useState(false);
+    const apiBase = (apiUrl || '').replace(/\/+$/, '');
 
     const cycleVoiceLang = useCallback(() => {
         if (isListening) return;
@@ -104,6 +106,7 @@ function ChatInterface({
 
     useEffect(() => {
         return () => {
+            activeRequestRef.current?.abort();
             if (streamFlushTimerRef.current) {
                 clearTimeout(streamFlushTimerRef.current);
                 streamFlushTimerRef.current = null;
@@ -194,6 +197,9 @@ function ChatInterface({
         if (!text.trim() || loading) return;
         const msg = text.trim();
         const userMessageId = createMessageId();
+        activeRequestRef.current?.abort();
+        const controller = new AbortController();
+        activeRequestRef.current = controller;
         setInput('');
         setIsStreaming(false);
         streamMessageIdRef.current = null;
@@ -222,14 +228,15 @@ function ChatInterface({
         setMessages(updated);
         setLoading(true);
 
-        // Helper: strip <think> blocks (even if unclosed) that Qwen3 may produce
+        // Helper: strip reasoning tags (even if unclosed) before rendering the final answer.
         const stripThink = (s) => s.replace(/<think>[\s\S]*?(<\/think>|$)/gi, '').trim();
 
         // Helper: fallback to regular /chat endpoint
         const fallbackChat = async () => {
-            const res = await fetch(`${apiUrl}/chat`, {
+            const res = await fetch(`${apiBase}/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                signal: controller.signal,
                 body: JSON.stringify({ message: msg, history: updated.slice(-4) }),
             });
             if (!res.ok) throw new Error(`Server error: ${res.status}`);
@@ -251,9 +258,10 @@ function ChatInterface({
         try {
             let streamWorked = false;
             try {
-                const res = await fetch(`${apiUrl}/chat/stream`, {
+                const res = await fetch(`${apiBase}/chat/stream`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    signal: controller.signal,
                     body: JSON.stringify({ message: msg, history: updated.slice(-4) }),
                 });
 
@@ -351,13 +359,15 @@ function ChatInterface({
                 }
 
                 streamWorked = true;
-            } catch {
+            } catch (error) {
+                if (error?.name === 'AbortError') return;
                 if (!streamWorked) {
                     setLoading(true);
                     await fallbackChat();
                 }
             }
-        } catch {
+        } catch (error) {
+            if (error?.name === 'AbortError') return;
             setMessages((prev) => [
                 ...prev,
                 {
@@ -376,6 +386,9 @@ function ChatInterface({
             }
             streamMessageIdRef.current = null;
             pendingStreamTextRef.current = '';
+            if (activeRequestRef.current === controller) {
+                activeRequestRef.current = null;
+            }
             setLoading(false);
             setIsStreaming(false);
             if (!isMobile) setTimeout(() => inputRef.current?.focus(), 100);

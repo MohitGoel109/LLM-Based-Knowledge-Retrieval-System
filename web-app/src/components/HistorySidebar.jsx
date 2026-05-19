@@ -28,7 +28,7 @@ function HistorySidebar({ sessions, activeSessionId, onLoadSession, onDeleteSess
             <div className="flex items-center justify-between px-6 mb-6">
                 <h2 className="text-[var(--text-heading)] font-bold text-lg">History</h2>
                 <span className="text-xs font-semibold text-[var(--text-secondary)] bg-[var(--bg-surface)] px-2 py-0.5 rounded-full border border-[var(--border-subtle)]">
-                    {activeSessions.length}/50
+                    {activeSessions.length}/20
                 </span>
             </div>
 

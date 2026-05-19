@@ -24,7 +24,7 @@ const UPDATES = [
         tag: 'Beta',
         tagColor: 'bg-blue-400/10 text-blue-400 border-blue-400/20',
         items: [
-            { icon: Zap, text: 'Switched from Llama 3.2 to Qwen3:8B for better Hindi comprehension' },
+            { icon: Zap, text: 'Added configurable Groq and Ollama provider support' },
             { icon: Bug, text: 'Fixed voice input overwriting existing text' },
             { icon: Bell, text: 'Added session history with auto-save and restore' },
         ],
@@ -57,7 +57,7 @@ const FAQS = [
     },
     {
         q: 'Is my data stored anywhere?',
-        a: 'All chat sessions and preferences are stored locally in your browser using localStorage. Nothing is sent to external servers. The AI model runs locally via Ollama, so your conversations stay on your machine.',
+        a: 'Chat sessions and preferences are stored locally in your browser using localStorage. Questions are sent to the configured KRMAI backend so the assistant can generate responses.',
     },
     {
         q: 'What languages are supported?',
@@ -73,7 +73,7 @@ const FAQS = [
     },
     {
         q: 'What model does KRMAI use?',
-        a: 'KRMAI uses the Qwen3:8B model running locally via Ollama. It was chosen for its strong multilingual capabilities, especially in Hindi and Hinglish comprehension, while being efficient enough to run on consumer hardware.',
+        a: 'KRMAI uses the model configured on the backend. The default cloud-ready setup is Groq with llama-3.3-70b-versatile, and local deployments can switch to Ollama with LLM_PROVIDER=ollama.',
     },
 ];
 

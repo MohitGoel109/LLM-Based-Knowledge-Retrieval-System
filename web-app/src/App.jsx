@@ -1,15 +1,21 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { Suspense, lazy, useState, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import LandingPage from './components/LandingPage';
-import ChatInterface from './components/ChatInterface';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import BackgroundEffect from './components/BackgroundEffect';
-import SettingsPage from './components/SettingsPage';
-import StudentProjectsPage from './components/StudentProjectsPage';
-import UpdatesFAQPage from './components/UpdatesFAQPage';
 
-const API_URL = import.meta.env.VITE_API_URL ||
-    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:8000' : '');
+const LandingPage = lazy(() => import('./components/LandingPage'));
+const ChatInterface = lazy(() => import('./components/ChatInterface'));
+const SettingsPage = lazy(() => import('./components/SettingsPage'));
+const StudentProjectsPage = lazy(() => import('./components/StudentProjectsPage'));
+const UpdatesFAQPage = lazy(() => import('./components/UpdatesFAQPage'));
+
+const rawApiUrl = import.meta.env.VITE_API_URL ||
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:8000'
+        : '');
+const API_URL = rawApiUrl.replace(/\/+$/, '');
 const ACTIVE_USER_KEY = 'krmai_active_user';
+const MAX_SESSIONS = 20;
 
 function sessionsKeyForUser(userId) {
     return `krmai_sessions_${userId}`;
@@ -20,7 +26,11 @@ function activeSessionKeyForUser(userId) {
 }
 
 function loadActiveUser() {
-    return localStorage.getItem(ACTIVE_USER_KEY) || '';
+    try {
+        return localStorage.getItem(ACTIVE_USER_KEY) || '';
+    } catch {
+        return '';
+    }
 }
 
 function loadSessionsForUser(userId) {
@@ -34,7 +44,7 @@ function loadSessionsForUser(userId) {
 
 function saveSessionsForUser(userId, sessions) {
     if (!userId) return;
-    localStorage.setItem(sessionsKeyForUser(userId), JSON.stringify(sessions.slice(0, 20)));
+    localStorage.setItem(sessionsKeyForUser(userId), JSON.stringify(sessions.slice(0, MAX_SESSIONS)));
 }
 
 function loadActiveSessionForUser(userId) {
@@ -51,8 +61,52 @@ function saveActiveSessionForUser(userId, sessionId) {
     }
 }
 
+function LoginPage({ loginInput, setLoginInput, onLogin }) {
+    return (
+        <motion.div
+            key="login"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+            className="h-full w-full flex items-center justify-center relative z-10 px-4"
+        >
+            <div className="w-full max-w-md rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
+                <h1 className="text-xl font-semibold mb-2">Login to KRMAI</h1>
+                <p className="text-sm text-[var(--text-secondary)] mb-4">
+                    Use your name or ID to keep your chat history separate on this browser.
+                </p>
+                <input
+                    value={loginInput}
+                    onChange={(e) => setLoginInput(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') onLogin();
+                    }}
+                    placeholder="Enter your username"
+                    className="w-full rounded-xl px-4 py-3 mb-3 bg-[var(--bg-base)] border border-[var(--border-default)] outline-none"
+                />
+                <button
+                    onClick={onLogin}
+                    className="w-full rounded-xl px-4 py-3 font-semibold bg-[var(--accent)] text-white"
+                >
+                    Continue
+                </button>
+            </div>
+        </motion.div>
+    );
+}
+
+function RouteFallback() {
+    return (
+        <div className="h-full w-full flex items-center justify-center text-sm text-[var(--text-secondary)]">
+            Loading...
+        </div>
+    );
+}
+
 function App() {
-    const [view, setView] = useState(() => (loadActiveUser() ? 'landing' : 'login'));
+    const navigate = useNavigate();
+    const location = useLocation();
     const [currentUser, setCurrentUser] = useState(loadActiveUser);
     const [loginInput, setLoginInput] = useState('');
     const [messages, setMessages] = useState([]);
@@ -65,6 +119,7 @@ function App() {
             setSessions([]);
             setMessages([]);
             setActiveSessionId(null);
+            if (location.pathname !== '/login') navigate('/login', { replace: true });
             return;
         }
 
@@ -79,38 +134,19 @@ function App() {
         } else {
             setMessages([]);
         }
-    }, [currentUser]);
+
+        if (location.pathname === '/login') navigate('/', { replace: true });
+    }, [currentUser, location.pathname, navigate]);
 
     useEffect(() => {
         saveActiveSessionForUser(currentUser, activeSessionId);
     }, [currentUser, activeSessionId]);
 
-    const handleLogin = useCallback(() => {
-        const normalizedUser = loginInput.trim();
-        if (!normalizedUser) return;
-        localStorage.setItem(ACTIVE_USER_KEY, normalizedUser);
-        setCurrentUser(normalizedUser);
-        setLoginInput('');
-        setView('landing');
-    }, [loginInput]);
-
-    const handleSwitchUser = useCallback(() => {
-        localStorage.removeItem(ACTIVE_USER_KEY);
-        setCurrentUser('');
-        setSessions([]);
-        setMessages([]);
-        setActiveSessionId(null);
-        setView('login');
-    }, []);
-
-    // Auto-save current session when messages change
     useEffect(() => {
         if (!currentUser || messages.length === 0 || !activeSessionId) return;
         setSessions((prev) => {
             const firstUserMsg = messages.find((m) => m.role === 'user');
-            const title = firstUserMsg
-                ? firstUserMsg.content.slice(0, 45)
-                : 'New Chat';
+            const title = firstUserMsg ? firstUserMsg.content.slice(0, 45) : 'New Chat';
             const updated = prev.map((s) =>
                 s.id === activeSessionId
                     ? { ...s, title, messages, timestamp: Date.now() }
@@ -121,26 +157,61 @@ function App() {
         });
     }, [messages, activeSessionId, currentUser]);
 
+    const handleLogin = useCallback(() => {
+        const normalizedUser = loginInput.trim();
+        if (!normalizedUser) return;
+        localStorage.setItem(ACTIVE_USER_KEY, normalizedUser);
+        setCurrentUser(normalizedUser);
+        setLoginInput('');
+        navigate('/', { replace: true });
+    }, [loginInput, navigate]);
+
+    const handleSwitchUser = useCallback(() => {
+        localStorage.removeItem(ACTIVE_USER_KEY);
+        setCurrentUser('');
+        setSessions([]);
+        setMessages([]);
+        setActiveSessionId(null);
+        navigate('/login', { replace: true });
+    }, [navigate]);
+
+    const ensureSession = useCallback(() => {
+        if (!currentUser) {
+            navigate('/login');
+            return null;
+        }
+        if (activeSessionId) return activeSessionId;
+        const id = Date.now().toString();
+        setActiveSessionId(id);
+        setSessions((prev) => {
+            const updated = [{ id, title: 'New Chat', messages: [], timestamp: Date.now() }, ...prev];
+            saveSessionsForUser(currentUser, updated);
+            return updated;
+        });
+        return id;
+    }, [activeSessionId, currentUser, navigate]);
+
     const startNewSession = useCallback(() => {
         if (!currentUser) return;
         const id = Date.now().toString();
         setMessages([]);
         setActiveSessionId(id);
         setSessions((prev) => {
-            const newSession = { id, title: 'New Chat', messages: [], timestamp: Date.now() };
-            const updated = [newSession, ...prev];
+            const updated = [{ id, title: 'New Chat', messages: [], timestamp: Date.now() }, ...prev];
             saveSessionsForUser(currentUser, updated);
             return updated;
         });
-    }, [currentUser]);
+        navigate('/chat');
+    }, [currentUser, navigate]);
 
     const loadSession = useCallback((sessionId) => {
         const session = sessions.find((s) => s.id === sessionId);
         if (session) {
             setMessages(session.messages);
             setActiveSessionId(sessionId);
+            navigate('/chat');
         }
-    }, [sessions]);
+    }, [sessions, navigate]);
 
     const deleteSession = useCallback((sessionId) => {
         if (!currentUser) return;
@@ -152,6 +223,7 @@ function App() {
         if (activeSessionId === sessionId) {
             setMessages([]);
             setActiveSessionId(null);
+            saveActiveSessionForUser(currentUser, null);
         }
     }, [activeSessionId, currentUser]);
 
@@ -161,151 +233,30 @@ function App() {
         saveSessionsForUser(currentUser, []);
         setMessages([]);
         setActiveSessionId(null);
+        saveActiveSessionForUser(currentUser, null);
     }, [currentUser]);
 
-    // Ensure there's an active session when entering chat
     const enterChat = useCallback(() => {
-        if (!currentUser) {
-            setView('login');
-            return;
-        }
-        if (!activeSessionId) {
-            const id = Date.now().toString();
-            setActiveSessionId(id);
-            setSessions((prev) => {
-                const newSession = { id, title: 'New Chat', messages: [], timestamp: Date.now() };
-                const updated = [newSession, ...prev];
-                saveSessionsForUser(currentUser, updated);
-                return updated;
-            });
-        }
-        setView('chat');
-    }, [activeSessionId, currentUser]);
+        if (ensureSession()) navigate('/chat');
+    }, [ensureSession, navigate]);
 
-    // Navigate to sub-pages
+    useEffect(() => {
+        if (currentUser && location.pathname === '/chat' && !activeSessionId) {
+            ensureSession();
+        }
+    }, [activeSessionId, currentUser, ensureSession, location.pathname]);
+
     const handleNavigate = useCallback((page) => {
-        setView(page);
-    }, []);
+        const path = page === 'landing' ? '/' : `/${page}`;
+        if (page === 'chat') ensureSession();
+        navigate(path);
+    }, [ensureSession, navigate]);
 
-    const renderView = () => {
-        switch (view) {
-            case 'login':
-                return (
-                    <motion.div
-                        key="login"
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
-                        transition={{ duration: 0.25 }}
-                        className="h-full w-full flex items-center justify-center relative z-10 px-4"
-                    >
-                        <div className="w-full max-w-md rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
-                            <h1 className="text-xl font-semibold mb-2">Login to KRMAI</h1>
-                            <p className="text-sm text-[var(--text-secondary)] mb-4">
-                                Use your name or ID to keep your chat history separate on this browser.
-                            </p>
-                            <input
-                                value={loginInput}
-                                onChange={(e) => setLoginInput(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') handleLogin();
-                                }}
-                                placeholder="Enter your username"
-                                className="w-full rounded-xl px-4 py-3 mb-3 bg-[var(--bg-base)] border border-[var(--border-default)] outline-none"
-                            />
-                            <button
-                                onClick={handleLogin}
-                                className="w-full rounded-xl px-4 py-3 font-semibold bg-[var(--accent)] text-white"
-                            >
-                                Continue
-                            </button>
-                        </div>
-                    </motion.div>
-                );
-            case 'settings':
-                return (
-                    <motion.div
-                        key="settings"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.3 }}
-                        className="h-full w-full relative z-10"
-                    >
-                        <SettingsPage
-                            onBack={() => setView('chat')}
-                            voiceLang={voiceLang}
-                            setVoiceLang={setVoiceLang}
-                        />
-                    </motion.div>
-                );
-            case 'projects':
-                return (
-                    <motion.div
-                        key="projects"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.3 }}
-                        className="h-full w-full relative z-10"
-                    >
-                        <StudentProjectsPage onBack={() => setView('chat')} />
-                    </motion.div>
-                );
-            case 'updates':
-                return (
-                    <motion.div
-                        key="updates"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.3 }}
-                        className="h-full w-full relative z-10"
-                    >
-                        <UpdatesFAQPage onBack={() => setView('chat')} />
-                    </motion.div>
-                );
-            case 'chat':
-                return (
-                    <motion.div
-                        key="chat"
-                        initial={{ opacity: 0, scale: 0.98 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.4 }}
-                        className="w-full h-full relative z-10"
-                    >
-                        <ChatInterface
-                            apiUrl={API_URL}
-                            onGoHome={() => setView('landing')}
-                            messages={messages}
-                            setMessages={setMessages}
-                            sessions={sessions}
-                            activeSessionId={activeSessionId}
-                            onNewSession={startNewSession}
-                            onLoadSession={loadSession}
-                            onDeleteSession={deleteSession}
-                            onClearAll={clearAllSessions}
-                            onNavigate={handleNavigate}
-                            voiceLang={voiceLang}
-                            setVoiceLang={setVoiceLang}
-                        />
-                    </motion.div>
-                );
-            default:
-                return (
-                    <motion.div
-                        key="landing"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.4 }}
-                        className="h-full w-full overflow-y-auto relative z-10"
-                    >
-                        <LandingPage onEnterChat={enterChat} onNavigate={handleNavigate} />
-                    </motion.div>
-                );
-        }
+    const routeTransition = {
+        initial: { opacity: 0, y: 8 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: -8 },
+        transition: { duration: 0.25 },
     };
 
     return (
@@ -314,17 +265,80 @@ function App() {
             {currentUser && (
                 <div className="fixed top-4 right-4 z-20 flex items-center gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-2 text-sm">
                     <span className="text-[var(--text-secondary)]">{currentUser}</span>
-                    <button
-                        onClick={handleSwitchUser}
-                        className="text-[var(--accent)] font-semibold"
-                    >
+                    <button onClick={handleSwitchUser} className="text-[var(--accent)] font-semibold">
                         Switch
                     </button>
                 </div>
             )}
-            <AnimatePresence mode="wait">
-                {renderView()}
-            </AnimatePresence>
+            <Suspense fallback={<RouteFallback />}>
+                <AnimatePresence mode="wait">
+                    <Routes location={location} key={location.pathname}>
+                        <Route
+                            path="/login"
+                            element={<LoginPage loginInput={loginInput} setLoginInput={setLoginInput} onLogin={handleLogin} />}
+                        />
+                        <Route
+                            path="/chat"
+                            element={(
+                                <motion.div {...routeTransition} className="w-full h-full relative z-10">
+                                    <ChatInterface
+                                        apiUrl={API_URL}
+                                        onGoHome={() => navigate('/')}
+                                        messages={messages}
+                                        setMessages={setMessages}
+                                        sessions={sessions}
+                                        activeSessionId={activeSessionId}
+                                        onNewSession={startNewSession}
+                                        onLoadSession={loadSession}
+                                        onDeleteSession={deleteSession}
+                                        onClearAll={clearAllSessions}
+                                        onNavigate={handleNavigate}
+                                        voiceLang={voiceLang}
+                                        setVoiceLang={setVoiceLang}
+                                    />
+                                </motion.div>
+                            )}
+                        />
+                        <Route
+                            path="/settings"
+                            element={(
+                                <motion.div {...routeTransition} className="h-full w-full relative z-10">
+                                    <SettingsPage
+                                        onBack={() => navigate('/chat')}
+                                        onClearAll={clearAllSessions}
+                                        voiceLang={voiceLang}
+                                        setVoiceLang={setVoiceLang}
+                                    />
+                                </motion.div>
+                            )}
+                        />
+                        <Route
+                            path="/projects"
+                            element={(
+                                <motion.div {...routeTransition} className="h-full w-full relative z-10">
+                                    <StudentProjectsPage onBack={() => navigate('/chat')} />
+                                </motion.div>
+                            )}
+                        />
+                        <Route
+                            path="/updates"
+                            element={(
+                                <motion.div {...routeTransition} className="h-full w-full relative z-10">
+                                    <UpdatesFAQPage onBack={() => navigate('/chat')} />
+                                </motion.div>
+                            )}
+                        />
+                        <Route
+                            path="*"
+                            element={(
+                                <motion.div {...routeTransition} className="h-full w-full overflow-y-auto relative z-10">
+                                    <LandingPage onEnterChat={enterChat} onNavigate={handleNavigate} />
+                                </motion.div>
+                            )}
+                        />
+                    </Routes>
+                </AnimatePresence>
+            </Suspense>
         </div>
     );
 }
