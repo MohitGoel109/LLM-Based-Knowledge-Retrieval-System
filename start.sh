@@ -28,7 +28,7 @@ set -a; source .env; set +a
 
 # ── 2. Pick provider ───────────────────────────────────
 PROVIDER="${LLM_PROVIDER:-nim}"
-KEY_VAR="${PROVIDER}_API_KEY"
+KEY_VAR="${PROVIDER^^}_API_KEY"
 API_KEY="${!KEY_VAR}"
 
 if [ -z "$API_KEY" ] || [ "$API_KEY" = "your_${PROVIDER}_api_key_here" ]; then
@@ -36,7 +36,7 @@ if [ -z "$API_KEY" ] || [ "$API_KEY" = "your_${PROVIDER}_api_key_here" ]; then
     echo "    Edit .env and set a valid API key, then re-run."
     exit 1
 fi
-echo "[OK] Provider: $PROVIDER  |  Model: $(eval echo \$${PROVIDER}_MODEL)"
+echo "[OK] Provider: $PROVIDER  |  Model: $(eval echo \$${PROVIDER^^}_MODEL)"
 
 # ── 3. Python dependencies ─────────────────────────────
 if ! python -c "import fastapi" &>/dev/null 2>&1; then

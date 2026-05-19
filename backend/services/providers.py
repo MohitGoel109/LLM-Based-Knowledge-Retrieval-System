@@ -26,6 +26,8 @@ class NIMProvider(LLMProvider):
             api_key=settings.nim_api_key,
             model=settings.nim_model,
             base_url=settings.nim_base_url,
+            timeout=60,
+            max_retries=1,
         )
 
 

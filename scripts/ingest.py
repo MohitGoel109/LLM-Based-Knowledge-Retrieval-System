@@ -3,13 +3,19 @@ import shutil
 
 from langchain_chroma import Chroma
 from langchain_community.document_loaders import Docx2txtLoader, PyPDFLoader, TextLoader
-from langchain_huggingface import HuggingFaceEmbeddings
+from backend.services.nim_embeddings import NIMEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 CHROMA_PATH = os.path.join(BASE_DIR, "chroma_db")
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+EMBEDDING_MODEL = "nvidia/nv-embedqa-e5-v5"
+NIM_API_KEY = os.getenv("NIM_API_KEY")
+NIM_BASE_URL = os.getenv("NIM_BASE_URL", "https://integrate.api.nvidia.com/v1")
 CHUNK_SIZE = 1500
 CHUNK_OVERLAP = 300
 
@@ -64,8 +70,15 @@ def create_vector_store(chunks: list) -> None:
         shutil.rmtree(CHROMA_PATH)
         print(f"Cleared old vector store at {CHROMA_PATH}")
 
-    print("Initializing embedding model (first run downloads ~80 MB)...")
-    embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+    print("Initializing NIM embedding model...")
+    if not NIM_API_KEY or NIM_API_KEY == "your-nvapi-key-here":
+        print("ERROR: NIM_API_KEY is not set. Set it in your .env file.")
+        return
+    embeddings = NIMEmbeddings(
+        api_key=NIM_API_KEY,
+        base_url=NIM_BASE_URL,
+        model=EMBEDDING_MODEL,
+    )
 
     print("Creating vector store...")
     Chroma.from_documents(

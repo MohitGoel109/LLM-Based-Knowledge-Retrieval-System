@@ -3,10 +3,8 @@ import re
 from typing import Any, Optional
 
 from langchain_chroma import Chroma
-from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
-from langchain_core.runnables import RunnablePassthrough
-from langchain_huggingface import HuggingFaceEmbeddings
+from backend.services.nim_embeddings import NIMEmbeddings
 
 from backend.config import SUPPORTED_PROVIDERS, get_settings
 from backend.data.slang_map import expand_slang
@@ -14,7 +12,7 @@ from backend.services.providers import get_chat_model
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CHROMA_PATH = os.path.join(BASE_DIR, "chroma_db")
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+EMBEDDING_MODEL = "nvidia/nv-embedqa-e5-v5"
 
 SETTINGS = get_settings()
 LLM_PROVIDER = SETTINGS.llm_provider
@@ -120,7 +118,6 @@ class RAGEngine:
         self.vector_store = None
         self.retriever = None
         self.llm = None
-        self.qa_chain = None
         self.max_history = 4
         self.status = {
             "db": False,
@@ -140,16 +137,23 @@ class RAGEngine:
             print("[RAG] SKIP_EMBEDDINGS=true — retrieval disabled; using direct LLM mode")
         elif os.path.exists(CHROMA_PATH) and os.listdir(CHROMA_PATH):
             print("[RAG] Found ChromaDB, loading embeddings...")
-            try:
-                self.embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
-                self.vector_store = Chroma(
-                    persist_directory=CHROMA_PATH,
-                    embedding_function=self.embeddings,
-                )
-                self.retriever = self.vector_store.as_retriever(search_kwargs={"k": 4})
-                self.status["db"] = True
-            except Exception as e:
-                print(f"[RAG] Error loading vector store: {e}")
+            if not SETTINGS.nim_api_key:
+                print("[RAG] NIM_API_KEY is missing; skipping retrieval.")
+            else:
+                try:
+                    self.embeddings = NIMEmbeddings(
+                        api_key=SETTINGS.nim_api_key,
+                        base_url=SETTINGS.nim_base_url,
+                        model=EMBEDDING_MODEL,
+                    )
+                    self.vector_store = Chroma(
+                        persist_directory=CHROMA_PATH,
+                        embedding_function=self.embeddings,
+                    )
+                    self.retriever = self.vector_store.as_retriever(search_kwargs={"k": 4})
+                    self.status["db"] = True
+                except Exception as e:
+                    print(f"[RAG] Error loading vector store: {e}")
         else:
             self.embeddings = None
             print("[RAG] ChromaDB not found — skipping embedding load.")
@@ -170,18 +174,6 @@ class RAGEngine:
                 print(f"[RAG] Error initializing {provider}: {e}")
 
         if self.llm:
-            if self.retriever:
-                self.qa_chain = (
-                    {
-                        "context": self.retriever | _format_docs,
-                        "question": RunnablePassthrough(),
-                    }
-                    | RAG_PROMPT
-                    | self.llm
-                    | StrOutputParser()
-                )
-            else:
-                self.qa_chain = GENERAL_PROMPT | self.llm | StrOutputParser()
             self.status["ready"] = True
 
     def query(self, question: str, history: list = None):
@@ -203,10 +195,7 @@ class RAGEngine:
         chat_history_str = _build_chat_history(history, self.max_history)
         prompt_text, source_docs = self._build_prompt(cleaned, chat_history_str)
 
-        if self.qa_chain:
-            raw = self.qa_chain.invoke(prompt_text)
-        else:
-            raw = self.llm.invoke(prompt_text)
+        raw = self.llm.invoke(prompt_text)
         answer = _strip_think(_as_text(raw))
 
         return {"answer": answer, "source_documents": source_docs}
@@ -250,14 +239,17 @@ class RAGEngine:
 
     def _build_prompt(self, cleaned_question: str, chat_history_str: str):
         if self.retriever:
-            source_docs = self.retriever.invoke(cleaned_question)
-            context = _format_docs(source_docs)
-            prompt_text = RAG_PROMPT.format(
-                context=context,
-                question=cleaned_question,
-                chat_history=chat_history_str,
-            )
-            return prompt_text, source_docs
+            try:
+                source_docs = self.retriever.invoke(cleaned_question)
+                context = _format_docs(source_docs)
+                prompt_text = RAG_PROMPT.format(
+                    context=context,
+                    question=cleaned_question,
+                    chat_history=chat_history_str,
+                )
+                return prompt_text, source_docs
+            except Exception as e:
+                print(f"[RAG] Retrieval failed, falling back to direct mode: {e}")
         prompt_text = GENERAL_PROMPT.format(
             question=cleaned_question,
             chat_history=chat_history_str,
